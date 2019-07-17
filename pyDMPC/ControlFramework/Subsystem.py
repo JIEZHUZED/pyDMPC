@@ -79,7 +79,7 @@ class Subsystem:
         self.cost_send = []
         self.cost_rec = []
         self.setpoint_rec = []
-        self.setpoint_rec = []
+        self.setpoint_send = []
         self.command_send = []
         self.command_rec = []
         self.err_integ = 0
