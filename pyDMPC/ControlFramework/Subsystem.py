@@ -150,8 +150,6 @@ class Subsystem:
         from scipy import interpolate as it
         import time
 
-        #print('minimizing')
-
         opt_costs = []
         opt_outputs =  []
         opt_command = []
@@ -159,7 +157,6 @@ class Subsystem:
         states = self.get_state_vars()
         if states != []:
             self.model.states.state_vars = states[0]
-            #print(f"States: {self.model.states.state_vars}")
 
         if self.model.states.input_variables[0] != "external":
             if self.inputs == []:
@@ -295,8 +292,6 @@ class Subsystem:
             else:
                 self.fin_coup_vars = self.coup_vars_send
 
-        #print(f"{self.name}: {self.fin_command}")
-        #time.sleep(2)
 
     def get_inputs(self):
 
@@ -307,13 +302,21 @@ class Subsystem:
         inputs = []
         #print("Input variables: "+ str(self.model.states.input_variables))
 
-        if self.model.states.input_variables is not None:
+        if self.model.states.input_names is not None:
             for nam in self.model.states.input_names:
                 #print("check")
                 inputs.append(System.Bexmoc.read_cont_sys(nam))
                 #print("Inputs" + str(inputs))
 
         self.model.states.inputs = inputs
+
+    def get_outputs(self):
+        outputs = []
+
+        if self.model.states.output_names is not None:
+            for nam in self.model.states.output_names:
+                outputs.append(System.Bexmoc.read_cont_sys(nam))
+        return outputs
 
     def get_state_vars(self):
 
@@ -327,7 +330,7 @@ class Subsystem:
 
         return states
 
-    def send_commands(self):
+    def send_commands(self, modifier = None):
 
         cur_time = Time.Time.get_time()
 
@@ -336,4 +339,9 @@ class Subsystem:
 
             if self.model.states.command_names is not None:
                 for nam in self.model.states.command_names:
-                   System.Bexmoc.write_cont_sys(nam, self.fin_command)
+                    if modifier is not None:
+                        com = modifier * self.fin_command
+                    else:
+                        com = self.fin_command
+
+                    System.Bexmoc.write_cont_sys(nam, com)

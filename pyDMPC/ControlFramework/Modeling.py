@@ -17,7 +17,7 @@ class States:
         the Modelica models
     outputs : list of floats
         The outputs of a subsystem model
-    output_names : list of strings
+    output_variables : list of strings
         The names of the outputs. These are the identifiers for logging and for
         the Modelica models
     set_points : list of floats
@@ -39,6 +39,7 @@ class States:
         self.input_names = Init.input_names[sys_id]
         self.input_variables = Init.input_variables[sys_id]
         self.outputs = []
+        self.output_variables = Init.output_variables[sys_id]
         self.output_names = Init.output_names[sys_id]
         self.set_points = Init.set_points[sys_id]
         self.state_vars = []
@@ -220,7 +221,7 @@ class ModelicaMod(Model):
                     method="Dassl",
                     tolerance=0.001,
                     resultFile= self.paths.res_path + r'\dsres',
-                    finalNames = self.states.output_names,
+                    finalNames = self.states.output_variables,
                     initialNames = initialNames,
                     initialValues = initialValues))
 
@@ -236,8 +237,8 @@ class ModelicaMod(Model):
     def get_outputs(self):
         self.states.outputs = []
 
-        if self.states.output_names is not None:
-            for nam in self.states.output_names:
+        if self.states.output_variables is not None:
+            for nam in self.states.output_variables:
                 self.states.outputs.append(self.get_results(nam))
 
     def get_results(self, name):

@@ -22,11 +22,12 @@ time_incr = 120
 # States
 inputs = []
 input_names = []
+output_names = []
 traj_points = []
 input_variables = []
 commands = []
 command_variables = []
-output_names = []
+output_variables = []
 set_points = []
 state_var_names = []
 model_state_var_names = []
@@ -72,7 +73,8 @@ par_neigh.append(None)
 input_names.append(["coolerTemperature.T"])
 input_variables.append([r"variation.table[1,2]"])
 inputs.append(range(280,325,5))
-output_names.append(["supplyAirTemperature.T"])
+output_names.append([r"heaterTemperature.T"])
+output_variables.append(["supplyAirTemperature.T"])
 set_points.append([303])
 state_var_names.append(["heaterInitials[1].y"])
 model_state_var_names.append(["mas1.k"])
@@ -101,7 +103,8 @@ par_neigh.append(None)
 input_names.append(["preHeaterTemperature.T"])
 input_variables.append([r"variation.table[1,2]"])
 inputs.append(range(280,325,5))
-output_names.append(["supplyAirTemperature.T"])
+output_names.append([r"coolerTemperature.T"])
+output_variables.append(["supplyAirTemperature.T"])
 set_points.append([303])
 state_var_names.append(["coolerInitials[1].y"])
 model_state_var_names.append(["hex.ele[1].mas.T"])
