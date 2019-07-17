@@ -101,12 +101,12 @@ package BaseClasses
   end HallBaseClass;
 
   model Selector "Select from various signal sources"
-    Modelica.Blocks.Routing.Extractor extractor(nin=2)
+    Modelica.Blocks.Routing.Extractor extractor(nin=7)
       annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
-    Modelica.Blocks.Sources.Step step
-      annotation (Placement(transformation(extent={{-60,60},{-40,80}})));
-    Modelica.Blocks.Sources.Step step1
-      annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+    Modelica.Blocks.Sources.Step u1(height=0.1)
+      annotation (Placement(transformation(extent={{-60,80},{-40,100}})));
+    Modelica.Blocks.Sources.Step u2(height=0.2)
+      annotation (Placement(transformation(extent={{-60,50},{-40,70}})));
     Modelica.Blocks.Interfaces.RealOutput y1
                  "Connector of Real output signal"
       annotation (Placement(transformation(extent={{90,-10},{110,10}})));
@@ -114,16 +114,36 @@ package BaseClasses
       annotation (Placement(transformation(extent={{-120,-20},{-80,20}})));
     Modelica.Blocks.Sources.IntegerExpression integerExpression(y=integer(u) +
           1)
-      annotation (Placement(transformation(extent={{-48,-44},{-28,-24}})));
+      annotation (Placement(transformation(extent={{82,-50},{62,-30}})));
+    Modelica.Blocks.Sources.Step u3(height=0.3)
+      annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+    Modelica.Blocks.Sources.Step u4(height=0.4)
+      annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
+    Modelica.Blocks.Sources.Step u5(height=0.5)
+      annotation (Placement(transformation(extent={{-60,-40},{-40,-20}})));
+    Modelica.Blocks.Sources.Step u6(height=0.6)
+      annotation (Placement(transformation(extent={{-60,-70},{-40,-50}})));
+    Modelica.Blocks.Sources.Step u7(height=0.7)
+      annotation (Placement(transformation(extent={{-60,-100},{-40,-80}})));
   equation
-    connect(step.y, extractor.u[1]) annotation (Line(points={{-39,70},{-20,70},
-            {-20,-1},{-12,-1}}, color={0,0,127}));
-    connect(step1.y, extractor.u[2]) annotation (Line(points={{-39,30},{-30,30},
-            {-30,1},{-12,1}}, color={0,0,127}));
+    connect(u1.y, extractor.u[1]) annotation (Line(points={{-39,90},{-20,90},{
+            -20,-1.71429},{-12,-1.71429}}, color={0,0,127}));
+    connect(u2.y, extractor.u[2]) annotation (Line(points={{-39,60},{-30,60},{
+            -30,-1.14286},{-12,-1.14286}}, color={0,0,127}));
     connect(extractor.y, y1)
       annotation (Line(points={{11,0},{100,0}}, color={0,0,127}));
     connect(integerExpression.y, extractor.index)
-      annotation (Line(points={{-27,-34},{0,-34},{0,-12}}, color={255,127,0}));
+      annotation (Line(points={{61,-40},{0,-40},{0,-12}},  color={255,127,0}));
+    connect(u3.y, extractor.u[3]) annotation (Line(points={{-39,30},{-26,30},{
+            -26,-0.571429},{-12,-0.571429}}, color={0,0,127}));
+    connect(u4.y, extractor.u[4]) annotation (Line(points={{-39,0},{-26,0},{-26,
+            0},{-12,0}}, color={0,0,127}));
+    connect(u5.y, extractor.u[5]) annotation (Line(points={{-39,-30},{-12,-30},
+            {-12,0.571429}}, color={0,0,127}));
+    connect(u6.y, extractor.u[6]) annotation (Line(points={{-39,-60},{-26,-60},
+            {-26,1.14286},{-12,1.14286}}, color={0,0,127}));
+    connect(u7.y, extractor.u[7]) annotation (Line(points={{-39,-90},{-26,-90},
+            {-26,1.71429},{-12,1.71429}}, color={0,0,127}));
     annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
           coordinateSystem(preserveAspectRatio=false)));
   end Selector;

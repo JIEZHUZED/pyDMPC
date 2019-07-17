@@ -7,10 +7,18 @@ model Field "Simplified model of geothermal field"
           10000; 2635200,12000; 5270400,9000; 7905600,3000; 10540800,-5000;
           13176000,-12000; 15811200,-12000; 18446400,-13000; 21081600,-5000;
           23716800,4000; 26352000,8000; 28987200,12000]), decisionVariables(
-        table=[0.0,50]),
+        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic, table=[0.0,
+          0.43]),
     percent(k=1));
 
-  extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass;
+  extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass(
+      returnTemperature(T(start=285.65)),
+      vol1(T_start=285.65),
+      supplyTemperature(T(start=285.65)),
+      vol(T_start=285.65),
+      pressurePoint(T(start=285.65)),
+      pump(T_start=285.65),
+    fixedTemperature(T=285.65));
 
   Modelica.Blocks.Math.Product product1
     annotation (Placement(transformation(extent={{-78,0},{-58,20}})));
@@ -23,10 +31,6 @@ model Field "Simplified model of geothermal field"
         extent={{-6,-6},{6,6}},
         rotation=0,
         origin={-48,42})));
-  BaseClasses.Selector selector annotation (Placement(transformation(
-        extent={{-10,-10},{10,10}},
-        rotation=90,
-        origin={-54,-22})));
 equation
   connect(variation.y[1], lessEqualThreshold.u) annotation (Line(points={{-79,
           90},{-70,90},{-70,80},{-62,80}}, color={0,0,127}));
@@ -44,10 +48,8 @@ equation
           80},{-14,60},{-92,60},{-92,42},{-82,42}},     color={255,0,255}));
   connect(negate.u,switch1. y)
     annotation (Line(points={{-55.2,42},{-59,42}}, color={0,0,127}));
-  connect(percent.y, selector.u) annotation (Line(points={{-57.4,-50},{-54,-50},
-          {-54,-32}}, color={0,0,127}));
-  connect(selector.y1, product1.u2) annotation (Line(points={{-54,-12},{-54,-6},
-          {-90,-6},{-90,4},{-80,4}}, color={0,0,127}));
+  connect(percent.y, product1.u2) annotation (Line(points={{-57.4,-50},{-44,-50},
+          {-44,-22},{-98,-22},{-98,4},{-80,4}}, color={0,0,127}));
   annotation (
     experiment(StopTime=94672800, Interval=3600),
     __Dymola_experimentSetupOutput,

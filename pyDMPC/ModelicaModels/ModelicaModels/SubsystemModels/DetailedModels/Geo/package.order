@@ -1,3 +1,5 @@
 Building
+GeothermalHeatPump
 Field
 GeoCommunicationBaseClass
+HeatPumpCommunicationBaseClass
