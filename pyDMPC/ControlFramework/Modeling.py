@@ -35,7 +35,8 @@ class States:
     """
 
     def __init__(self, sys_id):
-        self.inputs = []
+        self.inputs = [[293]]
+        self.prev_inputs = [[290]]
         self.input_names = Init.input_names[sys_id]
         self.input_variables = Init.input_variables[sys_id]
         self.outputs = []

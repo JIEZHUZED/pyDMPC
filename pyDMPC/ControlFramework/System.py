@@ -230,13 +230,19 @@ class Bexmoc(System):
         for i,sub in enumerate(self.subsystems):
             if Bexmoc.contr_sys_typ == "Modelica":
                 sub.get_inputs()
+        self.inpt = 293
+        self.prev_inpt = 290
 
 
     def execute(self):
         import time
 
         for i in range(len(self.subsystems)):
-            self.subsystems[i].optimize(interp=True)
+            if i == 0:
+                if self.ma_process == False:
+                    self.subsystems[i].optimize(interp=True)
+            else:
+                self.subsystems[i].optimize(interp=True)
             if self.subsystems[i].par_neigh is not None:
                 for j in self.subsystems[i].par_neigh:
                     self.subsystems[j].optimize(interp=True)
@@ -244,90 +250,118 @@ class Bexmoc(System):
             else:
                 #print(f"Broadcasting: {i}")
                 self.broadcast([i])
-
-
+                
         for i,sub in enumerate(self.subsystems):
             sub.get_inputs()
-            sub.interp(iter_real = "real")
-            sub.send_commands()
-
-        if Time.Time.get_time() > 0:
-            self.prev_outputs = self.outputs
-            #prev_prediction = self.subsystems[0].fin_coup_vars[0]
-            self.outputs = self.subsystems[0].get_outputs()
-            self.prev_command = self.subsystems[0].fin_command
-
-
-            if self.ma_process:
-                #self.subsystems[0].modify()
-                grad_plant = (self.outputs[0][-1] - self.prev_outputs[0][-1])/(self.command_2 - self.command_1)
-
-                print(f"grad_plant: {grad_plant}")
-
-                grad_model = (self.output_model_2[0][-1] - self.output_model_1) /(self.command_2 - self.command_1)
-
-                print(f"grad_model: {grad_model}")
-
-                dif_grad = grad_plant - grad_model
-
-                print(f"dif_grad: {dif_grad}")
-
-                print(f"self.dif: {self.dif}")
-
-                print(self.output_model_1)
-
-                self.output_model_1 = self.output_model_1[0][-1] + self.dif[-1]
-
-                cost_1 = self.subsystems[0].calc_cost(self.command_1, self.output_model_1)
-
-                print(f"cost_1: {cost_1}")
-
-                self.command_3 = min(100, self.command_2 * 1.05)
-                self.output_model_3 = self.output_model_1 + self.dif[-1] + dif_grad[-1] * (self.command_3 - self.command_1)
-
-                print(f"self.output_model_3: {self.output_model_3}")
-
-                cost_2 = self.subsystems[0].calc_cost(self.command_3, self.output_model_3[-1])
-
-                print(f"cost_2: {cost_2}")
-
-                if cost_2 < cost_1:
-                    self.subsystems[0].fin_command = self.command_3
-                    self.subsystems[0].send_commands()
-
-                print(f"self.subsystems[0].fin_command: {self.subsystems[0].fin_command}")
-                time.sleep(5)
-
-                self.ma_process = False
-
-            self.command_1 = self.subsystems[0].fin_command
-
-            print(f"self.prev_outputs: {self.prev_outputs[0][-1]}")
-
-            print(f"self.outputs: {self.outputs[0][-1]}")
-
-            test = abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001)
-
-            print(test)
-
-            if abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) < 0.001 and self.ma_process == False and self.command_1 == self.prev_command:
-                self.command_2 = self.command_1 * 1.05
-                self.subsystems[0].send_commands(1.05)
-                self.output_model_1 = self.subsystems[0].predict(self.subsystems[0].model.states.inputs, self.command_1)
-                self.output_model_2 = self.subsystems[0].predict(self.subsystems[0].model.states.inputs, self.command_2)
-                self.dif = self.outputs[0] - self.output_model_1[-1]
-                self.ma_process = True
-                time_1 = Time.Time.get_time()
+            if i == 0:
+                if self.ma_process == False:
+                    sub.interp(iter_real = "real")
             else:
-                self.ma_process = False
+                sub.interp(iter_real = "real")
+    
+            if i == 0:
+                self.inpt = self.read_cont_sys("coolerTemperature.T")
+                self.inpt = self.inpt[0]
+                #print(self.inpt)
+    
+                if Time.Time.get_time() == 0:
+                    #prev_prediction = self.subsystems[0].fin_coup_vars[0]
+                    self.outputs = self.subsystems[0].get_outputs()
+                    self.prev_command = self.subsystems[0].fin_command
+                    self.prev_outputs = self.outputs
+        
+        
+                if self.ma_process and abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) < 0.001:
+                    
+                    self.dif = self.outputs[0] - self.output_model_1[-1]
+                    #print(f"self.dif: {self.dif[-1]}")
+                    grad_plant = (self.outputs[0][-1] - self.prev_outputs[0][-1])/(self.command_2 - self.command_1)
+    
+                    #print(f"grad_plant: {grad_plant}")
+    
+                    grad_model = (self.output_model_2[0][-1] - self.output_model_1) /(self.command_2 - self.command_1)
+    
+                    #print(f"grad_model: {grad_model[-1]}")
+    
+                    dif_grad = grad_plant - grad_model
+    
+                    
+    
+                    #print(f"self.dif: {self.dif[-1]}")
+    
+                    #print(self.output_model_1)
+    
+                    self.output_model_1 = self.output_model_1[0][-1] + self.dif[-1]
+                    
+                    #print(f"dif_grad: {dif_grad[-1][-1]}")
+                    
+                    #print(f"self.command_1: {self.command_1}")
+                    #print(f"self.output_model_1: {self.output_model_1}")
+    
+    
+                    cost_1 = self.subsystems[0].calc_cost(self.command_1, self.output_model_1)
+    
+                    #print(f"cost_1: {cost_1}")
+    
+                    self.command_3 = min(100, self.command_2 * 1.05)
+                    self.output_model_3 = self.output_model_1 + dif_grad[-1][-1] * (self.command_3 - self.command_1)
+                    #print(f"self.output_model_3: {self.output_model_3}")
+    
+                    #print(f"self.output_model_3: {self.output_model_3}")
+    
+                    cost_2 = self.subsystems[0].calc_cost(self.command_3, self.output_model_3[-1])
+                    
+                    #print(f"self.command_3: {self.command_3}")
+                    #print(f"self.output_model_3: {self.output_model_3}")
+                    #print(f"cost_2: {cost_2}")
+    
+    
+                    if cost_2 < cost_1:
+                        self.subsystems[0].fin_command = self.command_3
+                    else:
+                        self.subsystems[0].fin_command = self.command_2
+                        
+                    #self.subsystems[0].send_commands()
+    
+                    #print(f"self.subsystems[0].fin_command: {self.subsystems[0].fin_command}")
+                    
+                    
+                    
+    
+                    #self.ma_process = False
+                    self.prev_outputs = self.outputs
+    
+                self.command_1 = self.subsystems[0].fin_command
+    
+                #print(f"self.prev_outputs: {self.prev_outputs[0][-1]}")
+    
+                #print(f"self.outputs: {self.outputs[0][-1]}")
+    
+               # test = abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001)
+    
 
-            print(f"self.ma_process: {self.ma_process}")
-
+    
+                if abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) < 0.001 and self.ma_process == False and abs(self.command_1 == self.prev_command)<0.1:
+                    self.subsystems[0].fin_command = self.subsystems[0].fin_command * 1.05
+                    self.command_2 = self.subsystems[0].fin_command
+                    self.subsystems[0].send_commands()
+                    self.output_model_1 = self.subsystems[0].predict(self.subsystems[0].model.states.inputs, self.command_1)
+                    self.output_model_2 = self.subsystems[0].predict(self.subsystems[0].model.states.inputs, self.command_2)
+                    
+                    self.ma_process = True
+    
+                else:
+                    self.ma_process = False
+                    self.outputs = self.subsystems[0].get_outputs()
+                    self.prev_outputs = self.outputs
+                    
+            print(self.command_1)
+            print(self.prev_command)
+            print(self.ma_process)
+            time.sleep(2)
+            sub.send_commands()
             self.prev_command = self.subsystems[0].fin_command
-        else:
-            self.outputs = self.subsystems[0].get_outputs()
-            self.prev_outputs = self.outputs
-            self.prev_command = self.subsystems[0].fin_command
+            
 
         if Bexmoc.contr_sys_typ == "Modelica":
             cur_time = Time.Time.get_time()

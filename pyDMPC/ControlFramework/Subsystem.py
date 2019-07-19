@@ -308,6 +308,7 @@ class Subsystem:
                 inputs.append(System.Bexmoc.read_cont_sys(nam))
                 #print("Inputs" + str(inputs))
 
+        #self.model.states.prev_inputs = self.model.states.inputs
         self.model.states.inputs = inputs
 
     def get_outputs(self):
@@ -343,5 +344,7 @@ class Subsystem:
                         com = modifier * self.fin_command
                     else:
                         com = self.fin_command
+                        
+                    #print(str(nam)+str(com))
 
                     System.Bexmoc.write_cont_sys(nam, com)
