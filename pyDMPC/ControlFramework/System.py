@@ -253,9 +253,13 @@ class Bexmoc(System):
                 
         for i,sub in enumerate(self.subsystems):
             sub.get_inputs()
+            cur_time = Time.Time.get_time()
             if i == 0:
-                if self.ma_process == False:
-                    sub.interp(iter_real = "real")
+                if cur_time != 0:
+                    if self.ma_process == False and abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) > 0.001:
+                        sub.interp(iter_real = "real")
+                else:
+                    sub.interp(iter_real = "real")   
             else:
                 sub.interp(iter_real = "real")
     
@@ -264,14 +268,19 @@ class Bexmoc(System):
                 self.inpt = self.inpt[0]
                 #print(self.inpt)
     
-                if Time.Time.get_time() == 0:
+                cur_time = Time.Time.get_time()
+                
+                if cur_time == 0:
                     #prev_prediction = self.subsystems[0].fin_coup_vars[0]
                     self.outputs = self.subsystems[0].get_outputs()
                     self.prev_command = self.subsystems[0].fin_command
                     self.prev_outputs = self.outputs
         
         
-                if self.ma_process and abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) < 0.001:
+                if (self.ma_process and 
+                    abs(self.prev_outputs[0][-1] - 
+                    self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) 
+                    < 0.001 and cur_time != 0):
                     
                     self.dif = self.outputs[0] - self.output_model_1[-1]
                     #print(f"self.dif: {self.dif[-1]}")
@@ -287,25 +296,26 @@ class Bexmoc(System):
     
                     
     
-                    #print(f"self.dif: {self.dif[-1]}")
+                    print(f"self.dif: {self.dif[-1]}")
     
                     #print(self.output_model_1)
     
                     self.output_model_1 = self.output_model_1[0][-1] + self.dif[-1]
                     
-                    #print(f"dif_grad: {dif_grad[-1][-1]}")
+                    print(f"dif_grad: {dif_grad[-1][-1]}")
                     
                     #print(f"self.command_1: {self.command_1}")
-                    #print(f"self.output_model_1: {self.output_model_1}")
+                    print(f"self.output_model_1: {self.output_model_1}")
     
     
                     cost_1 = self.subsystems[0].calc_cost(self.command_1, self.output_model_1)
     
-                    #print(f"cost_1: {cost_1}")
+                    print(f"cost_1: {cost_1}")
     
                     self.command_3 = min(100, self.command_2 * 1.05)
-                    self.output_model_3 = self.output_model_1 + dif_grad[-1][-1] * (self.command_3 - self.command_1)
-                    #print(f"self.output_model_3: {self.output_model_3}")
+                    self.output_model_3 = self.subsystems[0].predict(self.subsystems[0].model.states.inputs, self.command_3)
+                    self.output_model_3 = self.output_model_3[0][-1] + self.dif[-1] - dif_grad[-1][-1] * (self.command_3 - self.command_1)
+                    print(f"self.output_model_3: {self.output_model_3}")
     
                     #print(f"self.output_model_3: {self.output_model_3}")
     
@@ -313,13 +323,13 @@ class Bexmoc(System):
                     
                     #print(f"self.command_3: {self.command_3}")
                     #print(f"self.output_model_3: {self.output_model_3}")
-                    #print(f"cost_2: {cost_2}")
+                    print(f"cost_2: {cost_2}")
     
     
                     if cost_2 < cost_1:
                         self.subsystems[0].fin_command = self.command_3
                     else:
-                        self.subsystems[0].fin_command = self.command_2
+                        self.subsystems[0].fin_command = self.command_2/1.05
                         
                     #self.subsystems[0].send_commands()
     
@@ -341,7 +351,11 @@ class Bexmoc(System):
     
 
     
-                if abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) < 0.001 and self.ma_process == False and abs(self.command_1 == self.prev_command)<0.1:
+                if (abs(self.prev_outputs[0][-1] - 
+                        self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) < 0.001 
+                        and self.ma_process == False 
+                        and abs(self.command_1 - self.prev_command)<0.1 
+                        and cur_time != 0):
                     self.subsystems[0].fin_command = self.subsystems[0].fin_command * 1.05
                     self.command_2 = self.subsystems[0].fin_command
                     self.subsystems[0].send_commands()

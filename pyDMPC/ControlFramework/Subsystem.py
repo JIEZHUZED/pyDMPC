@@ -345,6 +345,6 @@ class Subsystem:
                     else:
                         com = self.fin_command
                         
-                    #print(str(nam)+str(com))
+                    print(str(nam)+str(com))
 
                     System.Bexmoc.write_cont_sys(nam, com)

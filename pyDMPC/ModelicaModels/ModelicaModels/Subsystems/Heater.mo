@@ -3,7 +3,7 @@ model Heater
   "Heater subsystem"
 
   extends ModelicaModels.Subsystems.BaseClasses.HeaterBaseClass(hex(UA_nominal=
-          100));
+          700));
 
   extends ModelicaModels.Subsystems.BaseClasses.HeatExchangerPorts;
 
