@@ -241,6 +241,7 @@ class Bexmoc(System):
             if i == 0:
                 if self.ma_process == False:
                     self.subsystems[i].optimize(interp=True)
+                    print("optimizing")
             else:
                 self.subsystems[i].optimize(interp=True)
             if self.subsystems[i].par_neigh is not None:
@@ -253,19 +254,24 @@ class Bexmoc(System):
                 
         for i,sub in enumerate(self.subsystems):
             sub.get_inputs()
+            self.inpt = self.read_cont_sys("coolerTemperature.T")
+            self.inpt = self.inpt[0]
             cur_time = Time.Time.get_time()
+            print(f"cur_time: {cur_time}")
             if i == 0:
-                if cur_time != 0:
-                    if self.ma_process == False and abs(self.prev_outputs[0][-1] - self.outputs[0][-1])/max(self.prev_outputs[0][-1], 0.001) > 0.001:
-                        sub.interp(iter_real = "real")
+                if cur_time == 0:
+                    sub.interp(iter_real = "real")
                 else:
-                    sub.interp(iter_real = "real")   
+                    print(f"self.inpt: {self.inpt}")
+                    print(f"self.prev_inpt: {self.prev_inpt}")
+                    if (abs(self.prev_inpt - 
+                            self.inpt)/max(self.inpt, 0.001) > 0.001):
+                        sub.interp(iter_real = "real")
+                        print("interpolating") 
             else:
                 sub.interp(iter_real = "real")
     
             if i == 0:
-                self.inpt = self.read_cont_sys("coolerTemperature.T")
-                self.inpt = self.inpt[0]
                 #print(self.inpt)
     
                 cur_time = Time.Time.get_time()
@@ -296,13 +302,13 @@ class Bexmoc(System):
     
                     
     
-                    print(f"self.dif: {self.dif[-1]}")
+                    #print(f"self.dif: {self.dif[-1]}")
     
                     #print(self.output_model_1)
     
                     self.output_model_1 = self.output_model_1[0][-1] + self.dif[-1]
                     
-                    print(f"dif_grad: {dif_grad[-1][-1]}")
+                    #print(f"dif_grad: {dif_grad[-1][-1]}")
                     
                     #print(f"self.command_1: {self.command_1}")
                     print(f"self.output_model_1: {self.output_model_1}")
@@ -310,20 +316,19 @@ class Bexmoc(System):
     
                     cost_1 = self.subsystems[0].calc_cost(self.command_1, self.output_model_1)
     
-                    print(f"cost_1: {cost_1}")
+                    #print(f"cost_1: {cost_1}")
     
                     self.command_3 = min(100, self.command_2 * 1.05)
                     self.output_model_3 = self.subsystems[0].predict(self.subsystems[0].model.states.inputs, self.command_3)
                     self.output_model_3 = self.output_model_3[0][-1] + self.dif[-1] - dif_grad[-1][-1] * (self.command_3 - self.command_1)
-                    print(f"self.output_model_3: {self.output_model_3}")
     
-                    #print(f"self.output_model_3: {self.output_model_3}")
+                    print(f"self.output_model_3: {self.output_model_3}")
     
                     cost_2 = self.subsystems[0].calc_cost(self.command_3, self.output_model_3[-1])
                     
                     #print(f"self.command_3: {self.command_3}")
                     #print(f"self.output_model_3: {self.output_model_3}")
-                    print(f"cost_2: {cost_2}")
+                    #print(f"cost_2: {cost_2}")
     
     
                     if cost_2 < cost_1:
@@ -369,12 +374,13 @@ class Bexmoc(System):
                     self.outputs = self.subsystems[0].get_outputs()
                     self.prev_outputs = self.outputs
                     
-            print(self.command_1)
-            print(self.prev_command)
+            #print(self.command_1)
+            #print(self.prev_command)
             print(self.ma_process)
             time.sleep(2)
             sub.send_commands()
             self.prev_command = self.subsystems[0].fin_command
+            self.prev_inpt = self.inpt
             
 
         if Bexmoc.contr_sys_typ == "Modelica":

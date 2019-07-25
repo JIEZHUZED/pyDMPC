@@ -95,11 +95,14 @@ model ControlledSystemBoundaries
   AixLib.Fluid.Sensors.RelativeHumidity outdoorHumidityMeas(redeclare package
       Medium = MediumAir) "Relative humidity outside"
     annotation (Placement(transformation(extent={{-254,-16},{-274,4}})));
+  Modelica.Blocks.Sources.Step step(
+    height=8,
+    offset=20,
+    startTime=1500)
+    annotation (Placement(transformation(extent={{-390,160},{-370,180}})));
 equation
   connect(roomHumidity.y, x_indoor.phi) annotation (Line(points={{140.7,183},{
           66,183},{66,182},{40,182}}, color={0,0,127}));
-  connect(outdoorTemperature.y, toKelvin1.Celsius) annotation (Line(points={{
-          -362.6,120},{-362.6,120},{-342,120}}, color={0,0,127}));
   connect(toKelvin1.Kelvin, freshAirSource.T_in) annotation (Line(points={{-319,
           120},{-310,120},{-310,120},{-310,-36},{-304,-36}}, color={0,0,127}));
   connect(roomTemperature.y, toKelvin.Celsius) annotation (Line(points={{140.7,
@@ -146,6 +149,8 @@ equation
   connect(outgoingAirOutletHumidity.port, inOutlets.portExhaustAirOut)
     annotation (Line(points={{-246,48},{-246,36},{-218,36},{-218,34},{-180.812,
           34},{-180.812,29.5765}}, color={0,127,255}));
+  connect(step.y, toKelvin1.Celsius) annotation (Line(points={{-369,170},{-356,
+          170},{-356,120},{-342,120}}, color={0,0,127}));
   annotation (
     experiment(StopTime=86400, Interval=10),
     __Dymola_experimentSetupOutput,
