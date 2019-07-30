@@ -1,5 +1,5 @@
 within ModelicaModels.SubsystemModels.DetailedModels.Geo;
-model Field "Simplified model of geothermal field"
+model Field2 "Simplified model of geothermal field"
 
   extends
     ModelicaModels.SubsystemModels.DetailedModels.Geo.GeoCommunicationBaseClass(variation(
@@ -10,15 +10,13 @@ model Field "Simplified model of geothermal field"
         extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic, table=[0.0,1]),
     percent(k=0.01));
 
-  extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass(
+  extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass2(
       returnTemperature(T(start=285.65)),
       vol1(T_start=285.65),
       supplyTemperature(T(start=285.65)),
       pressurePoint(T(start=285.65, fixed=true)),
       pump(T_start=285.65),
-    movMea(delta=284018400),
-    vol(T_start=285.65),
-    fixedTemperature(T=285.65));
+    movMea(delta=284018400));
 
   Modelica.Blocks.Math.Product product1
     annotation (Placement(transformation(extent={{-78,0},{-58,20}})));
@@ -58,4 +56,4 @@ equation
       Evaluate=false,
       OutputCPUtime=false,
       OutputFlatModelica=false));
-end Field;
+end Field2;

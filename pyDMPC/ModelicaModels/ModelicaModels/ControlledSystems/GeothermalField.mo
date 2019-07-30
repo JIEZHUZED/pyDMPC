@@ -1,7 +1,14 @@
 within ModelicaModels.ControlledSystems;
 model GeothermalField
 
-  extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass;
+  extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass(
+    vol(T_start=285.65),
+    pump(T_start=285.65),
+    vol1(T_start=285.65),
+    fixedTemperature(T=285.65),
+    pressurePoint(use_T_in=false, T=285.65),
+    supplyTemperature(T(fixed=true, start=285.65)),
+    returnTemperature(T(fixed=true, start=285.65)));
   Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow
     annotation (Placement(transformation(extent={{-12,-12},{12,12}},
         rotation=0,
@@ -13,6 +20,8 @@ model GeothermalField
   Modelica.Blocks.Interfaces.RealInput heatShare
     "Connector of Real input signal 2"
     annotation (Placement(transformation(extent={{-120,-18},{-80,22}})));
+  Modelica.Blocks.Interfaces.RealInput traj "Connector of Real input signal 2"
+    annotation (Placement(transformation(extent={{-120,-70},{-80,-30}})));
 equation
   connect(prescribedHeatFlow.port, vol1.heatPort)
     annotation (Line(points={{6,42},{20,42}}, color={191,0,0}));

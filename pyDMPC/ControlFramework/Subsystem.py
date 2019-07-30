@@ -221,8 +221,13 @@ class Subsystem:
                 self.command_send = opt_command
 
         else:
-            self.coup_vars_send = opt_outputs[0]
             self.command_send = opt_command[0]
+            
+            if self.traj_var != []:
+                self.command_send = self.setpoint_send
+            else:
+                self.coup_vars_send = opt_outputs[0]
+            
 
     def calc_cost(self, command, outputs):
         import scipy.interpolate
