@@ -4,7 +4,7 @@ model Building "Simplified building model"
   extends ModelicaModels.SubsystemModels.DetailedModels.Geo.GeoCommunicationBaseClass(variation(
         table=[0,293]));
 
-  extends ModelicaModels.Subsystems.Geo.BaseClasses.BuildingBaseClass;
+  extends ModelicaModels.Subsystems.Geo.BaseClasses.BuildingBaseClass(const(k=-10000));
 
 equation
   connect(variation.y[1], boundary.T_in) annotation (Line(points={{-79,90},{-68,

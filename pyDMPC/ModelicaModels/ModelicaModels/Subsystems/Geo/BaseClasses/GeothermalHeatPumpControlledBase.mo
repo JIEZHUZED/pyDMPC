@@ -1,14 +1,13 @@
 within ModelicaModels.Subsystems.Geo.BaseClasses;
 partial model GeothermalHeatPumpControlledBase
   "Example of a geothermal heat pump system with controllers"
-  extends
-    ModelicaModels.Subsystems.Geo.BaseClasses.GeothermalHeatPumpBase;
+  extends ModelicaModels.Subsystems.Geo.BaseClasses.GeothermalHeatPumpBase;
   Modelica.Blocks.Sources.RealExpression getTStorageUpper(y=heatStorage.layer[
         heatStorage.n].T) "Gets the temperature of upper heat storage layer"
     annotation (Placement(transformation(extent={{-160,64},{-140,84}})));
   Modelica.Blocks.Sources.RealExpression getTStorageLower(y=coldStorage.layer[1].T)
     "Gets the temperature of lower cold storage layer"
-    annotation (Placement(transformation(extent={{-160,42},{-140,62}})));
+    annotation (Placement(transformation(extent={{-160,48},{-140,68}})));
   Modelica.Blocks.Interfaces.RealOutput coldStorageTemperature(
     final quantity="ThermodynamicTemperature",
     final unit="K",
@@ -16,7 +15,7 @@ partial model GeothermalHeatPumpControlledBase
     min=0,
     start=T_start_cold[1]) "Temperature in the cold storage" annotation (
       Placement(transformation(
-        origin={-60,80},
+        origin={78,80},
         extent={{-10,-10},{10,10}},
         rotation=90), iconTransformation(
         extent={{10,-10},{-10,10}},
@@ -29,38 +28,31 @@ partial model GeothermalHeatPumpControlledBase
     min=0,
     start=T_start_warm[heatStorage.n]) "Temperature in the heat storage"
     annotation (Placement(transformation(
-        origin={-80,80},
+        origin={60,80},
         extent={{-10,-10},{10,10}},
         rotation=90), iconTransformation(
         extent={{10,-10},{-10,10}},
         rotation=90,
         origin={-140,-110})));
-  Modelica.Blocks.Interfaces.RealOutput chemicalEnergyFlowRate(final unit="W")
+  Modelica.Blocks.Interfaces.RealOutput chemicalEnergy(final unit="W")
     "Flow of primary (chemical) energy into boiler " annotation (Placement(
         transformation(
         extent={{-10,10},{10,-10}},
         rotation=270,
-        origin={-61.5,-119.5}), iconTransformation(extent={{10,-10},{-10,10}},
+        origin={-61.5,-119.5}), iconTransformation(
+        extent={{10,-10},{-10,10}},
         rotation=90,
         origin={-20.5,-109})));
-  Modelica.Blocks.Interfaces.RealOutput heatPumpPower(final unit="W")
+  Modelica.Blocks.Interfaces.RealOutput heatPumpEnergy(final unit="W")
     "Electrical power of the heat pump" annotation (Placement(transformation(
         extent={{-10,10},{10,-10}},
         rotation=270,
-        origin={-39.5,-119.5}), iconTransformation(extent={{10,-10},{-10,10}},
+        origin={-39.5,-119.5}), iconTransformation(
+        extent={{10,-10},{-10,10}},
         rotation=90,
         origin={-60.5,-109})));
   inner Modelica.Fluid.System system
-    annotation (Placement(transformation(extent={{140,60},{160,80}})));
-  Modelica.Blocks.Logical.LessEqualThreshold    lessEqualThreshold
-    annotation (Placement(transformation(extent={{160,12},{140,32}})));
-  Modelica.Blocks.Logical.Switch switch1
-    annotation (Placement(transformation(extent={{152,-30},{132,-10}})));
-  Modelica.Blocks.Math.Gain negate(k=-1) "negate" annotation (Placement(
-        transformation(
-        extent={{6,-6},{-6,6}},
-        rotation=0,
-        origin={118,-20})));
+    annotation (Placement(transformation(extent={{180,60},{200,80}})));
   Modelica.Blocks.Sources.CombiTimeTable variation(
     fileName="../../Geo_long/variation.mat",
     extrapolation=Modelica.Blocks.Types.Extrapolation.HoldLastPoint,
@@ -80,13 +72,13 @@ partial model GeothermalHeatPumpControlledBase
         transformation(
         extent={{-10,-10},{10,10}},
         rotation=0,
-        origin={-150,-10})));
+        origin={-150,-16})));
   Modelica.Blocks.Sources.CombiTimeTable decisionVariables(
     table=[0.0,0.0],
     columns={2},
     smoothness=Modelica.Blocks.Types.Smoothness.ConstantSegments,
     extrapolation=Modelica.Blocks.Types.Extrapolation.HoldLastPoint)
-    annotation (Placement(transformation(extent={{136,-116},{156,-96}})));
+    annotation (Placement(transformation(extent={{138,-116},{158,-96}})));
   Modelica.Blocks.Interfaces.RealOutput returnTemperature(
     final quantity="ThermodynamicTemperature",
     final unit="K",
@@ -100,19 +92,135 @@ partial model GeothermalHeatPumpControlledBase
         extent={{10,-10},{-10,10}},
         rotation=90,
         origin={-100,-110})));
+  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow
+    annotation (Placement(transformation(extent={{-6,-6},{6,6}},
+        rotation=-90,
+        origin={116,-34})));
+  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow1
+    annotation (Placement(transformation(extent={{6,-6},{-6,6}},
+        rotation=-90,
+        origin={96,8})));
+  AixLib.ThermalZones.ReducedOrder.Multizone.MultizoneEquipped multizone(
+    redeclare package Medium = Modelica.Media.Air.SimpleAir,
+    buildingID=0,
+    energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
+    VAir=3500.0,
+    ABuilding=1000.0,
+    ASurTot=4961.336840410235,
+    numZones=6,
+    zoneParam={ERC_DataBase.ERC_Office(),ERC_DataBase.ERC_Floor(),
+        ERC_DataBase.ERC_Storage(),ERC_DataBase.ERC_Meeting(),
+        ERC_DataBase.ERC_Restroom(),ERC_DataBase.ERC_ICT()},
+    heatAHU=true,
+    coolAHU=true,
+    dehuAHU=true,
+    huAHU=true,
+    BPFDehuAHU=0.2,
+    HRS=true,
+    sampleRateAHU=1800,
+    effFanAHU_sup=0.7,
+    effFanAHU_eta=0.7,
+    effHRSAHU_enabled=0.65,
+    effHRSAHU_disabled=0.2,
+    zone(ROM(
+        extWallRC(thermCapExt(each der_T(fixed=true))),
+        intWallRC(thermCapInt(each der_T(fixed=true))),
+        floorRC(thermCapExt(each der_T(fixed=true))),
+        roofRC(thermCapExt(each der_T(fixed=true))))),
+    redeclare model thermalZone =
+        AixLib.ThermalZones.ReducedOrder.ThermalZone.ThermalZoneEquipped,
+    redeclare model corG =
+        AixLib.ThermalZones.ReducedOrder.SolarGain.CorrectionGDoublePane,
+    redeclare model AHUMod = AixLib.Airflow.AirHandlingUnit.AHU,
+    T_start=293.15,
+    dpAHU_sup=800,
+    dpAHU_eta=800)
+    "Multizone"
+    annotation (Placement(transformation(extent={{164,0},{144,20}})));
+  AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
+    calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
+    computeWetBulbTemperature=false,
+    filNam=
+        "modelica://teaserweb_Aixlib/ERC/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos")
+    "Weather data reader"
+    annotation (Placement(transformation(extent={{188,32},{168,52}})));
+
+  Modelica.Blocks.Sources.CombiTimeTable tableAHU(
+    tableOnFile=true,
+    extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
+    tableName="AHU",
+    columns=2:5,
+    fileName=Modelica.Utilities.Files.loadResource(
+        "modelica://teaserweb_AixLib/ERC/AHU_ERC.mat"))
+    "Boundary conditions for air handling unit"
+    annotation (Placement(transformation(extent={{188,2},{172,18}})));
+  Modelica.Blocks.Sources.CombiTimeTable tableTSet(
+    tableOnFile=true,
+    tableName="Tset",
+    extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
+    fileName=Modelica.Utilities.Files.loadResource(
+        "modelica://teaserweb_AixLib/ERC/Tset_ERC.mat"),
+    columns=2:7)
+    "Set points for heater"
+    annotation (Placement(transformation(extent={{188,-46},{172,-30}})));
+  Modelica.Blocks.Sources.Constant const2
+                                        [6](each k=0)
+    "Set point for cooler"
+    annotation (Placement(transformation(extent={{188,-20},{172,-4}})));
+  Modelica.Blocks.Sources.CombiTimeTable tableInternalGains(
+    tableOnFile=true,
+    extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
+    tableName="Internals",
+    fileName=Modelica.Utilities.Files.loadResource(
+        "modelica://teaserweb_AixLib/ERC/InternalGains_ERC.mat"),
+    columns=2:19)
+    "Profiles for internal gains"
+    annotation (Placement(transformation(extent={{188,-68},{172,-52}})));
+  Modelica.Blocks.Continuous.Integrator integrator annotation (Placement(
+        transformation(
+        extent={{-6,-6},{6,6}},
+        rotation=-90,
+        origin={-62,-94})));
+  Modelica.Blocks.Continuous.Integrator integrator1 annotation (Placement(
+        transformation(
+        extent={{-6,-6},{6,6}},
+        rotation=-90,
+        origin={-40,-94})));
 equation
-  connect(heatPumpTab.Power, heatPumpPower) annotation (Line(points={{-22,
-          -12.3},{-22,-40},{-39.5,-40},{-39.5,-119.5}},      color={0,0,127}));
-  connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,52},
-          {-60,52},{-60,80}},               color={0,0,127}));
+  connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,58},
+          {78,58},{78,80}},                 color={0,0,127}));
   connect(getTStorageUpper.y, heatStorageTemperature) annotation (Line(points={{-139,74},
-          {-122,74},{-122,60},{-80,60},{-80,80}},
+          {-122,74},{-122,60},{60,60},{60,80}},
         color={0,0,127}));
   connect(returnTemSensor.T, returnTemperature) annotation (Line(points={{
           -107,9.2},{-107,-94},{-144,-94},{-144,-120}}, color={0,0,127}));
-  connect(boundary.T_in, variation.y[1]) annotation (Line(points={{-153.6,
-          -50.8},{-153.6,-28},{-128,-28},{-128,-10},{-139,-10}}, color={0,0,
+  connect(boundary.T_in, variation.y[1]) annotation (Line(points={{-153.6,-50.8},
+          {-153.6,-28},{-128,-28},{-128,-16},{-139,-16}},        color={0,0,
           127}));
+  connect(prescribedHeatFlow.port, vol2.heatPort)
+    annotation (Line(points={{116,-40},{116,-44}}, color={191,0,0}));
+  connect(vol1.heatPort, prescribedHeatFlow1.port)
+    annotation (Line(points={{96,20},{96,14}}, color={191,0,0}));
+  connect(weaDat.weaBus,multizone. weaBus) annotation (Line(
+      points={{168,42},{166,42},{166,14},{162,14}},
+      color={255,204,51},
+      thickness=0.5));
+  connect(tableInternalGains.y,multizone. intGains)
+    annotation (Line(points={{171.2,-60},{148,-60},{148,-1}},
+                                                           color={0,0,127}));
+  connect(tableAHU.y,multizone. AHU)
+    annotation (Line(points={{171.2,10},{163,10}},     color={0,0,127}));
+  connect(tableTSet.y,multizone. TSetHeat) annotation (Line(points={{171.2,-38},
+          {159.2,-38},{159.2,-1}},
+                                 color={0,0,127}));
+  connect(const2.y, multizone.TSetCool) annotation (Line(points={{171.2,-12},{
+          161.4,-12},{161.4,-1}}, color={0,0,127}));
+  connect(chemicalEnergy, integrator.y) annotation (Line(points={{-61.5,-119.5},
+          {-62,-119.5},{-62,-100.6}}, color={0,0,127}));
+  connect(integrator1.y, heatPumpEnergy) annotation (Line(points={{-40,-100.6},
+          {-40,-119.5},{-39.5,-119.5}}, color={0,0,127}));
+  connect(integrator1.u, heatPumpTab.Power) annotation (Line(points={{-40,-86.8},
+          {-40,-30},{-22,-30},{-22,-12.3}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
 </html>", revisions="<html>
@@ -122,5 +230,7 @@ May 19, 2017, by Marc Baranski:<br/>
 First implementation.
 </li>
 </ul>
-</html>"));
+</html>"),
+    Diagram(coordinateSystem(extent={{-160,-120},{200,80}})),
+    Icon(coordinateSystem(extent={{-160,-120},{200,80}})));
 end GeothermalHeatPumpControlledBase;

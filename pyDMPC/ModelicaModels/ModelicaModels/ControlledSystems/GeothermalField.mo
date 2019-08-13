@@ -22,6 +22,11 @@ model GeothermalField
     annotation (Placement(transformation(extent={{-120,-18},{-80,22}})));
   Modelica.Blocks.Interfaces.RealInput traj "Connector of Real input signal 2"
     annotation (Placement(transformation(extent={{-120,-70},{-80,-30}})));
+  Modelica.Blocks.Math.Gain percent(k=0.01) "Convert from percent" annotation (
+      Placement(transformation(
+        extent={{6,6},{-6,-6}},
+        rotation=-90,
+        origin={-74,20})));
 equation
   connect(prescribedHeatFlow.port, vol1.heatPort)
     annotation (Line(points={{6,42},{20,42}}, color={191,0,0}));
@@ -29,8 +34,10 @@ equation
           48},{-64,48}}, color={0,0,127}));
   connect(product.y, prescribedHeatFlow.Q_flow)
     annotation (Line(points={{-41,42},{-41,42},{-18,42}}, color={0,0,127}));
-  connect(product.u2, heatShare) annotation (Line(points={{-64,36},{-76,36},{
-          -76,2},{-100,2}}, color={0,0,127}));
+  connect(heatShare, percent.u)
+    annotation (Line(points={{-100,2},{-74,2},{-74,12.8}}, color={0,0,127}));
+  connect(percent.y, product.u2)
+    annotation (Line(points={{-74,26.6},{-74,36},{-64,36}}, color={0,0,127}));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
         coordinateSystem(preserveAspectRatio=false)));
 end GeothermalField;

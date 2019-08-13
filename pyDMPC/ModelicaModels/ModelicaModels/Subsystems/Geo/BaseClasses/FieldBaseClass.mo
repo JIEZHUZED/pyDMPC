@@ -51,8 +51,8 @@ model FieldBaseClass "Simplified model of geothermal field"
     annotation (Placement(transformation(extent={{6,-6},{-6,6}},
         rotation=270,
         origin={80,12})));
-  AixLib.Fluid.Sensors.Temperature returnTemperature(redeclare package Medium
-      = Water, T(start=285.15)) "Temperature of supply water"
+  AixLib.Fluid.Sensors.Temperature returnTemperature(redeclare package Medium =
+        Water, T(start=285.15)) "Temperature of supply water"
     annotation (Placement(transformation(extent={{44,-78},{64,-58}})));
   AixLib.Fluid.MixingVolumes.MixingVolume vol(
     redeclare package Medium = Water,
