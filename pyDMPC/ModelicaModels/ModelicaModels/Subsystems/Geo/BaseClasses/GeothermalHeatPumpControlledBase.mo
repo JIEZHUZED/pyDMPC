@@ -163,10 +163,6 @@ partial model GeothermalHeatPumpControlledBase
     columns=2:7)
     "Set points for heater"
     annotation (Placement(transformation(extent={{188,-46},{172,-30}})));
-  Modelica.Blocks.Sources.Constant const2
-                                        [6](each k=0)
-    "Set point for cooler"
-    annotation (Placement(transformation(extent={{188,-20},{172,-4}})));
   Modelica.Blocks.Sources.CombiTimeTable tableInternalGains(
     tableOnFile=true,
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
@@ -186,6 +182,9 @@ partial model GeothermalHeatPumpControlledBase
         extent={{-6,-6},{6,6}},
         rotation=-90,
         origin={-40,-94})));
+  Modelica.Blocks.Sources.Constant const[6](each k=0)
+    "Set point for cooler"
+    annotation (Placement(transformation(extent={{188,-22},{172,-6}})));
 equation
   connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,58},
           {78,58},{78,80}},                 color={0,0,127}));
@@ -213,14 +212,14 @@ equation
   connect(tableTSet.y,multizone. TSetHeat) annotation (Line(points={{171.2,-38},
           {159.2,-38},{159.2,-1}},
                                  color={0,0,127}));
-  connect(const2.y, multizone.TSetCool) annotation (Line(points={{171.2,-12},{
-          161.4,-12},{161.4,-1}}, color={0,0,127}));
   connect(chemicalEnergy, integrator.y) annotation (Line(points={{-61.5,-119.5},
           {-62,-119.5},{-62,-100.6}}, color={0,0,127}));
   connect(integrator1.y, heatPumpEnergy) annotation (Line(points={{-40,-100.6},
           {-40,-119.5},{-39.5,-119.5}}, color={0,0,127}));
   connect(integrator1.u, heatPumpTab.Power) annotation (Line(points={{-40,-86.8},
           {-40,-30},{-22,-30},{-22,-12.3}}, color={0,0,127}));
+  connect(const.y, multizone.TSetCool) annotation (Line(points={{171.2,-14},{
+          162,-14},{162,-2},{161.4,-2},{161.4,-1}},  color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
 </html>", revisions="<html>

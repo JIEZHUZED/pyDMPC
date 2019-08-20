@@ -82,7 +82,11 @@ class Subsystem:
         self.setpoint_send = []
         self.command_send = []
         self.command_rec = []
+        self.err_prop = 0
         self.err_integ = 0
+        self.err_prev = 0
+        self.err_curr = 0
+        self.err_diff = 0
         self.cost_fac = Init.cost_fac[sys_id]
         self.last_opt = 0
         self.last_read = 0
@@ -92,6 +96,7 @@ class Subsystem:
         self.fin_command = 0
         self.traj_var = Init.traj_var[sys_id]
         self.traj_points = Init.traj_points[sys_id]
+        self.counter = 0
 
     def prepare_model(self):
         """Prepares the model of a subsystem according to the subsystem's model
@@ -231,10 +236,15 @@ class Subsystem:
 
     def calc_cost(self, command, outputs):
         import scipy.interpolate
-
+        
         cost = self.cost_fac[0] * command
-
-
+        
+        #if self.cost_rec != []:
+            #energy_heater = self.model.get_results("chemicalEnergy[-1]")
+            #cost += self.cost_fac[1] * energy_heater        #Realkosten Chiller/Heater
+            #energy_heatpump = self.model.get_results("heatPumpEnergy[-1]")
+            #cost += self.cost_fac[2] * energy_heatpump      #Realkosten Strom Wärmepumpe
+                        
         if self.cost_rec != []:
             if type(self.cost_rec) is scipy.interpolate.interpolate.interp1d:
                 cost += self.cost_fac[1] * self.cost_rec(outputs)
@@ -249,10 +259,30 @@ class Subsystem:
             setpoint = self.model.states.set_points[0]
 
         if self.model.states.set_points != []:
-            cost += (self.cost_fac[2] * (outputs - setpoint)**2)
+            self.err_prop += (outputs -setpoint)
+            if self.err_prop > 0:
+                cost += (self.cost_fac[2] * (self.err_prop)**2)
+            else:
+                cost += (self.cost_fac[3] * (self.err_prop)**2)
+                
+        if self.cost_rec != []:    
             self.err_integ += (outputs - setpoint)
-            cost += self.cost_fac[3] * self.err_integ
-
+            if self.err_integ > 0:
+                cost += self.cost_fac[3] * self.err_integ           #Integral penalization
+            else:
+                cost += self.cost_fac[4] * self.err_integ           #Integral reward
+        
+            self.counter += 1
+            self.err_prev = self.err_curr
+            self.err_curr = outputs - setpoint
+            
+            if self.counter > 1:
+                self.err_diff = self.err_curr - self.err_prev
+                if self.err_diff > 0:
+                    cost += self.cost_fac[5] * self.err_diff        #Differential penalization
+                else:
+                    cost += self.cost_fac[6] * self.err_diff        #Differential reward
+        
         return cost
 
     def interp(self, iter_real):

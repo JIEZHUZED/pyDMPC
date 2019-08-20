@@ -23,8 +23,8 @@ model FieldBaseClass "Simplified model of geothermal field"
       redeclare package Medium = Water,
     m_flow_nominal=baseParam.m_flow_tot,
     inputType=AixLib.Fluid.Types.InputType.Constant,
-    constantMassFlowRate=baseParam.m_flow_tot)
-                                        "Main geothermal pump"
+    constantMassFlowRate=baseParam.m_flow_tot,
+    addPowerToMedium=false)             "Main geothermal pump"
     annotation (Placement(transformation(extent={{46,-10},{66,10}})));
   AixLib.Fluid.FixedResistances.PressureDrop res(m_flow_nominal=16, dp_nominal(
         displayUnit="bar") = 100000, redeclare package Medium = Water)
@@ -43,30 +43,32 @@ model FieldBaseClass "Simplified model of geothermal field"
     annotation (Placement(transformation(extent={{10,-10},{-10,10}},
         rotation=270,
         origin={42,-34})));
-  AixLib.Fluid.Sensors.Temperature supplyTemperature(T(start=285), redeclare
-      package Medium = Water) "Temperature of supply water"
+  AixLib.Fluid.Sensors.Temperature supplyTemperature(redeclare package
+              Medium = Water,
+    T(start=285))             "Temperature of supply water"
     annotation (Placement(transformation(extent={{82,34},{102,54}})));
   AixLib.Fluid.Sensors.MassFlowRate massFlow(redeclare package Medium =
         Water)
     annotation (Placement(transformation(extent={{6,-6},{-6,6}},
         rotation=270,
         origin={80,12})));
-  AixLib.Fluid.Sensors.Temperature returnTemperature(redeclare package Medium =
-        Water, T(start=285.15)) "Temperature of supply water"
+  AixLib.Fluid.Sensors.Temperature returnTemperature(redeclare package
+              Medium = Water,
+    T(start=285.15))                           "Temperature of supply water"
     annotation (Placement(transformation(extent={{44,-78},{64,-58}})));
   AixLib.Fluid.MixingVolumes.MixingVolume vol(
     redeclare package Medium = Water,
     m_flow_small=50,
     nPorts=2,
-    V=9000,
+    m_flow_nominal=16,
     p_start=150000,
     T_start=285.15,
-    m_flow_nominal=16)              annotation (
+    V=6000)                         annotation (
       Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=0,
         origin={-8,-2})));
-  Modelica.Thermal.HeatTransfer.Sources.FixedTemperature fixedTemperature(T=285.15)
+  Modelica.Thermal.HeatTransfer.Sources.FixedTemperature fixedTemperature(T=285.65)
     annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=90,
@@ -76,10 +78,10 @@ model FieldBaseClass "Simplified model of geothermal field"
         extent={{-6,-6},{6,6}},
         rotation=90,
         origin={-24,-34})));
-  Modelica.Thermal.HeatTransfer.Celsius.FromKelvin fromKelvin
-    annotation (Placement(transformation(extent={{106,36},{118,48}})));
   Buildings.Controls.OBC.CDL.Continuous.MovingMean movMea(delta=94672800)
-    annotation (Placement(transformation(extent={{126,32},{136,42}})));
+    annotation (Placement(transformation(extent={{108,38},{120,50}})));
+  Modelica.Blocks.Interfaces.RealOutput MeanTemperature(unit="K", displayUnit="K")
+    annotation (Placement(transformation(extent={{128,34},{148,54}})));
 equation
   connect(res.port_b, vol1.ports[1])
     annotation (Line(points={{56,32},{27.3333,32}},
@@ -103,10 +105,10 @@ equation
           {-40,-12},{-6,-12}}, color={0,127,255}));
   connect(vol1.ports[3], returnTemperature.port) annotation (Line(points={{32.6667,
           32},{-40,32},{-40,-80},{54,-80},{54,-78}},         color={0,127,255}));
-  connect(supplyTemperature.T, fromKelvin.Kelvin) annotation (Line(points={{99,
-          44},{102,44},{102,42},{104.8,42}}, color={0,0,127}));
-  connect(fromKelvin.Celsius, movMea.u) annotation (Line(points={{118.6,42},{
-          122,42},{122,37},{125,37}}, color={0,0,127}));
+  connect(movMea.u, supplyTemperature.T) annotation (Line(points={{106.8,44},{99,
+          44}},                    color={0,0,127}));
+  connect(movMea.y, MeanTemperature)
+    annotation (Line(points={{120.6,44},{138,44}}, color={0,0,127}));
   annotation (experiment(StopTime=94608000, Interval=86400),
       __Dymola_experimentSetupOutput);
 end FieldBaseClass;

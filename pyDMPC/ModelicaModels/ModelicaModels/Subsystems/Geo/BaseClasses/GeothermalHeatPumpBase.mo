@@ -114,8 +114,7 @@ partial model GeothermalHeatPumpBase
         extent={{-6,-7},{6,7}},
         rotation=90,
         origin={-18,-78})));
-  AixLib.Fluid.Sources.Boundary_pT geothField_sink1(redeclare package
-      Medium =
+  AixLib.Fluid.Sources.Boundary_pT geothField_sink1(redeclare package Medium =
         Water, nPorts=2) "One of two sinks representing geothermal field"
     annotation (Placement(transformation(extent={{-158,20},{-146,32}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(

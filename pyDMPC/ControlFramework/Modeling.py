@@ -283,10 +283,10 @@ class LinMod(Model):
         super().__init__(sys_id)
         self.modifs = Modifs(sys_id)
         
-    def predict(self, start_val):
-        self.states.outputs = (start_val + 
-                               self.modifs.factors[0] * self.states.inputs[0] + 
-                               self.modifs.factors[1] * self.states.commands[0])
+    def predict(self):
+        self.states.outputs = [[(self.modifs.factors[0] * self.states.inputs[0] + 
+                               self.modifs.factors[1] * self.states.commands[0])]]
+        print(f"input: {self.states.commands[0]}, output: {self.states.outputs}")
         
 class FuzMod(Model):
     

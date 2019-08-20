@@ -3,22 +3,23 @@ model Field "Simplified model of geothermal field"
 
   extends
     ModelicaModels.SubsystemModels.DetailedModels.Geo.GeoCommunicationBaseClass(variation(
-        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic, table=[0,9000;
-          2635200,12000; 5270400,5000; 7905600,-3000; 10540800,-5000; 13176000,-12000;
-          15811200,-12000; 18446400,-13000; 21081600,-8000; 23716800,-1000; 26352000,
-          8000; 28987200,10000]),                         decisionVariables(
-        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic, table=[0.0,1]),
+        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic, table=[0,10000;
+          2635200,12000; 5270400,9000; 7905600,3000; 10540800,-5000; 13176000,-12000;
+          15811200,-14000; 18446400,-13000; 21081600,-6000; 23716800,1000; 26352000,
+          4000; 28987200,8000]),                          decisionVariables(
+        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic, table=[0.0,30]),
     percent(k=0.01));
 
   extends ModelicaModels.Subsystems.Geo.BaseClasses.FieldBaseClass(
-      returnTemperature(T(start=285.65)),
-      vol1(T_start=285.65),
-      supplyTemperature(T(start=285.65)),
+      returnTemperature(T(start=285.65, displayUnit="K")),
+      vol1(V=2, T_start=287.15),
+      supplyTemperature(T(start=285.65, displayUnit="K")),
       pressurePoint(T(start=285.65, fixed=true)),
-      pump(T_start=285.65),
-    movMea(delta=284018400),
-    vol(T_start=285.65),
-    fixedTemperature(T=285.65));
+      pump(addPowerToMedium=false, T_start=287.15),
+    movMea(delta=94672800),
+    vol(V=6000, T_start=287.15),
+    fixedTemperature(T=285.65),
+    thermalConductor(G=50));
 
   Modelica.Blocks.Math.Product product1
     annotation (Placement(transformation(extent={{-78,0},{-58,20}})));
