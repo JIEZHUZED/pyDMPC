@@ -13,16 +13,12 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     boundary(m_flow=16),
     tableInternalGains(fileName=
           "N:/Forschung/EBC0377_BMWi-GeoBase_GA/Students/mba-mst/02-Models/teaserweb_AixLib/ERC/InternalGains_ERC.mat"),
-
     tableTSet(fileName=
           "N:/Forschung/EBC0377_BMWi-GeoBase_GA/Students/mba-mst/02-Models/teaserweb_AixLib/ERC/Tset_ERC.mat"),
-
     tableAHU(fileName=
           "N:/Forschung/EBC0377_BMWi-GeoBase_GA/Students/mba-mst/02-Models/teaserweb_AixLib/ERC/AHU_ERC.mat"),
-
     weaDat(filNam=
           "N:/Forschung/EBC0377_BMWi-GeoBase_GA/Students/mba-mst/02-Models/teaserweb_AixLib/ERC/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"),
-
     variation(table=[0,285]),
     const(k=293.15));
 

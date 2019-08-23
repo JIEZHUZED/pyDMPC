@@ -62,6 +62,7 @@ class System:
             The created subsystem objects
         """
         import os
+        import shutil
         subsystems = []
 
         for i in range(self.amo_subsys):
@@ -69,6 +70,9 @@ class System:
 
         for sys in subsystems:
             os.mkdir(self.wkdir + "\\" + sys.name)
+            if sys.model_type == "const":
+                shutil.copyfile(Init.glob_res_path + "\\dsres.mat", 
+                        sys.model.paths.res_path + "\\dsres.mat")
 
         return subsystems
 

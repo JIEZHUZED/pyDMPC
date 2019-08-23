@@ -4,7 +4,7 @@ package DataBase "Contians records for the various case studies"
 
     record GeoRecord
 
-      parameter Modelica.SIunits.MassFlowRate m_flow_tot = 16.0
+      parameter Modelica.SIunits.MassFlowRate m_flow_tot = 8.0
        "The total mass flow rate circulating through field and
    building";
 

@@ -253,6 +253,36 @@ class ModelicaMod(Model):
     def predict(self):
         self.simulate()
         self.get_outputs()
+        
+class ConstMod(Model):
+    
+    dymola = None
+    lib_paths = Init.glob_lib_paths
+    dym_path = Init.glob_dym_path
+
+    def __init__(self, sys_id):
+        super().__init__(sys_id)
+                    
+    def get_outputs(self):
+        self.states.outputs = []
+        
+        if self.states.output_names is not None:
+            for nam in self.states.output_names:
+                self.states.outputs.append(self.get_results(nam))
+                
+    def get_results(self, name):
+        from modelicares import SimRes
+        import os
+        # Get the simulation result
+        sim = SimRes(os.path.join(self.paths.res_path, 'dsres.mat'))
+    
+        arr = sim[name].values()
+        results = arr.tolist()
+        
+        return results
+    
+    def predict(self):
+        self.get_outputs()
                     
 class SciMod(Model):
     def __init__(self, sys_id):
