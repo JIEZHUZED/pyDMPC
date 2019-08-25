@@ -87,6 +87,7 @@ class Subsystem:
         self.err_integ = 0
         self.err_prev = 0
         self.err_curr = 0
+        self.err_outputs = 0
         self.err_diff = 0
         self.cost_fac = Init.cost_fac[sys_id]
         self.last_opt = 0
@@ -97,7 +98,6 @@ class Subsystem:
         self.fin_command = 0
         self.traj_var = Init.traj_var[sys_id]
         self.traj_points = Init.traj_points[sys_id]
-        self.counter = 0
         self.setpoint_prev = 0
         self.phase = 0
 
@@ -275,40 +275,57 @@ class Subsystem:
         
         if self.phase > 0:#if field cools off
             if self.err_prop < 0:                                  
-                cost += self.cost_fac[2]*self.err_prop              #Penalty Deviation (proportional)
+                cost += self.cost_fac[2]*(setpoint - outputs)              #Penalty Deviation (proportional)
             else:
                 cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
         else:#if field heats up
             if self.err_prop > 0:
                 cost += self.cost_fac[2]*self.err_prop              #Penalty Deviation (proportional)
             else:
-                cost += self.cost_fac[3]*(setpoint-outputs)           #Reward Deviation (proportional)
+                cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
         
         #Integralteil
         self.err_integ += outputs - setpoint
         
         if self.cost_rec != []:    
             if self.phase > 0:                                      #if field cools off
-                if self.err_integ > 0:
-                    cost += self.cost_fac[4] * self.err_integ       #Integral reward
-                else:
+                if self.err_integ < 0:
                     cost += self.cost_fac[3] * (-(self.err_integ))       #Integral penalty
+                else:
+                    cost += self.cost_fac[4] * self.err_integ       #Integral reward
             else:
                 if self.err_integ > 0:
                     cost += self.cost_fac[3] * self.err_integ       #Integral penalization
                 else:
                     cost += self.cost_fac[4] * (-(self.err_integ))       #Integral reward
-        
-#        self.counter += 1
-#        self.err_prev = self.err_curr
-#        self.err_curr = outputs - setpoint
-#            
-#        if self.counter > 1:
-#            self.err_diff = self.err_curr - self.err_prev
-#            if self.err_diff > 0:
-#                cost += self.cost_fac[5] * self.err_diff        #Differential penalization
-#            else:
-#                cost += self.cost_fac[6] * self.err_diff        #Differential reward
+        #Differentialteil 
+            self.err_prev = self.err_curr
+            self.err_curr = outputs - setpoint              #same as proportional error
+            self.err_outputs = self.err_curr - self.err_prev        #gradient outputs
+            self.err_diff = self.err_outputs - self.phase           #differentieller Fehler
+            
+            if self.phase > 0:#field cools off (heating demand building)
+                if self.err_prop < 0:    
+                    if self.err_diff > 0:
+                        cost += self.cost_fac[5] * self.err_diff        #Differential penalization
+                    else:
+                        cost += self.cost_fac[6] * (-(self.err_diff))   #Differential reward
+                else:
+                    if self.err_diff > 0:
+                        cost += self.cost_fac[6] * self.err_diff
+                    else:
+                        cost += self.cost_fac[5] * (-(self.err_diff))
+            else:#field heats up (cooling demand building)
+                if self.err_prop > 0:
+                    if self.err_diff > 0:
+                        cost += self.cost_fac[5] * self.err_diff
+                    else:
+                        cost += self.cost_fac[6] * (-(self.err_diff))
+                else:
+                    if self.err_diff > 0:
+                        cost += self.cost_fac[6] * self.err_diff
+                    else:
+                        cost += self.cost_fac[5] * (-(self.err_diff))
         
         return cost
 
