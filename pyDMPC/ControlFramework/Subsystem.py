@@ -81,13 +81,13 @@ class Subsystem:
         self.cost_rec = []
         self.setpoint_rec = []
         self.setpoint_send = []
+        self.setpoint_prev = []
         self.command_send = []
         self.command_rec = []
         self.err_prop = 0
         self.err_integ = 0
         self.err_prev = 0
         self.err_curr = 0
-        self.err_outputs = 0
         self.err_diff = 0
         self.cost_fac = Init.cost_fac[sys_id]
         self.last_opt = 0
@@ -98,7 +98,6 @@ class Subsystem:
         self.fin_command = 0
         self.traj_var = Init.traj_var[sys_id]
         self.traj_points = Init.traj_points[sys_id]
-        self.setpoint_prev = 0
         self.phase = 0
 
     def prepare_model(self):
@@ -203,12 +202,9 @@ class Subsystem:
             opt_command.append(self.commands[min_ind])
 
         if self.traj_var != []:
-            traj_costs = []
+            #traj_costs = []
             traj = self.model.get_results(self.traj_var[0])
-            if self.setpoint_send:
-                self.setpoint_prev = self.setpoint_send
-            else:
-                self.setpoint_prev = 285.65
+            self.setpoint_prev = self.setpoint_send
             self.setpoint_send = traj[10]
 
         else:
@@ -265,67 +261,71 @@ class Subsystem:
             setpoint = self.setpoint_rec
         else:
             setpoint = self.model.states.set_points[0]
-        
-        if self.setpoint_send:
-            self.phase = self.setpoint_prev - self.setpoint_send    #if > 0: field for heating the building, if < 0: field for cooling the building 
-        
+     #   
+#        if self.setpoint_rec != []:
+#            self.
+            
+            #self.phase = self.setpoint_prev - self.setpoint_rec
+            #
+            #if > 0: field for heating the building, if < 0: field for cooling the building 
+            
+            
         #Regelung in Anlehnung an PID Regelverhalten
         #Proportionalanteil
         self.err_prop = outputs - setpoint                          #Deviation from setpoint (proportional & integral)
         
-        if self.phase > 0:#if field cools off
-            if self.err_prop < 0:                                  
-                cost += self.cost_fac[2]*(setpoint - outputs)              #Penalty Deviation (proportional)
-            else:
-                cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
-        else:#if field heats up
-            if self.err_prop > 0:
-                cost += self.cost_fac[2]*self.err_prop              #Penalty Deviation (proportional)
-            else:
-                cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
+        #if self.phase > 0:#if field cools off
+        if self.err_prop < 0:                                  
+            cost += self.cost_fac[2]*(setpoint - outputs)              #Penalty Deviation (proportional)
+        else:
+            cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
+        #else:#if field heats up
+#        if self.err_prop > 0:
+#            cost += self.cost_fac[2]*self.err_prop              #Penalty Deviation (proportional)
+#        else:
+#            cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
         
         #Integralteil
         self.err_integ += outputs - setpoint
         
         if self.cost_rec != []:    
-            if self.phase > 0:                                      #if field cools off
-                if self.err_integ < 0:
-                    cost += self.cost_fac[3] * (-(self.err_integ))       #Integral penalty
-                else:
-                    cost += self.cost_fac[4] * self.err_integ       #Integral reward
+            #if self.phase > 0:                                      #if field cools off
+            if self.err_integ < 0:
+                cost += self.cost_fac[4] * (-(self.err_integ))       #Integral penalty
             else:
-                if self.err_integ > 0:
-                    cost += self.cost_fac[3] * self.err_integ       #Integral penalization
-                else:
-                    cost += self.cost_fac[4] * (-(self.err_integ))       #Integral reward
+                cost += self.cost_fac[5] * self.err_integ       #Integral reward
+#            #else:
+#            if self.err_integ > 0:
+#                cost += self.cost_fac[4] * self.err_integ       #Integral penalization
+#            else:
+#                cost += self.cost_fac[5] * (-(self.err_integ))       #Integral reward
         #Differentialteil 
             self.err_prev = self.err_curr
             self.err_curr = outputs - setpoint              #same as proportional error
-            self.err_outputs = self.err_curr - self.err_prev        #gradient outputs
-            self.err_diff = self.err_outputs - self.phase           #differentieller Fehler
+            self.err_diff = self.err_curr - self.err_prev        #differentieller Fehler
             
-            if self.phase > 0:#field cools off (heating demand building)
-                if self.err_prop < 0:    
-                    if self.err_diff > 0:
-                        cost += self.cost_fac[5] * self.err_diff        #Differential penalization
-                    else:
-                        cost += self.cost_fac[6] * (-(self.err_diff))   #Differential reward
+            #if self.phase > 0:#field cools off (heating demand building)
+            if self.err_prop < 0:    
+                if self.err_diff > 0:
+                    cost += self.cost_fac[6] * self.err_diff        #Differential penalization
                 else:
-                    if self.err_diff > 0:
-                        cost += self.cost_fac[6] * self.err_diff
-                    else:
-                        cost += self.cost_fac[5] * (-(self.err_diff))
-            else:#field heats up (cooling demand building)
-                if self.err_prop > 0:
-                    if self.err_diff > 0:
-                        cost += self.cost_fac[5] * self.err_diff
-                    else:
-                        cost += self.cost_fac[6] * (-(self.err_diff))
+                    cost += self.cost_fac[7] * (-(self.err_diff))   #Differential reward
+            else:
+                if self.err_diff > 0:
+                    cost += self.cost_fac[7] * self.err_diff
                 else:
-                    if self.err_diff > 0:
-                        cost += self.cost_fac[6] * self.err_diff
-                    else:
-                        cost += self.cost_fac[5] * (-(self.err_diff))
+                    cost += self.cost_fac[6] * (-(self.err_diff))
+            #else:#field heats up (cooling demand building)
+#            if self.err_prop > 0:
+#                if self.err_diff > 0:
+#                    cost += self.cost_fac[6] * self.err_diff
+#                else:
+#                    cost += self.cost_fac[7] * (-(self.err_diff))
+#            else:
+#                if self.err_diff > 0:
+#                    cost += self.cost_fac[7] * self.err_diff
+#                else:
+#                    cost += self.cost_fac[6] * (-(self.err_diff))
         
         return cost
 
