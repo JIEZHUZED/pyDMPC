@@ -1,6 +1,5 @@
 ControlledSystemBoundaries
-SimpleModelGeo
 TestHall
 GeothermalField
 GenericControlledSystem
-GeothermalField2
+GeothermalHeatPumpSystem

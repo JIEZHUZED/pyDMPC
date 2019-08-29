@@ -89,7 +89,7 @@ command_variables.append(["decisionVariables.table[1,2]"])
 commands.append(range(0,105,5))
 traj_points.append([])
 traj_var.append([])
-cost_fac.append([-1.0, 0.0, 55.0, -55.0, 0.0, 0.0, 0.0, 0.0])
+cost_fac.append([-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3000.0, -3000.0])
 factors.append([1, -60./4.18/8./100.])
 
 sys_id.append(1)

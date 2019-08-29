@@ -1,3 +1,5 @@
 ControlledSystemBaseClass
 HRCController
 ThermalConductor
+GeothermalHeatPumpBase
+GeothermalHeatPumpControlledBase

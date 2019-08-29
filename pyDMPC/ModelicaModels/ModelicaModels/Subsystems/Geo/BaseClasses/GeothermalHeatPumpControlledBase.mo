@@ -78,7 +78,7 @@ partial model GeothermalHeatPumpControlledBase
     columns={2},
     smoothness=Modelica.Blocks.Types.Smoothness.ConstantSegments,
     extrapolation=Modelica.Blocks.Types.Extrapolation.HoldLastPoint)
-    annotation (Placement(transformation(extent={{138,-116},{158,-96}})));
+    annotation (Placement(transformation(extent={{-160,0},{-146,14}})));
   Modelica.Blocks.Interfaces.RealOutput returnTemperature(
     final quantity="ThermodynamicTemperature",
     final unit="K",
@@ -108,9 +108,9 @@ partial model GeothermalHeatPumpControlledBase
     ABuilding=1000.0,
     ASurTot=4961.336840410235,
     numZones=6,
-    zoneParam={ERC_DataBase.ERC_Office(),ERC_DataBase.ERC_Floor(),
-        ERC_DataBase.ERC_Storage(),ERC_DataBase.ERC_Meeting(),
-        ERC_DataBase.ERC_Restroom(),ERC_DataBase.ERC_ICT()},
+    zoneParam={TEASER_DataBase.TEASER_Office(),TEASER_DataBase.TEASER_Floor(),
+        TEASER_DataBase.TEASER_Storage(),TEASER_DataBase.TEASER_Meeting(),
+        TEASER_DataBase.TEASER_Restroom(),TEASER_DataBase.TEASER_ICT()},
     heatAHU=true,
     coolAHU=true,
     dehuAHU=true,
@@ -134,8 +134,7 @@ partial model GeothermalHeatPumpControlledBase
     redeclare model AHUMod = AixLib.Airflow.AirHandlingUnit.AHU,
     T_start=293.15,
     dpAHU_sup=800,
-    dpAHU_eta=800)
-    "Multizone"
+    dpAHU_eta=800) "Multizone"
     annotation (Placement(transformation(extent={{164,0},{144,20}})));
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,

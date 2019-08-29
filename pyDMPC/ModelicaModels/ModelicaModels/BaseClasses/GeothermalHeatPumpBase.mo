@@ -1,4 +1,4 @@
-within ModelicaModels.Subsystems.Geo.BaseClasses;
+within ModelicaModels.BaseClasses;
 partial model GeothermalHeatPumpBase
   "Base class of the geothermal heat pump system"
 
@@ -108,8 +108,10 @@ partial model GeothermalHeatPumpBase
         rotation=90,
         origin={-18,-78})));
   AixLib.Fluid.Sources.Boundary_pT geothField_sink1(redeclare package Medium =
-        Water, nPorts=2) "One of two sinks representing geothermal field"
-    annotation (Placement(transformation(extent={{-158,20},{-146,32}})));
+        Water, nPorts=3) "One of two sinks representing geothermal field"
+    annotation (Placement(transformation(extent={{-6,-6},{6,6}},
+        rotation=-90,
+        origin={-150,30})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(
     redeclare package Medium = Water,
     m_flow_nominal=0.2,
@@ -205,11 +207,6 @@ partial model GeothermalHeatPumpBase
         extent={{7,8},{-7,-8}},
         rotation=0,
         origin={-107,18})));
-  AixLib.Fluid.Sources.Boundary_pT      boundary(
-    redeclare package Medium = Water,
-    use_T_in=true,
-    nPorts=1) annotation (Placement(transformation(extent={{-152,-62},{-136,
-            -46}})));
   AixLib.Fluid.MixingVolumes.MixingVolume vol1(
     redeclare package Medium = Water,
     energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
@@ -234,6 +231,43 @@ partial model GeothermalHeatPumpBase
         extent={{10,10},{-10,-10}},
         rotation=90,
         origin={116,-54})));
+  AixLib.Fluid.Geothermal.Borefields.TwoUTubes
+            borFie(redeclare package Medium = Water,
+    tLoaAgg=21600,
+    borFieDat(
+      filDat(
+        kFil=2,
+        cFil=800,
+        dFil=1600),
+      conDat(
+        borCon=AixLib.Fluid.Geothermal.Borefields.Types.BoreholeConfiguration.DoubleUTubeParallel,
+        mBor_flow_nominal=0.4,
+        mBorFie_flow_nominal=16,
+        dp_nominal=50000,
+        hBor=100,
+        rBor=0.076,
+        dBor=100,
+        cooBor=[6.02,49.93; 15.08,51.43; 24.14,49.93; 33.2,49.93; 42.26,
+            49.93; 51.25,49.93; 60.32,49.93; 22.98,41.07; 10.65,35.27;
+            22.91,32; 6.08,27.5; 15.15,27.5; 22.98,14; 35.58,6.77; 44.65,
+            6.77; 53.64,6.77; 62.63,6.77; 71.69,6.77; 80.75,6.77; 89.75,
+            6.77; 98.81,6.77; 107.8,6.77; 115.5,11.48; 106.58,16.32; 91.04,
+            16.32; 98.81,20.82; 114.41,20.82; 106.64,25.32; 91.04,25.39;
+            98.81,29.96; 114.41,29.82; 106.64,34.45; 98.81,38.95; 114.41,
+            38.89; 91.04,43.52; 106.58,43.52; 98.81,48.02; 114.41,47.95;
+            78.3,49.93; 69.31,49.93],
+        rTub=0.016,
+        kTub=0.38,
+        eTub=0.0029,
+        xC=0.048),
+      soiDat(
+        dSoi=2700,
+        kSoi=3.85,
+        cSoi=18)),
+    TExt0_start=285.65)
+    annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+        rotation=-90,
+        origin={-150,-6})));
 equation
 
   connect(resistanceGeothermalSource.port_b, valveHeatSink.port_a) annotation (
@@ -272,7 +306,7 @@ equation
   connect(valveHeatStorage.port_b, heatPumpTab.port_a_sink) annotation (Line(
         points={{-18,-57},{-18,-54},{-5.8,-54},{-5.8,-8.9}}, color={0,127,255}));
   connect(heatPumpTab.port_b_sink, geothField_sink1.ports[1]) annotation (Line(
-        points={{-5.8,14.9},{2,14.9},{2,27.2},{-146,27.2}},
+        points={{-5.8,14.9},{2,14.9},{2,24},{-148.4,24}},
                                                         color={0,127,255}));
   connect(heatStorage.port_a_heatGenerator, heatPumpTab.port_b_sink)
     annotation (Line(points={{26.24,-63.68},{10,-63.68},{10,14.9},{-5.8,
@@ -308,7 +342,7 @@ equation
   connect(resistanceHeatConsumerFlow.port_b, PeakLoadDevice.port_a) annotation (
      Line(points={{80,-50},{86,-50}},            color={0,127,255}));
   connect(geothField_sink1.ports[2], returnTemSensor.port_b) annotation (
-      Line(points={{-146,24.8},{-138,24.8},{-138,18},{-114,18}}, color={0,
+      Line(points={{-150,24},{-138,24},{-138,18},{-114,18}},     color={0,
           127,255}));
   connect(returnTemSensor.port_a, heatPumpTab.port_b_source) annotation (
       Line(points={{-100,18},{-76,18},{-76,-8.9},{-38.2,-8.9}}, color={0,
@@ -321,8 +355,11 @@ equation
           -50},{106,-50},{106,-52}}, color={0,127,255}));
   connect(resistanceHeatConsumerReturn.port_a, vol2.ports[2]) annotation (Line(
         points={{100,-106},{106,-106},{106,-56}}, color={0,127,255}));
-  connect(boundary.ports[1], pumpGeothermalSource.port_a)
-    annotation (Line(points={{-136,-54},{-96,-54}}, color={0,127,255}));
+  connect(borFie.port_b, pumpGeothermalSource.port_a) annotation (Line(points={{
+          -150,-16},{-150,-16},{-150,-52},{-150,-52},{-150,-54},{-96,-54}},
+        color={0,127,255}));
+  connect(geothField_sink1.ports[3], borFie.port_a) annotation (Line(points={{-151.6,
+          24},{-150,24},{-150,4}}, color={0,127,255}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),

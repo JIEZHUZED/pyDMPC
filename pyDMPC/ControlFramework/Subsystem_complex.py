@@ -2,6 +2,7 @@ import Init
 import Modeling
 import System
 import Time
+import numpy as np
 
 class Subsystem:
 
@@ -80,8 +81,10 @@ class Subsystem:
         self.cost_rec = []
         self.setpoint_rec = []
         self.setpoint_send = []
+        self.setpoint_prev = []
         self.command_send = []
         self.command_rec = []
+        self.err_prop = 0
         self.err_integ = 0
         self.err_prev = 0
         self.err_curr = 0
@@ -95,7 +98,7 @@ class Subsystem:
         self.fin_command = 0
         self.traj_var = Init.traj_var[sys_id]
         self.traj_points = Init.traj_points[sys_id]
-        self.counter = 0
+        self.phase = 0
 
     def prepare_model(self):
         """Prepares the model of a subsystem according to the subsystem's model
@@ -118,6 +121,8 @@ class Subsystem:
             model.load_mod()
         elif self.model_type == "Linear":
             model = Modeling.LinMod(self.sys_id)
+        elif self.model_type == "const":
+            model = Modeling.ConstMod(self.sys_id)
         else:
             model = Modeling.FuzMod(self.sys_id)
         return model
@@ -197,8 +202,9 @@ class Subsystem:
             opt_command.append(self.commands[min_ind])
 
         if self.traj_var != []:
-            traj_costs = []
+            #traj_costs = []
             traj = self.model.get_results(self.traj_var[0])
+            self.setpoint_prev = self.setpoint_send
             self.setpoint_send = traj[10]
 
         else:
@@ -232,48 +238,94 @@ class Subsystem:
             else:
                 self.coup_vars_send = opt_outputs[0]
             
-
     def calc_cost(self, command, outputs):
         import scipy.interpolate
         
         cost = self.cost_fac[0] * command
         
+        #if self.cost_rec != []:
+            #energy_heater = self.model.get_results("chemicalEnergy[-1]")
+            #cost += self.cost_fac[1] * energy_heater        #Realkosten Chiller/Heater
+            #energy_heatpump = self.model.get_results("heatPumpEnergy[-1]")
+            #cost += self.cost_fac[2] * energy_heatpump      #Realkosten Strom Wärmepumpe
+                        
         if self.cost_rec != []:
-            cost += self.cost_fac[1] * self.model.get_results("chemicalEnergy[-1]")      #Realkosten Chiller/Heater
-            cost += self.cost_fac[2] * self.model.get_results("heatPumpEnergy[-1]")      #Realkosten Electricity HP
- 
             if type(self.cost_rec) is scipy.interpolate.interpolate.interp1d:
-                cost += self.cost_fac[3] * self.cost_rec(outputs)
+                cost += self.cost_fac[1] * self.cost_rec(outputs)
             elif type(self.cost_rec) is list:
-                cost += self.cost_fac[3] * self.cost_rec[0]
+                cost += self.cost_fac[1] * self.cost_rec[0]
             else:
-                cost += self.cost_fac[3] * self.cost_rec
+                cost += self.cost_fac[1] * self.cost_rec
 
         if self.setpoint_rec != []:
             setpoint = self.setpoint_rec
         else:
             setpoint = self.model.states.set_points[0]
-
-        if self.model.states.set_points != []:
-            cost += (self.cost_fac[4] * (outputs - setpoint)**2)
+     #   
+#        if self.setpoint_rec != []:
+#            self.
             
-        if self.cost_rec != []:    
-            self.err_integ += (outputs - setpoint)
-            if self.err_integ > 0:
-                cost += self.cost_fac[5] * self.err_integ
-            else:
-                cost += self.cost_fac[6] * self.err_integ
+            #self.phase = self.setpoint_prev - self.setpoint_rec
+            #
+            #if > 0: field for heating the building, if < 0: field for cooling the building 
+            
+            
+        #Regelung in Anlehnung an PID Regelverhalten
+        #Proportionalanteil
+        self.err_prop = outputs - setpoint                          #Deviation from setpoint (proportional & integral)
         
-            self.counter += 1
-            self.err_prev = self.err_curr
-            self.err_curr = outputs - setpoint
+        #if self.phase > 0:#if field cools off
+        if self.err_prop < 0:                                  
+            cost += self.cost_fac[2]*(setpoint - outputs)              #Penalty Deviation (proportional)
+        else:
+            cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
+        #else:#if field heats up
+#        if self.err_prop > 0:
+#            cost += self.cost_fac[2]*self.err_prop              #Penalty Deviation (proportional)
+#        else:
+#            cost += self.cost_fac[3]*(setpoint - outputs)           #Reward Deviation (proportional)
+        
+        #Integralteil
+        self.err_integ += outputs - setpoint
+        
+        #if self.cost_rec != []:    
+            #if self.phase > 0:                                      #if field cools off
+        if self.err_integ < 0:
+            cost += self.cost_fac[4] * (-(self.err_integ))       #Integral penalty
+        else:
+            cost += self.cost_fac[5] * self.err_integ       #Integral reward
+#       else:
+#            if self.err_integ > 0:
+#                cost += self.cost_fac[4] * self.err_integ       #Integral penalization
+#            else:
+#                cost += self.cost_fac[5] * (-(self.err_integ))       #Integral reward
+        #Differentialteil 
+        self.err_prev = self.err_curr
+        self.err_curr = outputs - setpoint              #same as proportional error
+        self.err_diff = self.err_curr - self.err_prev        #differentieller Fehler
             
-            if self.counter > 1:
-                self.err_diff = self.err_curr - self.err_prev
-                if self.err_diff > 0:
-                    cost += self.cost_fac[7] * self.err_diff
-                else:
-                    cost += self.cost_fac[8] * self.err_diff
+        #if self.phase > 0:#field cools off (heating demand building)
+        if self.err_prop < 0:    
+            if self.err_diff > 0:
+                cost += self.cost_fac[6] * self.err_diff        #Differential penalization
+            else:
+                cost += self.cost_fac[7] * (-(self.err_diff))   #Differential reward
+        else:
+            if self.err_diff > 0:
+                cost += self.cost_fac[7] * self.err_diff
+            else:
+                cost += self.cost_fac[6] * (-(self.err_diff))
+            #else:#field heats up (cooling demand building)
+#            if self.err_prop > 0:
+#                if self.err_diff > 0:
+#                    cost += self.cost_fac[6] * self.err_diff
+#                else:
+#                    cost += self.cost_fac[7] * (-(self.err_diff))
+#            else:
+#                if self.err_diff > 0:
+#                    cost += self.cost_fac[7] * self.err_diff
+#                else:
+#                    cost += self.cost_fac[6] * (-(self.err_diff))
         
         return cost
 

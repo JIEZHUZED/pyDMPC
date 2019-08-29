@@ -1,5 +1,5 @@
 within ModelicaModels.Subsystems.Geo.BaseClasses;
-package ERC_DataBase
+package TEASER_DataBase
   extends Modelica.Icons.Package;
 
 
@@ -7,4 +7,4 @@ package ERC_DataBase
 
 
 
-end ERC_DataBase;
+end TEASER_DataBase;
