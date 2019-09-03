@@ -243,11 +243,11 @@ class Subsystem:
         
         cost = self.cost_fac[0] * command
         
-        if self.cost_rec != []:
-            energy_heater = self.model.get_results("chemicalEnergy[-1]")
-            cost += cost_fac[8] * energy_heater        #Realkosten Chiller/Heater
-            energy_heatpump = self.model.get_results("heatPumpEnergy[-1]")
-            cost += cost_fac[9] * energy_heatpump      #Realkosten Strom Wärmepumpe
+        #if self.cost_rec != []:
+            #energy_heater = self.model.get_results("chemicalEnergy[-1]")
+            #cost += self.cost_fac[1] * energy_heater        #Realkosten Chiller/Heater
+            #energy_heatpump = self.model.get_results("heatPumpEnergy[-1]")
+            #cost += self.cost_fac[2] * energy_heatpump      #Realkosten Strom Wärmepumpe
                         
         if self.cost_rec != []:
             if type(self.cost_rec) is scipy.interpolate.interpolate.interp1d:
