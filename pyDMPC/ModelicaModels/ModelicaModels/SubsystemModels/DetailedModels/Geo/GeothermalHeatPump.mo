@@ -21,7 +21,10 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
           "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"),
     variation(table=[0,285]),
     const(k=293.15),
-    decisionVariables(table=[0.0,273.15 + 35]));
+    decisionVariables(table=[0.0,273.15 + 35]),
+    geothField_sink1(T=T_start_cold[1]),
+    integrator1(k=3600),
+    integrator(k=3600));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1) annotation (Placement(transformation(

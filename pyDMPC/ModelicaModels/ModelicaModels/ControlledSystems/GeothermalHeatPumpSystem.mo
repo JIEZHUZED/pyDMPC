@@ -6,20 +6,29 @@ model GeothermalHeatPumpSystem
     redeclare
       AixLib.Fluid.Examples.GeothermalHeatPump.Components.BoilerStandAlone
       PeakLoadDevice(redeclare package Medium = Water),
-    vol1(V=0.5),
-    vol2(V=0.5),
+    vol1(V=0.5, T_start=285.15),
+    vol2(V=0.5, T_start=285.15),
     resistanceGeothermalSource(m_flow_nominal=16),
-    pumpGeothermalSource(m_flow_nominal=16));
+    pumpGeothermalSource(m_flow_nominal=16, T_start=285.15),
+    pumpHeatConsumer(T_start=285.15),
+    pumpCondenser(T_start=285.15),
+    borFie(TExt0_start=285.15),
+    pumpEvaporator(T_start=285.15),
+    pumpColdConsumer(T_start=285.15),
+    geothField_sink1(T=285.15),
+    integrator(k=3600),
+    integrator1(k=3600));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
-        Water, nPorts=1) annotation (Placement(transformation(
+        Water, nPorts=1,
+    T=285.15)            annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
         origin={94,-20})));
   AixLib.Fluid.Sources.Boundary_pT heatConsumerReturn(
     redeclare package Medium = Water,
     nPorts=1,
-    T=303.15) "Source representing heat consumer" annotation (Placement(
+    T=285.15) "Source representing heat consumer" annotation (Placement(
         transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
@@ -30,9 +39,6 @@ model GeothermalHeatPumpSystem
         extent={{-6,-6},{6,6}},
         rotation=180,
         origin={72,6})));
-  AixLib.Controls.HeatPump.HPControllerOnOff hPControllerOnOff(bandwidth=5)
-    "Controls the temperature in the heat storage by switching the heat pump on or off"
-    annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
   AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerCold(
       temperature_low=273.15 + 6, temperature_high=273.15 + 8)
     "Controls the heat exchange with the geothermal field and the cold storage"
@@ -42,6 +48,11 @@ model GeothermalHeatPumpSystem
     annotation (Placement(transformation(extent={{-100,-34},{-84,-18}})));
   Modelica.Blocks.Math.Gain negate(k=-1)
     annotation (Placement(transformation(extent={{112,-2},{104,6}})));
+  Modelica.Blocks.Sources.Constant const1(k=0) annotation (Placement(
+        transformation(
+        extent={{-6,-6},{6,6}},
+        rotation=180,
+        origin={128,20})));
 equation
   connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
     annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
@@ -60,14 +71,6 @@ equation
   connect(pumpGeothermalSource.dp_in,pressureDifference. y) annotation (Line(
         points={{-89,-45.6},{-89,-36},{62,-36},{62,6},{65.4,6}},       color={0,
           0,127}));
-  connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation (
-     Line(
-      points={{-58.05,72.05},{-44,72.05},{-44,79},{-0.5,79}},
-      color={255,204,51},
-      thickness=0.5), Text(
-      string="%second",
-      index=1,
-      extent={{6,3},{6,3}}));
   connect(getTStorageLower.y,geothermalFieldControllerCold. temperature)
     annotation (Line(points={{-139,58},{-122,58},{-108,58},{-108,36},{-100,36}},
         color={0,0,127}));
@@ -86,13 +89,13 @@ equation
   connect(geothermalFieldControllerHeat.valveOpening2, valveHeatStorage.y)
     annotation (Line(points={{-83.04,-30.8},{-56,-30.8},{-56,-63},{-26.4,-63}},
         color={0,0,127}));
-  connect(getTStorageUpper.y, hPControllerOnOff.T_meas) annotation (Line(points=
-         {{-139,74},{-108,74},{-108,76},{-78,76}}, color={0,0,127}));
   connect(prescribedHeatFlow1.Q_flow, negate.y)
     annotation (Line(points={{96,2},{103.6,2}}, color={0,0,127}));
   connect(integrator.u, PeakLoadDevice.chemicalEnergyFlowRate) annotation (Line(
         points={{-62,-86.8},{-62,-78},{-26,-78},{-26,-116},{74,-116},{74,-76},{
           90.77,-76},{90.77,-56.54}}, color={0,0,127}));
+  connect(const1.y, negate.u) annotation (Line(points={{121.4,20},{118,20},{118,
+          2},{112.8,2}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
