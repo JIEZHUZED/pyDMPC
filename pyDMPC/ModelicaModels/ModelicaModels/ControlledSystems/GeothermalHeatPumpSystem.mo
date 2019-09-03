@@ -12,7 +12,6 @@ model GeothermalHeatPumpSystem
     pumpGeothermalSource(T_start=285.15),
     pumpHeatConsumer(T_start=285.15),
     pumpCondenser(T_start=285.15),
-    borFie(TExt0_start=285.15),
     pumpEvaporator(T_start=285.15),
     pumpColdConsumer(T_start=285.15),
     geothField_sink1(T=285.15),
