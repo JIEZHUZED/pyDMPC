@@ -57,6 +57,12 @@ model GeothermalHeatPumpSystem
     annotation (Placement(transformation(extent={{-170,-90},{-150,-70}})));
   Modelica.Thermal.HeatTransfer.Celsius.FromKelvin fromKelvin
     annotation (Placement(transformation(extent={{-144,-86},{-132,-74}})));
+  AixLib.Controls.HeatPump.HPControllerOnOff hPControllerOnOff(bandwidth=5)
+    "Controls the temperature in the heat storage by switching the heat pump on or off"
+    annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
+  Modelica.Blocks.Interfaces.RealInput T_set_storage
+    "Connector of Real input signal 2"
+    annotation (Placement(transformation(extent={{-108,58},{-88,78}})));
 equation
   connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
     annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
@@ -102,6 +108,18 @@ equation
           2},{112.8,2}}, color={0,0,127}));
   connect(traj, fromKelvin.Kelvin)
     annotation (Line(points={{-160,-80},{-145.2,-80}}, color={0,0,127}));
+  connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation (
+     Line(
+      points={{-58.05,72.05},{-44,72.05},{-44,79},{-0.5,79}},
+      color={255,204,51},
+      thickness=0.5), Text(
+      string="%second",
+      index=1,
+      extent={{6,3},{6,3}}));
+  connect(getTStorageUpper.y, hPControllerOnOff.T_meas) annotation (Line(points
+        ={{-139,74},{-108.5,74},{-108.5,76},{-78,76}}, color={0,0,127}));
+  connect(T_set_storage, hPControllerOnOff.T_set)
+    annotation (Line(points={{-98,68},{-78,68}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
