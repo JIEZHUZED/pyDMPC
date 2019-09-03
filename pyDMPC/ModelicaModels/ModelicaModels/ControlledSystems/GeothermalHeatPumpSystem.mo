@@ -53,6 +53,10 @@ model GeothermalHeatPumpSystem
         extent={{-6,-6},{6,6}},
         rotation=180,
         origin={128,20})));
+  Modelica.Blocks.Interfaces.RealInput traj "Connector of Real input signal 2"
+    annotation (Placement(transformation(extent={{-170,-90},{-150,-70}})));
+  Modelica.Thermal.HeatTransfer.Celsius.FromKelvin fromKelvin
+    annotation (Placement(transformation(extent={{-144,-86},{-132,-74}})));
 equation
   connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
     annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
@@ -96,6 +100,8 @@ equation
           90.77,-76},{90.77,-56.54}}, color={0,0,127}));
   connect(const1.y, negate.u) annotation (Line(points={{121.4,20},{118,20},{118,
           2},{112.8,2}}, color={0,0,127}));
+  connect(traj, fromKelvin.Kelvin)
+    annotation (Line(points={{-160,-80},{-145.2,-80}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>

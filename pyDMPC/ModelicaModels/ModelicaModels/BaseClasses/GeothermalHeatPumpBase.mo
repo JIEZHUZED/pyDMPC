@@ -268,10 +268,8 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=-90,
         origin={-150,-6})));
-  AixLib.Fluid.Sensors.TemperatureTwoPort returnTemSensor1(
-                                                          redeclare package
-      Medium = Water, m_flow_nominal=16) annotation (Placement(
-        transformation(
+  AixLib.Fluid.Sensors.TemperatureTwoPort supplyTemSensor(redeclare package
+      Medium = Water, m_flow_nominal=16) annotation (Placement(transformation(
         extent={{-7,8},{7,-8}},
         rotation=0,
         origin={-115,-54})));
@@ -364,10 +362,10 @@ equation
         points={{100,-106},{106,-106},{106,-56}}, color={0,127,255}));
   connect(geothField_sink1.ports[3], borFie.port_a) annotation (Line(points={{-151.6,
           24},{-150,24},{-150,4}}, color={0,127,255}));
-  connect(returnTemSensor1.port_b, pumpGeothermalSource.port_a)
+  connect(supplyTemSensor.port_b, pumpGeothermalSource.port_a)
     annotation (Line(points={{-108,-54},{-96,-54}}, color={0,127,255}));
-  connect(borFie.port_b, returnTemSensor1.port_a) annotation (Line(points={{
-          -150,-16},{-150,-54},{-122,-54}}, color={0,127,255}));
+  connect(borFie.port_b, supplyTemSensor.port_a) annotation (Line(points={{-150,
+          -16},{-150,-54},{-122,-54}}, color={0,127,255}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),

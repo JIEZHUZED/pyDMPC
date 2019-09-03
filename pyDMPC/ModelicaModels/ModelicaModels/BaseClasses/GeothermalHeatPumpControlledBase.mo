@@ -129,7 +129,7 @@ equation
     annotation (Line(points={{116,-28},{116,-20.4}}, color={0,0,127}));
   connect(const.y, negate1.u) annotation (Line(points={{121.4,-2},{116,-2},{116,
           -11.2}}, color={0,0,127}));
-  connect(returnTemSensor1.T, supplyTemperature) annotation (Line(points={{-115,
+  connect(supplyTemSensor.T, supplyTemperature) annotation (Line(points={{-115,
           -62.8},{-115,-67.4},{-116,-67.4},{-116,-120}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
