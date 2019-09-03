@@ -17,7 +17,7 @@ model Field2 "Simplified model of geothermal field"
       supplyTemperature(T(start=285.65)),
       pressurePoint(T(start=285.65, fixed=true)),
       pump(T_start=285.65),
-    movMea(delta=94672800, y(start=12.5, fixed=true)));
+    movMea(delta=94672800, y(start=12.5)));
 
   Modelica.Blocks.Math.Product product1
     annotation (Placement(transformation(extent={{-78,0},{-58,20}})));

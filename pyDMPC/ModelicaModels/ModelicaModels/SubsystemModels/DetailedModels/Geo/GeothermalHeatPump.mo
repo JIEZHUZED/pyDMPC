@@ -9,7 +9,7 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     vol1(V=0.5),
     vol2(V=0.5),
     resistanceGeothermalSource(m_flow_nominal=16),
-    pumpGeothermalSource(m_flow_nominal=16),
+    pumpGeothermalSource(m_flow_nominal=8),
     boundary,
     tableInternalGains(fileName=
           "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_ERC.mat"),
@@ -24,7 +24,9 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     decisionVariables(table=[0.0,273.15 + 35]),
     geothField_sink1(T=T_start_cold[1]),
     integrator1(k=3600),
-    integrator(k=3600));
+    integrator(k=3600),
+    pumpCondenser(m_flow_nominal=8),
+    pumpHeatConsumer(m_flow_nominal=8));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1) annotation (Placement(transformation(

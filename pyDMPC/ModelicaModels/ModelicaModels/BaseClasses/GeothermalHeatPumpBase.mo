@@ -5,6 +5,9 @@ partial model GeothermalHeatPumpBase
   replaceable package Water = AixLib.Media.Water
     "Medium model used for hydronic components";
 
+  parameter ModelicaModels.DataBase.Geo.GeoRecord baseParam
+  "The basic paramters";
+
   parameter Modelica.SIunits.Temperature T_start_cold[5] = 300*ones(5)
     "Initial temperature of cold components";
 
@@ -140,17 +143,17 @@ partial model GeothermalHeatPumpBase
         origin={-18,-63})));
 
   AixLib.Fluid.Movers.FlowControlled_dp pumpColdConsumer(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to cold consumers"
     annotation (Placement(transformation(extent={{48,-27},{62,-13}})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpHeatConsumer(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_warm[5])
+    T_start=T_start_warm[5],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to heat consumers"
     annotation (Placement(transformation(extent={{48,-57},{62,-43}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdConsumerReturn(
@@ -170,30 +173,30 @@ partial model GeothermalHeatPumpBase
         rotation=180,
         origin={93,-106})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpCondenser(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to condenser of heat pump"
                              annotation (Placement(transformation(
         extent={{-7,7},{7,-7}},
         rotation=180,
         origin={-1,-98})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpEvaporator(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to evaporator of heat pump"
                              annotation (Placement(transformation(
         extent={{-7,7},{7,-7}},
         rotation=180,
         origin={7,36})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpGeothermalSource(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from geothermal source into system" annotation (
       Placement(transformation(
         extent={{-7,-7},{7,7}},
