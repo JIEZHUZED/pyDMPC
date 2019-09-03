@@ -50,24 +50,27 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{52,-8},{24,20}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdStorage(
     redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dp_nominal=15000) "Resistance in evaporator circuit" annotation (
+    dp_nominal=15000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in evaporator circuit" annotation (
       Placement(transformation(
         extent={{-6,-7},{6,7}},
         rotation=180,
         origin={-34,38})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceGeothermalSource(
     redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dp_nominal=15000) "Resistance in geothermal field circuit" annotation (
+    dp_nominal=15000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in geothermal field circuit" annotation (
       Placement(transformation(
         extent={{-6,-7},{6,7}},
         rotation=0,
         origin={-70,-54})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdConsumerFlow(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in cold consumer flow line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in cold consumer flow line" annotation (
       Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=0,
@@ -104,8 +107,9 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{52,-90},{24,-62}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatStorage(
     redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dp_nominal=15000) "Resistance in condenser circuit" annotation (
+    dp_nominal=15000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in condenser circuit" annotation (
       Placement(transformation(
         extent={{-6,-7},{6,7}},
         rotation=90,
@@ -117,8 +121,9 @@ partial model GeothermalHeatPumpBase
         origin={-150,30})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in heat consumer flow line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in heat consumer flow line" annotation (
       Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=0,
@@ -158,16 +163,18 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{48,-57},{62,-43}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdConsumerReturn(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in cold consumer return line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in cold consumer return line" annotation (
      Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=180,
         origin={73,32})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerReturn(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in heat consumer return line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in heat consumer return line" annotation (
      Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=180,
@@ -214,10 +221,11 @@ partial model GeothermalHeatPumpBase
     redeclare package Medium = Water,
     energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
     m_flow_small=50,
-    p_start=100000,
-    m_flow_nominal=16,
     V=2,
-    nPorts=2)                    annotation (
+    nPorts=2,
+    p_start=100000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                                 annotation (
       Placement(transformation(
         extent={{-10,10},{10,-10}},
         rotation=90,
@@ -226,10 +234,10 @@ partial model GeothermalHeatPumpBase
     redeclare package Medium = Water,
     energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
     m_flow_small=50,
-    p_start=100000,
-    m_flow_nominal=16,
     V=2,
-    nPorts=2)                    annotation (
+    nPorts=2,
+    m_flow_nominal=baseParam.m_flow_tot,
+    p_start=100000)              annotation (
       Placement(transformation(
         extent={{10,10},{-10,-10}},
         rotation=90,

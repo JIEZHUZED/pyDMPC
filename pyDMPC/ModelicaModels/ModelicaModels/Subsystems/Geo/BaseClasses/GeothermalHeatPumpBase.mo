@@ -5,6 +5,9 @@ partial model GeothermalHeatPumpBase
   replaceable package Water = AixLib.Media.Water
     "Medium model used for hydronic components";
 
+  parameter ModelicaModels.DataBase.Geo.GeoRecord baseParam
+  "The basic paramters";
+
   parameter Modelica.SIunits.Temperature T_start_cold[5] = 300*ones(5)
     "Initial temperature of cold components";
 
@@ -47,24 +50,27 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{52,-8},{24,20}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdStorage(
     redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dp_nominal=15000) "Resistance in evaporator circuit" annotation (
+    dp_nominal=15000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in evaporator circuit" annotation (
       Placement(transformation(
         extent={{-6,-7},{6,7}},
         rotation=180,
         origin={-34,38})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceGeothermalSource(
     redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dp_nominal=15000) "Resistance in geothermal field circuit" annotation (
+    dp_nominal=15000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in geothermal field circuit" annotation (
       Placement(transformation(
         extent={{-6,-7},{6,7}},
         rotation=0,
         origin={-70,-54})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdConsumerFlow(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in cold consumer flow line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in cold consumer flow line" annotation (
       Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=0,
@@ -101,8 +107,9 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{52,-90},{24,-62}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatStorage(
     redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dp_nominal=15000) "Resistance in condenser circuit" annotation (
+    dp_nominal=15000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in condenser circuit" annotation (
       Placement(transformation(
         extent={{-6,-7},{6,7}},
         rotation=90,
@@ -112,8 +119,9 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(extent={{-158,20},{-146,32}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in heat consumer flow line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in heat consumer flow line" annotation (
       Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=0,
@@ -138,60 +146,62 @@ partial model GeothermalHeatPumpBase
         origin={-18,-63})));
 
   AixLib.Fluid.Movers.FlowControlled_dp pumpColdConsumer(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to cold consumers"
     annotation (Placement(transformation(extent={{48,-27},{62,-13}})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpHeatConsumer(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_warm[5])
+    T_start=T_start_warm[5],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to heat consumers"
     annotation (Placement(transformation(extent={{48,-57},{62,-43}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceColdConsumerReturn(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in cold consumer return line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in cold consumer return line" annotation (
      Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=180,
         origin={73,32})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerReturn(
     redeclare package Medium = Water,
-    m_flow_nominal=0.2,
-    dp_nominal=10000) "Resistance in heat consumer return line" annotation (
+    dp_nominal=10000,
+    m_flow_nominal=baseParam.m_flow_tot)
+                      "Resistance in heat consumer return line" annotation (
      Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=180,
         origin={93,-106})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpCondenser(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to condenser of heat pump"
                              annotation (Placement(transformation(
         extent={{-7,7},{7,-7}},
         rotation=180,
         origin={-1,-98})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpEvaporator(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from storage tank to evaporator of heat pump"
                              annotation (Placement(transformation(
         extent={{-7,7},{7,-7}},
         rotation=180,
         origin={7,36})));
   AixLib.Fluid.Movers.FlowControlled_dp pumpGeothermalSource(
-    m_flow_nominal=0.05,
     redeclare package Medium = Water,
     addPowerToMedium=false,
-    T_start=T_start_cold[1])
+    T_start=T_start_cold[1],
+    m_flow_nominal=baseParam.m_flow_tot)
     "Pump moving fluid from geothermal source into system" annotation (
       Placement(transformation(
         extent={{-7,-7},{7,7}},
@@ -214,10 +224,10 @@ partial model GeothermalHeatPumpBase
     redeclare package Medium = Water,
     energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
     m_flow_small=50,
-    p_start=100000,
-    m_flow_nominal=16,
     V=2,
-    nPorts=2)                    annotation (
+    nPorts=2,
+    m_flow_nominal=baseParam.m_flow_tot,
+    p_start=100000)              annotation (
       Placement(transformation(
         extent={{-10,10},{10,-10}},
         rotation=90,
@@ -226,10 +236,10 @@ partial model GeothermalHeatPumpBase
     redeclare package Medium = Water,
     energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
     m_flow_small=50,
-    p_start=100000,
-    m_flow_nominal=16,
     V=2,
-    nPorts=2)                    annotation (
+    nPorts=2,
+    m_flow_nominal=baseParam.m_flow_tot,
+    p_start=100000)              annotation (
       Placement(transformation(
         extent={{10,10},{-10,-10}},
         rotation=90,
