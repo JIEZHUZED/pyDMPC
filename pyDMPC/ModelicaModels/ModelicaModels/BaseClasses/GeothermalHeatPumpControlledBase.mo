@@ -148,8 +148,7 @@ partial model GeothermalHeatPumpControlledBase
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
     computeWetBulbTemperature=false,
-    filNam=
-        "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos")
+    filNam=Modelica.Utilities.Files.loadResource("modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
     "Weather data reader"
     annotation (Placement(transformation(extent={{188,32},{168,52}})));
   Modelica.Blocks.Sources.CombiTimeTable tableAHU(
@@ -158,7 +157,7 @@ partial model GeothermalHeatPumpControlledBase
     tableName="AHU",
     columns=2:5,
     fileName=Modelica.Utilities.Files.loadResource(
-        "modelica://teaserweb_AixLib/ERC/AHU_ERC.mat"))
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/ERC/AHU_ERC.mat"))
     "Boundary conditions for air handling unit"
     annotation (Placement(transformation(extent={{188,2},{172,18}})));
   Modelica.Blocks.Sources.CombiTimeTable tableTSet(
@@ -166,7 +165,7 @@ partial model GeothermalHeatPumpControlledBase
     tableName="Tset",
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
     fileName=Modelica.Utilities.Files.loadResource(
-        "modelica://teaserweb_AixLib/ERC/Tset_ERC.mat"),
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tset_ERC.mat"),
     columns=2:7)
     "Set points for heater"
     annotation (Placement(transformation(extent={{188,-46},{172,-30}})));
@@ -175,7 +174,7 @@ partial model GeothermalHeatPumpControlledBase
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
     tableName="Internals",
     fileName=Modelica.Utilities.Files.loadResource(
-        "modelica://teaserweb_AixLib/ERC/InternalGains_ERC.mat"),
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_ERC.mat"),
     columns=2:19)
     "Profiles for internal gains"
     annotation (Placement(transformation(extent={{188,-68},{172,-52}})));
@@ -232,18 +231,18 @@ equation
                                  color={0,0,127}));
   connect(const.y,multizone. TSetCool) annotation (Line(points={{171.2,-14},{
           162,-14},{162,-2},{161.4,-2},{161.4,-1}},  color={0,0,127}));
-  connect(negate1.u,sum1. y) annotation (Line(points={{116,-13.2},{124,-13.2},{
-          124,-16.4},{132,-16.4}},    color={0,0,127}));
+  connect(negate1.u,sum1. y) annotation (Line(points={{116,-13.2},{124,-13.2},{124,
+          -16.4},{132,-16.4}},        color={0,0,127}));
   connect(negate.u,sum2. y)
     annotation (Line(points={{110.8,2},{111.6,2}}, color={0,0,127}));
   connect(multizone.PCooler[1],sum2. u[1]) annotation (Line(points={{145,
           0.166667},{122,0.166667},{122,2.4},{120.8,2.4}}, color={0,0,127}));
-  connect(multizone.PHeater[1],sum1. u[1]) annotation (Line(points={{145,
-          2.16667},{131.6,2.16667},{131.6,-7.2}}, color={0,0,127}));
+  connect(multizone.PHeater[1],sum1. u[1]) annotation (Line(points={{145,2.16667},
+          {131.6,2.16667},{131.6,-7.2}},          color={0,0,127}));
   connect(multizone.PCoolAHU,sum2. u[2]) annotation (Line(points={{145,5},{122,
           5},{122,1.6},{120.8,1.6}}, color={0,0,127}));
-  connect(multizone.PHeatAHU,sum1. u[2]) annotation (Line(points={{145,7},{
-          132.4,7},{132.4,-7.2}}, color={0,0,127}));
+  connect(multizone.PHeatAHU,sum1. u[2]) annotation (Line(points={{145,7},{132.4,
+          7},{132.4,-7.2}},       color={0,0,127}));
   connect(negate.y, prescribedHeatFlow1.Q_flow)
     annotation (Line(points={{101.6,2},{96,2}}, color={0,0,127}));
   connect(prescribedHeatFlow.Q_flow, negate1.y)

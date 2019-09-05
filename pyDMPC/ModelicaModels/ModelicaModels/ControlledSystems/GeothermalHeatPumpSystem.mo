@@ -23,15 +23,7 @@ model GeothermalHeatPumpSystem
           Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Storage(),
           Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Meeting(),
           Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Restroom(),
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_ICT()}),
-    tableAHU(fileName=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/AHU_ERC.mat"),
-
-    tableTSet(fileName=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tset_ERC.mat"),
-
-    tableInternalGains(fileName=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_ERC.mat"));
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_ICT()}));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1,
