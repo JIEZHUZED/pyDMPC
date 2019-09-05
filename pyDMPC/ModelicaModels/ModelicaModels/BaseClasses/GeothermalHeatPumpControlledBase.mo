@@ -148,7 +148,7 @@ partial model GeothermalHeatPumpControlledBase
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
     computeWetBulbTemperature=false,
-    filNam=Modelica.Utilities.Files.loadResource("modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEUl_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
+    filNam=Modelica.Utilities.Files.loadResource("modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
     "Weather data reader"
     annotation (Placement(transformation(extent={{188,32},{168,52}})));
   Modelica.Blocks.Sources.CombiTimeTable tableAHU(
@@ -157,7 +157,7 @@ partial model GeothermalHeatPumpControlledBase
     tableName="AHU",
     columns=2:5,
     fileName=Modelica.Utilities.Files.loadResource(
-        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/AHUl_TEASER.mat"))
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/AHU_TEASER.mat"))
     "Boundary conditions for air handling unit"
     annotation (Placement(transformation(extent={{188,2},{172,18}})));
   Modelica.Blocks.Sources.CombiTimeTable tableTSet(
@@ -165,7 +165,7 @@ partial model GeothermalHeatPumpControlledBase
     tableName="Tset",
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
     fileName=Modelica.Utilities.Files.loadResource(
-        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tsetl_TEASER.mat"),
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tset_TEASER.mat"),
     columns=2:7)
     "Set points for heater"
     annotation (Placement(transformation(extent={{188,-46},{172,-30}})));
@@ -174,7 +174,7 @@ partial model GeothermalHeatPumpControlledBase
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
     tableName="Internals",
     fileName=Modelica.Utilities.Files.loadResource(
-        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGainsl_TEASER.mat"),
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_TEASER.mat"),
     columns=2:19)
     "Profiles for internal gains"
     annotation (Placement(transformation(extent={{188,-68},{172,-52}})));
