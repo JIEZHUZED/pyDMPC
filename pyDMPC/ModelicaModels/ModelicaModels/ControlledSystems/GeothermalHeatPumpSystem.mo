@@ -3,6 +3,7 @@ model GeothermalHeatPumpSystem
   "Example of a geothermal heat pump systemreplaceable package Water = AixLib.Media.Water;"
   extends Modelica.Icons.Example;
   extends ModelicaModels.BaseClasses.GeothermalHeatPumpControlledBase(
+    geothField(T=285.15),
     redeclare
       AixLib.Fluid.Examples.GeothermalHeatPump.Components.BoilerStandAlone
       PeakLoadDevice(redeclare package Medium = Water),
@@ -14,7 +15,6 @@ model GeothermalHeatPumpSystem
     pumpCondenser(T_start=285.15),
     pumpEvaporator(T_start=285.15),
     pumpColdConsumer(T_start=285.15),
-    geothField_sink1(T=285.15),
     integrator(k=3600),
     integrator1(k=3600),
     multizone(zoneParam={
@@ -61,7 +61,7 @@ model GeothermalHeatPumpSystem
     annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
   Modelica.Blocks.Interfaces.RealInput T_set_storage
     "Connector of Real input signal 2"
-    annotation (Placement(transformation(extent={{-108,58},{-88,78}})));
+    annotation (Placement(transformation(extent={{-102,62},{-90,74}})));
 equation
   connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
     annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
@@ -93,8 +93,8 @@ equation
     annotation (Line(points={{-139,74},{-122,74},{-122,-26},{-100,-26}}, color=
           {0,0,127}));
   connect(valveHeatSink.y, geothermalFieldControllerHeat.valveOpening1)
-    annotation (Line(points={{-30,-45.6},{-30,-45.6},{-30,-32},{-30,-21.2},{-83.04,
-          -21.2}}, color={0,0,127}));
+    annotation (Line(points={{-30,-45.6},{-30,-21.2},{-83.04,-21.2}},
+                   color={0,0,127}));
   connect(geothermalFieldControllerHeat.valveOpening2, valveHeatStorage.y)
     annotation (Line(points={{-83.04,-30.8},{-56,-30.8},{-56,-63},{-26.4,-63}},
         color={0,0,127}));
@@ -111,10 +111,10 @@ equation
       string="%second",
       index=1,
       extent={{6,3},{6,3}}));
-  connect(getTStorageUpper.y, hPControllerOnOff.T_meas) annotation (Line(points
-        ={{-139,74},{-108.5,74},{-108.5,76},{-78,76}}, color={0,0,127}));
+  connect(getTStorageUpper.y, hPControllerOnOff.T_meas) annotation (Line(points=
+         {{-139,74},{-108.5,74},{-108.5,76},{-78,76}}, color={0,0,127}));
   connect(T_set_storage, hPControllerOnOff.T_set)
-    annotation (Line(points={{-98,68},{-78,68}}, color={0,0,127}));
+    annotation (Line(points={{-96,68},{-78,68}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
@@ -139,6 +139,6 @@ from the geothermal field to the heat storage
 <p>In the flow line of the heating circuit a boiler is connected as a peak load device.
 Consumers are modeled as sinks are sources with a constant temperature.</p>
 </html>"),
-    Diagram(coordinateSystem(extent={{-160,-120},{140,80}})),
-    Icon(coordinateSystem(extent={{-160,-120},{140,80}})));
+    Diagram(coordinateSystem(extent={{-160,-120},{200,80}})),
+    Icon(coordinateSystem(extent={{-160,-120},{200,80}})));
 end GeothermalHeatPumpSystem;

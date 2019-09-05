@@ -60,7 +60,7 @@ partial model GeothermalHeatPumpControlledBase
         rotation=90,
         origin={-60.5,-109})));
   inner Modelica.Fluid.System system
-    annotation (Placement(transformation(extent={{120,60},{140,80}})));
+    annotation (Placement(transformation(extent={{180,60},{200,80}})));
   Modelica.Blocks.Interfaces.RealOutput returnTemperature(
     final quantity="ThermodynamicTemperature",
     final unit="K",
@@ -150,7 +150,7 @@ partial model GeothermalHeatPumpControlledBase
     computeWetBulbTemperature=false,
     filNam=Modelica.Utilities.Files.loadResource("modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
     "Weather data reader"
-    annotation (Placement(transformation(extent={{188,32},{168,52}})));
+    annotation (Placement(transformation(extent={{200,30},{180,50}})));
   Modelica.Blocks.Sources.CombiTimeTable tableAHU(
     tableOnFile=true,
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
@@ -159,7 +159,7 @@ partial model GeothermalHeatPumpControlledBase
     fileName=Modelica.Utilities.Files.loadResource(
         "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/AHU_TEASER.mat"))
     "Boundary conditions for air handling unit"
-    annotation (Placement(transformation(extent={{188,2},{172,18}})));
+    annotation (Placement(transformation(extent={{200,0},{180,20}})));
   Modelica.Blocks.Sources.CombiTimeTable tableTSet(
     tableOnFile=true,
     tableName="Tset",
@@ -168,7 +168,7 @@ partial model GeothermalHeatPumpControlledBase
         "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tset_TEASER.mat"),
     columns=2:7)
     "Set points for heater"
-    annotation (Placement(transformation(extent={{188,-46},{172,-30}})));
+    annotation (Placement(transformation(extent={{200,-60},{180,-40}})));
   Modelica.Blocks.Sources.CombiTimeTable tableInternalGains(
     tableOnFile=true,
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
@@ -177,10 +177,10 @@ partial model GeothermalHeatPumpControlledBase
         "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_TEASER.mat"),
     columns=2:19)
     "Profiles for internal gains"
-    annotation (Placement(transformation(extent={{188,-68},{172,-52}})));
+    annotation (Placement(transformation(extent={{200,-90},{180,-70}})));
   Modelica.Blocks.Sources.Constant const[6](each k=0)
     "Set point for cooler"
-    annotation (Placement(transformation(extent={{188,-22},{172,-6}})));
+    annotation (Placement(transformation(extent={{200,-30},{180,-10}})));
   Modelica.Blocks.Math.Gain negate(k=-1)
     annotation (Placement(transformation(extent={{110,-2},{102,6}})));
   Modelica.Blocks.Math.Gain negate1(k=-1) annotation (Placement(transformation(
@@ -218,19 +218,17 @@ equation
   connect(supplyTemSensor.T, supplyTemperature) annotation (Line(points={{-115,-62.8},
           {-115,-67.4},{-116,-67.4},{-116,-120}}, color={0,0,127}));
   connect(weaDat.weaBus,multizone. weaBus) annotation (Line(
-      points={{168,42},{166,42},{166,14},{162,14}},
+      points={{180,40},{166,40},{166,14},{162,14}},
       color={255,204,51},
       thickness=0.5));
   connect(tableInternalGains.y,multizone. intGains)
-    annotation (Line(points={{171.2,-60},{148,-60},{148,-1}},
-                                                           color={0,0,127}));
+    annotation (Line(points={{179,-80},{148,-80},{148,-1}},color={0,0,127}));
   connect(tableAHU.y,multizone. AHU)
-    annotation (Line(points={{171.2,10},{163,10}},     color={0,0,127}));
-  connect(tableTSet.y,multizone. TSetHeat) annotation (Line(points={{171.2,-38},
-          {159.2,-38},{159.2,-1}},
-                                 color={0,0,127}));
-  connect(const.y,multizone. TSetCool) annotation (Line(points={{171.2,-14},{
-          162,-14},{162,-2},{161.4,-2},{161.4,-1}},  color={0,0,127}));
+    annotation (Line(points={{179,10},{163,10}},       color={0,0,127}));
+  connect(tableTSet.y,multizone. TSetHeat) annotation (Line(points={{179,-50},{
+          159.2,-50},{159.2,-1}},color={0,0,127}));
+  connect(const.y,multizone. TSetCool) annotation (Line(points={{179,-20},{162,
+          -20},{162,-2},{161.4,-2},{161.4,-1}},      color={0,0,127}));
   connect(negate1.u,sum1. y) annotation (Line(points={{116,-13.2},{124,-13.2},{124,
           -16.4},{132,-16.4}},        color={0,0,127}));
   connect(negate.u,sum2. y)
@@ -257,6 +255,6 @@ First implementation.
 </li>
 </ul>
 </html>"),
-    Diagram(coordinateSystem(extent={{-160,-120},{140,80}})),
-    Icon(coordinateSystem(extent={{-160,-120},{140,80}})));
+    Diagram(coordinateSystem(extent={{-160,-120},{200,80}})),
+    Icon(coordinateSystem(extent={{-160,-120},{200,80}})));
 end GeothermalHeatPumpControlledBase;
