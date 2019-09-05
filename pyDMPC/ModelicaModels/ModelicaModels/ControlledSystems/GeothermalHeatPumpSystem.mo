@@ -16,7 +16,22 @@ model GeothermalHeatPumpSystem
     pumpColdConsumer(T_start=285.15),
     geothField_sink1(T=285.15),
     integrator(k=3600),
-    integrator1(k=3600));
+    integrator1(k=3600),
+    multizone(zoneParam={
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office(),
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Floor(),
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Storage(),
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Meeting(),
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Restroom(),
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_ICT()}),
+    tableAHU(fileName=
+          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/AHU_ERC.mat"),
+
+    tableTSet(fileName=
+          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tset_ERC.mat"),
+
+    tableInternalGains(fileName=
+          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_ERC.mat"));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1,
@@ -45,13 +60,6 @@ model GeothermalHeatPumpSystem
   AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerHeat
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-100,-34},{-84,-18}})));
-  Modelica.Blocks.Math.Gain negate(k=-1)
-    annotation (Placement(transformation(extent={{112,-2},{104,6}})));
-  Modelica.Blocks.Sources.Constant const1(k=0) annotation (Placement(
-        transformation(
-        extent={{-6,-6},{6,6}},
-        rotation=180,
-        origin={128,20})));
   Modelica.Blocks.Interfaces.RealInput traj "Connector of Real input signal 2"
     annotation (Placement(transformation(extent={{-170,-90},{-150,-70}})));
   Modelica.Thermal.HeatTransfer.Celsius.FromKelvin fromKelvin
@@ -98,13 +106,9 @@ equation
   connect(geothermalFieldControllerHeat.valveOpening2, valveHeatStorage.y)
     annotation (Line(points={{-83.04,-30.8},{-56,-30.8},{-56,-63},{-26.4,-63}},
         color={0,0,127}));
-  connect(prescribedHeatFlow1.Q_flow, negate.y)
-    annotation (Line(points={{96,2},{103.6,2}}, color={0,0,127}));
   connect(integrator.u, PeakLoadDevice.chemicalEnergyFlowRate) annotation (Line(
         points={{-62,-86.8},{-62,-78},{-26,-78},{-26,-116},{74,-116},{74,-76},{
           90.77,-76},{90.77,-56.54}}, color={0,0,127}));
-  connect(const1.y, negate.u) annotation (Line(points={{121.4,20},{118,20},{118,
-          2},{112.8,2}}, color={0,0,127}));
   connect(traj, fromKelvin.Kelvin)
     annotation (Line(points={{-160,-80},{-145.2,-80}}, color={0,0,127}));
   connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation (

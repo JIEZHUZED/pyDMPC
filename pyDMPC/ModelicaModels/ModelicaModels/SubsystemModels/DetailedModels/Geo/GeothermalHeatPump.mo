@@ -11,16 +11,7 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     resistanceGeothermalSource(m_flow_nominal=16),
     pumpGeothermalSource(m_flow_nominal=8),
     boundary,
-    tableInternalGains(fileName=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/InternalGains_ERC.mat"),
-    tableTSet(fileName=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/Tset_ERC.mat"),
-    tableAHU(fileName=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/AHU_ERC.mat"),
-    weaDat(filNam=
-          "C:/mst/pyDMPC/pyDMPC/ModelicaModels/ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"),
     variation(table=[0,285]),
-    const(k=293.15),
     decisionVariables(table=[0.0,273.15 + 35]),
     geothField_sink1(T=T_start_cold[1]),
     integrator1(k=3600),
@@ -53,26 +44,30 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
   AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerCold(
       temperature_low=273.15 + 6, temperature_high=273.15 + 8)
     "Controls the heat exchange with the geothermal field and the cold storage"
-    annotation (Placement(transformation(extent={{-100,28},{-84,44}})));
+    annotation (Placement(transformation(extent={{-100,38},{-84,54}})));
   AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerHeat
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-100,-34},{-84,-18}})));
-  Modelica.Blocks.Math.Gain negate(k=-1)
-    annotation (Placement(transformation(extent={{110,-2},{102,6}})));
+  Modelica.Blocks.Sources.Constant const(k=0)
+    "Pressure difference used for all pumps" annotation (Placement(
+        transformation(
+        extent={{-6,-6},{6,6}},
+        rotation=180,
+        origin={144,-14})));
   Modelica.Blocks.Math.Gain negate1(k=-1) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=-90,
         origin={116,-22})));
-  Modelica.Blocks.Math.Sum sum1(nin=2, k={1,1}) annotation (Placement(
-        transformation(
-        extent={{-4,-4},{4,4}},
-        rotation=-90,
-        origin={132,-12})));
-  Modelica.Blocks.Math.Sum sum2(nin=2, k={1,1}) annotation (Placement(
-        transformation(
+  Modelica.Blocks.Math.Gain negate2(k=-1) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=180,
         origin={116,2})));
+  Modelica.Blocks.Sources.Constant const1(k=0)
+    "Pressure difference used for all pumps" annotation (Placement(
+        transformation(
+        extent={{-6,-6},{6,6}},
+        rotation=180,
+        origin={134,2})));
 equation
   connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
     annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
@@ -100,46 +95,39 @@ equation
       index=1,
       extent={{6,3},{6,3}}));
   connect(getTStorageLower.y,geothermalFieldControllerCold. temperature)
-    annotation (Line(points={{-139,58},{-122,58},{-108,58},{-108,36},{-100,36}},
+    annotation (Line(points={{-139,58},{-108,58},{-108,46},{-100,46}},
         color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening1, valveColdStorage.y)
-    annotation (Line(points={{-83.04,40.8},{-82,40.8},{-82,40},{-82,52},{-82,54},
-          {-52,54},{-52,46.4}}, color={0,0,127}));
+    annotation (Line(points={{-83.04,50.8},{-82,50.8},{-82,54},{-52,54},{-52,
+          46.4}},               color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening2, valveHeatSource.y)
-    annotation (Line(points={{-83.04,31.2},{-82,31.2},{-82,1},{-68.4,1}}, color=
+    annotation (Line(points={{-83.04,41.2},{-82,41.2},{-82,1},{-68.4,1}}, color=
          {0,0,127}));
   connect(getTStorageUpper.y,geothermalFieldControllerHeat. temperature)
     annotation (Line(points={{-139,74},{-122,74},{-122,-26},{-100,-26}}, color=
           {0,0,127}));
   connect(valveHeatSink.y, geothermalFieldControllerHeat.valveOpening1)
-    annotation (Line(points={{-30,-45.6},{-30,-45.6},{-30,-32},{-30,-21.2},{-83.04,
-          -21.2}}, color={0,0,127}));
+    annotation (Line(points={{-32,-41.6},{-32,-41.6},{-32,-32},{-32,-21.2},{
+          -83.04,-21.2}},
+                   color={0,0,127}));
   connect(geothermalFieldControllerHeat.valveOpening2, valveHeatStorage.y)
     annotation (Line(points={{-83.04,-30.8},{-56,-30.8},{-56,-63},{-26.4,-63}},
         color={0,0,127}));
   connect(getTStorageUpper.y, hPControllerOnOff.T_meas) annotation (Line(points=
          {{-139,74},{-108,74},{-108,76},{-78,76}}, color={0,0,127}));
-  connect(prescribedHeatFlow1.Q_flow, negate.y)
-    annotation (Line(points={{96,2},{101.6,2}}, color={0,0,127}));
-  connect(prescribedHeatFlow.Q_flow, negate1.y)
-    annotation (Line(points={{116,-28},{116,-26.4}}, color={0,0,127}));
   connect(integrator.u, PeakLoadDevice.chemicalEnergyFlowRate) annotation (Line(
         points={{-62,-86.8},{-62,-78},{-26,-78},{-26,-116},{74,-116},{74,-76},{
           90.77,-76},{90.77,-56.54}}, color={0,0,127}));
-  connect(negate1.u, sum1.y) annotation (Line(points={{116,-17.2},{116.5,-17.2},
-          {116.5,-16.4},{132,-16.4}}, color={0,0,127}));
-  connect(negate.u, sum2.y)
-    annotation (Line(points={{110.8,2},{111.6,2}}, color={0,0,127}));
-  connect(multizone.PCooler[1], sum2.u[1]) annotation (Line(points={{145,
-          0.166667},{122,0.166667},{122,2.4},{120.8,2.4}}, color={0,0,127}));
-  connect(multizone.PHeater[1], sum1.u[1]) annotation (Line(points={{145,
-          2.16667},{131.6,2.16667},{131.6,-7.2}}, color={0,0,127}));
-  connect(multizone.PCoolAHU, sum2.u[2]) annotation (Line(points={{145,5},{122,
-          5},{122,1.6},{120.8,1.6}}, color={0,0,127}));
-  connect(multizone.PHeatAHU, sum1.u[2]) annotation (Line(points={{145,7},{132.4,
-          7},{132.4,-7.2}},       color={0,0,127}));
   connect(decisionVariables.y[1], hPControllerOnOff.T_set) annotation (Line(
         points={{-145.3,7},{-126,7},{-126,68},{-78,68}}, color={0,0,127}));
+  connect(const.y, negate1.u) annotation (Line(points={{137.4,-14},{116,-14},{
+          116,-17.2}}, color={0,0,127}));
+  connect(prescribedHeatFlow.Q_flow, negate1.y)
+    annotation (Line(points={{116,-28},{116,-26.4}}, color={0,0,127}));
+  connect(prescribedHeatFlow1.Q_flow, negate2.y)
+    annotation (Line(points={{96,2},{111.6,2}}, color={0,0,127}));
+  connect(negate2.u, const1.y)
+    annotation (Line(points={{120.8,2},{127.4,2}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>

@@ -73,8 +73,8 @@ input_variables.append([r"variation.table[1,2]"])       #subsystem
 inputs.append(range(280,290,5))
 output_names.append(["returnTemperature"])  #controlled System
 set_points.append([287])
-state_var_names.append(["const.k"])         #controlled System
-model_state_var_names.append(["sum1.y"])    #subsystem
+state_var_names.append(["sum1.y"])         #controlled System
+model_state_var_names.append(["const.k"])    #subsystem
 start.append(0.)
 stop.append(7200.)
 incr.append(10.)
@@ -86,7 +86,7 @@ dym_path.append(glob_dym_path)
 mod_path.append(r'ModelicaModels.SubsystemModels.DetailedModels.Geo.GeothermalHeatPump')
 command_names.append(["T_set_storage"])     #controlled System
 command_variables.append(["decisionVariables.table[1,2]"])      #subsystem
-commands.append(range(35,45,5))
+commands.append(range(273+35,273+40,5))
 traj_points.append([])
 traj_var.append([])
 cost_fac.append([-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3000.0, -3000.0, 10.0, 2.0])
@@ -103,7 +103,7 @@ inputs.append([])
 output_names.append(["movMea.y"])
 set_points.append([285.65])
 state_var_names.append(["supplyTemperature"])
-model_state_var_names.append(["borFie.TFlu_start"])
+model_state_var_names.append(["vol.T_start"])
 start.append(0.)
 stop.append(3600.0*24*365.25*3)
 incr.append(3600.)
@@ -112,7 +112,7 @@ samp_time.append(10)
 lib_paths.append(glob_lib_paths)
 res_path.append(glob_res_path + "\\" + name_wkdir)
 dym_path.append(glob_dym_path)
-mod_path.append(r'ModelicaModels.SubsystemModels.DetailedModels.Geo.Field2')
+mod_path.append(r'ModelicaModels.SubsystemModels.DetailedModels.Geo.Field')
 command_names.append(["traj"])
 command_variables.append(["decisionVariables.table[1,2]"])
 commands.append(range(0,105,5))

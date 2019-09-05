@@ -116,9 +116,9 @@ partial model GeothermalHeatPumpBase
         origin={-18,-78})));
   AixLib.Fluid.Sources.Boundary_pT geothField_sink1(redeclare package Medium =
         Water, nPorts=1) "One of two sinks representing geothermal field"
-    annotation (Placement(transformation(extent={{-6,-6},{6,6}},
+    annotation (Placement(transformation(extent={{5,-5},{-5,5}},
         rotation=-90,
-        origin={-150,30})));
+        origin={-139,-29})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(
     redeclare package Medium = Water,
     dp_nominal=10000,
@@ -263,12 +263,12 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=90,
-        origin={-152,-38})));
+        origin={-146,-40})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature fixedTemperature(T=285.65)
     annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=90,
-        origin={-152,-66})));
+        origin={-146,-58})));
 equation
 
   connect(resistanceGeothermalSource.port_b, valveHeatSink.port_a) annotation (
@@ -301,7 +301,7 @@ equation
   connect(valveHeatSource.port_b, heatPumpTab.port_a_source) annotation (Line(
         points={{-60,7},{-60,14.9},{-38.2,14.9}}, color={0,127,255}));
   connect(valveColdStorage.port_b, heatPumpTab.port_a_source) annotation (Line(
-        points={{-58,38},{-62,38},{-62,14.9},{-38.2,14.9}}, color={0,127,255}));
+        points={{-58,38},{-60,38},{-60,14.9},{-38.2,14.9}}, color={0,127,255}));
   connect(valveHeatSink.port_b, heatPumpTab.port_a_sink) annotation (Line(
         points={{-24,-54},{-16,-54},{-5.8,-54},{-5.8,-8.9}}, color={0,127,255}));
   connect(valveHeatStorage.port_b, heatPumpTab.port_a_sink) annotation (Line(
@@ -352,19 +352,18 @@ equation
         points={{100,-106},{106,-106},{106,-56}}, color={0,127,255}));
   connect(supplyTemSensor.port_b, pumpGeothermalSource.port_a)
     annotation (Line(points={{-108,-54},{-96,-54}}, color={0,127,255}));
-  connect(geothField_sink1.ports[1], vol.ports[1]) annotation (Line(points={{
-          -150,24},{-148,24},{-148,-30},{-139,-30},{-139,-16}}, color={0,127,
-          255}));
+  connect(geothField_sink1.ports[1], vol.ports[1])
+    annotation (Line(points={{-139,-24},{-139,-16}}, color={0,127,255}));
   connect(vol.ports[2], supplyTemSensor.port_a) annotation (Line(points={{-137,
           -16},{-130,-16},{-130,-54},{-122,-54}}, color={0,127,255}));
-  connect(thermalConductor.port_b, vol.heatPort) annotation (Line(points={{-152,
-          -32},{-150,-32},{-150,-6},{-146,-6}}, color={191,0,0}));
+  connect(thermalConductor.port_b, vol.heatPort)
+    annotation (Line(points={{-146,-34},{-146,-6}}, color={191,0,0}));
   connect(fixedTemperature.port, thermalConductor.port_a)
-    annotation (Line(points={{-152,-60},{-152,-44}}, color={191,0,0}));
+    annotation (Line(points={{-146,-52},{-146,-46}}, color={191,0,0}));
   connect(vol.ports[3], returnTemSensor.port_b) annotation (Line(points={{-135,
           -16},{-150,-16},{-150,14},{-114,14},{-114,18}}, color={0,127,255}));
   connect(vol.ports[4], heatPumpTab.port_b_sink) annotation (Line(points={{-133,
-          -16},{-138,-16},{-138,14.9},{-5.8,14.9}}, color={0,127,255}));
+          -16},{10,-16},{10,14.9},{-5.8,14.9}}, color={0,127,255}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),

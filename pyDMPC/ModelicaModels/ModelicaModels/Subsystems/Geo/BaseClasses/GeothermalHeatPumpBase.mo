@@ -80,7 +80,7 @@ partial model GeothermalHeatPumpBase
     m_flow_nominal=0.5,
     dpValve_nominal=5000)
     "Valve connecting geothermal field to the condenser of the heat pump"
-    annotation (Placement(transformation(extent={{-36,-61},{-24,-47}})));
+    annotation (Placement(transformation(extent={{-38,-57},{-26,-43}})));
   AixLib.Fluid.Actuators.Valves.TwoWayQuickOpening valveHeatSource(
     redeclare package Medium = Water,
     m_flow_nominal=0.5,
@@ -115,7 +115,7 @@ partial model GeothermalHeatPumpBase
         rotation=90,
         origin={-18,-78})));
   AixLib.Fluid.Sources.Boundary_pT geothField_sink1(redeclare package Medium =
-        Water, nPorts=2) "One of two sinks representing geothermal field"
+        Water, nPorts=1) "One of two sinks representing geothermal field"
     annotation (Placement(transformation(extent={{-158,20},{-146,32}})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(
     redeclare package Medium = Water,
@@ -248,11 +248,11 @@ equation
 
   connect(resistanceGeothermalSource.port_b, valveHeatSink.port_a) annotation (
       Line(
-      points={{-64,-54},{-36,-54}},
+      points={{-64,-54},{-52,-54},{-52,-50},{-38,-50}},
       color={0,127,255},
       smooth=Smooth.None));
   connect(valveHeatSource.port_a, valveHeatSink.port_a) annotation (Line(
-      points={{-60,-5},{-60,-54},{-36,-54}},
+      points={{-60,-5},{-60,-50},{-38,-50}},
       color={0,127,255},
       smooth=Smooth.None));
 
@@ -278,12 +278,9 @@ equation
   connect(valveColdStorage.port_b, heatPumpTab.port_a_source) annotation (Line(
         points={{-58,38},{-62,38},{-62,14.9},{-38.2,14.9}}, color={0,127,255}));
   connect(valveHeatSink.port_b, heatPumpTab.port_a_sink) annotation (Line(
-        points={{-24,-54},{-16,-54},{-5.8,-54},{-5.8,-8.9}}, color={0,127,255}));
+        points={{-26,-50},{-26,-48},{-5.8,-48},{-5.8,-8.9}}, color={0,127,255}));
   connect(valveHeatStorage.port_b, heatPumpTab.port_a_sink) annotation (Line(
         points={{-18,-57},{-18,-54},{-5.8,-54},{-5.8,-8.9}}, color={0,127,255}));
-  connect(heatPumpTab.port_b_sink, geothField_sink1.ports[1]) annotation (Line(
-        points={{-5.8,14.9},{2,14.9},{2,27.2},{-146,27.2}},
-                                                        color={0,127,255}));
   connect(heatStorage.port_a_heatGenerator, heatPumpTab.port_b_sink)
     annotation (Line(points={{26.24,-63.68},{10,-63.68},{10,14.9},{-5.8,
           14.9}},
@@ -317,11 +314,8 @@ equation
       extent={{6,3},{6,3}}));
   connect(resistanceHeatConsumerFlow.port_b, PeakLoadDevice.port_a) annotation (
      Line(points={{80,-50},{86,-50}},            color={0,127,255}));
-  connect(geothField_sink1.ports[2], returnTemSensor.port_b) annotation (
-      Line(points={{-146,24.8},{-138,24.8},{-138,18},{-114,18}}, color={0,
-          127,255}));
-  connect(returnTemSensor.port_a, heatPumpTab.port_b_source) annotation (
-      Line(points={{-100,18},{-76,18},{-76,-8.9},{-38.2,-8.9}}, color={0,
+  connect(geothField_sink1.ports[1], returnTemSensor.port_b) annotation (
+      Line(points={{-146,26},{-138,26},{-138,18},{-114,18}},     color={0,
           127,255}));
   connect(resistanceColdConsumerFlow.port_b, vol1.ports[1])
     annotation (Line(points={{80,-20},{86,-20},{86,28}}, color={0,127,255}));
@@ -333,6 +327,11 @@ equation
         points={{100,-106},{106,-106},{106,-56}}, color={0,127,255}));
   connect(boundary.ports[1], pumpGeothermalSource.port_a)
     annotation (Line(points={{-136,-54},{-96,-54}}, color={0,127,255}));
+  connect(heatPumpTab.port_b_sink, returnTemSensor.port_a) annotation (Line(
+        points={{-5.8,14.9},{2,14.9},{2,30},{-100,30},{-100,18}}, color={0,127,
+          255}));
+  connect(heatPumpTab.port_b_source, returnTemSensor.port_a) annotation (Line(
+        points={{-38.2,-8.9},{-100,-8.9},{-100,18}}, color={0,127,255}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),
