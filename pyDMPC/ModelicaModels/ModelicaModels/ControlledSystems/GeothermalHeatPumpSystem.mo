@@ -17,13 +17,13 @@ model GeothermalHeatPumpSystem
     pumpColdConsumer(T_start=285.15),
     integrator(k=3600),
     integrator1(k=3600),
-    multizone(zoneParam={
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office(),
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Floor(),
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Storage(),
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Meeting(),
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Restroom(),
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_ICT()}));
+    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,9900,
+          10200,10500,11100,11400; 323.15,13500,13200,13800,15000,15300],
+        tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
+          29100,34800,39000,44400,48900; 323.15,30000,33600,38700,50100,52500]),
+
+    thermalZone(zoneParam=
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office()));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1,
@@ -39,7 +39,7 @@ model GeothermalHeatPumpSystem
         extent={{-6,-6},{6,6}},
         rotation=180,
         origin={112,-106})));
-  Modelica.Blocks.Sources.Constant pressureDifference(k=20000)
+  Modelica.Blocks.Sources.Constant pressureDifference(k=60000)
     "Pressure difference used for all pumps"                   annotation (
       Placement(transformation(
         extent={{-6,-6},{6,6}},
