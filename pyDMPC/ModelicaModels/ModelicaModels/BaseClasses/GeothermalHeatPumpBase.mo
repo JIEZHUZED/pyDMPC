@@ -251,7 +251,7 @@ partial model GeothermalHeatPumpBase
   AixLib.Fluid.MixingVolumes.MixingVolume vol(
     redeclare package Medium = Water,
     m_flow_small=50,
-    nPorts=4,
+    nPorts=3,
     m_flow_nominal=16,
     p_start=150000,
     T_start=285.15,
@@ -354,17 +354,19 @@ equation
   connect(supplyTemSensor.port_b, pumpGeothermalSource.port_a)
     annotation (Line(points={{-108,-54},{-96,-54}}, color={0,127,255}));
   connect(geothField.ports[1], vol.ports[1]) annotation (Line(points={{-139,-24},
-          {-139,-20},{-139,-16},{-139,-16}}, color={0,127,255}));
-  connect(vol.ports[2], supplyTemSensor.port_a) annotation (Line(points={{-137,
+          {-139,-20},{-139,-16},{-138.667,-16}}, color={0,127,255}));
+  connect(vol.ports[2], supplyTemSensor.port_a) annotation (Line(points={{-136,
           -16},{-130,-16},{-130,-54},{-122,-54}}, color={0,127,255}));
   connect(thermalConductor.port_b, vol.heatPort)
     annotation (Line(points={{-146,-34},{-146,-6}}, color={191,0,0}));
   connect(fixedTemperature.port, thermalConductor.port_a)
     annotation (Line(points={{-146,-52},{-146,-46}}, color={191,0,0}));
-  connect(vol.ports[3], returnTemSensor.port_b) annotation (Line(points={{-135,
-          -16},{-150,-16},{-150,14},{-114,14},{-114,18}}, color={0,127,255}));
-  connect(heatPumpTab.port_b_sink, vol.ports[4]) annotation (Line(points={{-5.8,
-          14.9},{10,14.9},{10,-16},{-133,-16}}, color={0,127,255}));
+  connect(vol.ports[3], returnTemSensor.port_b) annotation (Line(points={{
+          -133.333,-16},{-150,-16},{-150,14},{-114,14},{-114,18}},
+                                                          color={0,127,255}));
+  connect(heatPumpTab.port_b_sink, returnTemSensor.port_a) annotation (Line(
+        points={{-5.8,14.9},{8,14.9},{8,22},{-100,22},{-100,18}}, color={0,127,
+          255}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),
