@@ -170,7 +170,7 @@ partial model GeothermalHeatPumpBase
      Placement(transformation(
         extent={{-7,-7},{7,7}},
         rotation=180,
-        origin={51,32})));
+        origin={73,32})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerReturn(
     redeclare package Medium = Water,
     dp_nominal=10000,
@@ -228,9 +228,9 @@ partial model GeothermalHeatPumpBase
     m_flow_nominal=baseParam.m_flow_tot)
                                  annotation (
       Placement(transformation(
-        extent={{10,-10},{-10,10}},
-        rotation=0,
-        origin={88,42})));
+        extent={{-10,10},{10,-10}},
+        rotation=90,
+        origin={96,30})));
   AixLib.Fluid.MixingVolumes.MixingVolume vol2(
     redeclare package Medium = Water,
     energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
@@ -314,7 +314,7 @@ equation
   connect(heatStorage.port_b_consumer, pumpHeatConsumer.port_a) annotation (
       Line(points={{38,-62},{38,-50},{48,-50}},          color={0,127,255}));
   connect(resistanceColdConsumerReturn.port_b, coldStorage.port_b_consumer)
-    annotation (Line(points={{44,32},{38,32},{38,20}}, color={0,127,255}));
+    annotation (Line(points={{66,32},{38,32},{38,20}}, color={0,127,255}));
   connect(resistanceHeatConsumerReturn.port_b, heatStorage.port_a_consumer)
     annotation (Line(points={{86,-106},{38,-106},{38,-90}},           color={0,127,
           255}));
@@ -344,9 +344,9 @@ equation
       Line(points={{-100,18},{-76,18},{-76,-8.9},{-38.2,-8.9}}, color={0,
           127,255}));
   connect(resistanceColdConsumerFlow.port_b, vol1.ports[1])
-    annotation (Line(points={{80,-20},{90,-20},{90,32}}, color={0,127,255}));
+    annotation (Line(points={{80,-20},{86,-20},{86,28}}, color={0,127,255}));
   connect(vol1.ports[2], resistanceColdConsumerReturn.port_a)
-    annotation (Line(points={{86,32},{58,32}}, color={0,127,255}));
+    annotation (Line(points={{86,32},{80,32}}, color={0,127,255}));
   connect(PeakLoadDevice.port_b, vol2.ports[1]) annotation (Line(points={{98,
           -50},{106,-50},{106,-52}}, color={0,127,255}));
   connect(resistanceHeatConsumerReturn.port_a, vol2.ports[2]) annotation (Line(
