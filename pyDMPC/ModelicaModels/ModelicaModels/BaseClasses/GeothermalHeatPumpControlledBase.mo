@@ -80,8 +80,8 @@ partial model GeothermalHeatPumpControlledBase
         origin={116,-34})));
   Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow prescribedHeatFlow1
     annotation (Placement(transformation(extent={{6,-6},{-6,6}},
-        rotation=-90,
-        origin={96,8})));
+        rotation=0,
+        origin={106,42})));
 
   Modelica.Blocks.Continuous.Integrator integrator annotation (Placement(
         transformation(
@@ -144,7 +144,7 @@ partial model GeothermalHeatPumpControlledBase
         Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_ICT()},
     dpAHU_sup=800,
     dpAHU_eta=800) "Multizone"
-    annotation (Placement(transformation(extent={{164,0},{144,20}})));
+    annotation (Placement(transformation(extent={{170,14},{150,34}})));
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
     computeWetBulbTemperature=false,
@@ -182,21 +182,29 @@ partial model GeothermalHeatPumpControlledBase
     "Set point for cooler"
     annotation (Placement(transformation(extent={{200,-30},{180,-10}})));
   Modelica.Blocks.Math.Gain negate(k=-1)
-    annotation (Placement(transformation(extent={{110,-2},{102,6}})));
+    annotation (Placement(transformation(extent={{118,40},{114,44}})));
   Modelica.Blocks.Math.Gain negate1(k=-1) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=-90,
         origin={116,-18})));
-  Modelica.Blocks.Math.Sum sum1(nin=2, k={1,1}) annotation (Placement(
-        transformation(
+  Modelica.Blocks.Math.Sum sumHeat(nin=2) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=-90,
-        origin={132,-12})));
-  Modelica.Blocks.Math.Sum sum2(nin=2, k={1,1}) annotation (Placement(
+        origin={116,-6})));
+  Modelica.Blocks.Math.Sum sumCool(nin=2) annotation (Placement(transformation(
+        extent={{-4,-4},{4,4}},
+        rotation=180,
+        origin={124,42})));
+  Modelica.Blocks.Math.Sum sumCooler(nin=6) annotation (Placement(
         transformation(
         extent={{-4,-4},{4,4}},
         rotation=180,
-        origin={116,2})));
+        origin={136,34})));
+  Modelica.Blocks.Math.Sum sumHeater(nin=6) annotation (Placement(
+        transformation(
+        extent={{-4,-4},{4,4}},
+        rotation=-90,
+        origin={108,8})));
 equation
   connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,58},
           {78,58},{78,80}},                 color={0,0,127}));
@@ -207,8 +215,6 @@ equation
           -107,9.2},{-107,-94},{-144,-94},{-144,-120}}, color={0,0,127}));
   connect(prescribedHeatFlow.port, vol2.heatPort)
     annotation (Line(points={{116,-40},{116,-44}}, color={191,0,0}));
-  connect(vol1.heatPort, prescribedHeatFlow1.port)
-    annotation (Line(points={{96,20},{96,14}}, color={191,0,0}));
   connect(chemicalEnergy, integrator.y) annotation (Line(points={{-61.5,-119.5},
           {-62,-119.5},{-62,-100.6}}, color={0,0,127}));
   connect(integrator1.y, heatPumpEnergy) annotation (Line(points={{-40,-100.6},
@@ -218,33 +224,70 @@ equation
   connect(supplyTemSensor.T, supplyTemperature) annotation (Line(points={{-115,-62.8},
           {-115,-67.4},{-116,-67.4},{-116,-120}}, color={0,0,127}));
   connect(weaDat.weaBus,multizone. weaBus) annotation (Line(
-      points={{180,40},{166,40},{166,14},{162,14}},
+      points={{180,40},{174,40},{174,28},{168,28}},
       color={255,204,51},
       thickness=0.5));
   connect(tableInternalGains.y,multizone. intGains)
-    annotation (Line(points={{179,-80},{148,-80},{148,-1}},color={0,0,127}));
+    annotation (Line(points={{179,-80},{154,-80},{154,13}},color={0,0,127}));
   connect(tableAHU.y,multizone. AHU)
-    annotation (Line(points={{179,10},{163,10}},       color={0,0,127}));
-  connect(tableTSet.y,multizone. TSetHeat) annotation (Line(points={{179,-50},{
-          159.2,-50},{159.2,-1}},color={0,0,127}));
-  connect(const.y,multizone. TSetCool) annotation (Line(points={{179,-20},{162,
-          -20},{162,-2},{161.4,-2},{161.4,-1}},      color={0,0,127}));
-  connect(negate1.u,sum1. y) annotation (Line(points={{116,-13.2},{124,-13.2},{124,
-          -16.4},{132,-16.4}},        color={0,0,127}));
-  connect(negate.u,sum2. y)
-    annotation (Line(points={{110.8,2},{111.6,2}}, color={0,0,127}));
-  connect(multizone.PCooler[1],sum2. u[1]) annotation (Line(points={{145,
-          0.166667},{122,0.166667},{122,2.4},{120.8,2.4}}, color={0,0,127}));
-  connect(multizone.PHeater[1],sum1. u[1]) annotation (Line(points={{145,2.16667},
-          {131.6,2.16667},{131.6,-7.2}},          color={0,0,127}));
-  connect(multizone.PCoolAHU,sum2. u[2]) annotation (Line(points={{145,5},{122,
-          5},{122,1.6},{120.8,1.6}}, color={0,0,127}));
-  connect(multizone.PHeatAHU,sum1. u[2]) annotation (Line(points={{145,7},{132.4,
-          7},{132.4,-7.2}},       color={0,0,127}));
-  connect(negate.y, prescribedHeatFlow1.Q_flow)
-    annotation (Line(points={{101.6,2},{96,2}}, color={0,0,127}));
+    annotation (Line(points={{179,10},{172,10},{172,24},{169,24}},
+                                                       color={0,0,127}));
+  connect(tableTSet.y,multizone. TSetHeat) annotation (Line(points={{179,-50},{165.2,
+          -50},{165.2,13}},      color={0,0,127}));
+  connect(const.y,multizone. TSetCool) annotation (Line(points={{179,-20},{176,-20},
+          {176,-2},{167.4,-2},{167.4,13}},           color={0,0,127}));
   connect(prescribedHeatFlow.Q_flow, negate1.y)
     annotation (Line(points={{116,-28},{116,-22.4}}, color={0,0,127}));
+  connect(vol1.heatPort, prescribedHeatFlow1.port)
+    annotation (Line(points={{98,42},{100,42}}, color={191,0,0}));
+  connect(prescribedHeatFlow1.Q_flow, negate.y)
+    annotation (Line(points={{112,42},{113.8,42}}, color={0,0,127}));
+  connect(negate.u, sumCool.y)
+    annotation (Line(points={{118.4,42},{119.6,42}}, color={0,0,127}));
+  connect(negate1.u, sumHeat.y)
+    annotation (Line(points={{116,-13.2},{116,-10.4}}, color={0,0,127}));
+  connect(sumHeater.y, sumHeat.u[1]) annotation (Line(points={{108,3.6},{108,-1.2},
+          {115.6,-1.2}}, color={0,0,127}));
+  connect(sumCooler.y, sumCool.u[1]) annotation (Line(points={{131.6,34},{130,34},
+          {130,42.4},{128.8,42.4}}, color={0,0,127}));
+  connect(multizone.PHeater[1], sumHeater.u[1]) annotation (Line(points={{151,
+          16.1667},{107.333,16.1667},{107.333,12.8}},
+                                             color={0,0,127}));
+  connect(multizone.PCooler[1], sumCooler.u[1]) annotation (Line(points={{151,
+          14.1667},{151,34.6667},{140.8,34.6667}},
+                                          color={0,0,127}));
+  connect(multizone.PHeater[2], sumHeater.u[2]) annotation (Line(points={{151,
+          16.5},{107.6,16.5},{107.6,12.8}},  color={0,0,127}));
+  connect(multizone.PCooler[2], sumCooler.u[2]) annotation (Line(points={{151,
+          14.5},{151,34.4},{140.8,34.4}}, color={0,0,127}));
+  connect(multizone.PHeater[1], sumHeater.u[3]) annotation (Line(points={{151,
+          16.1667},{107.867,16.1667},{107.867,12.8}},
+                                             color={0,0,127}));
+  connect(multizone.PCooler[1], sumCooler.u[3]) annotation (Line(points={{151,
+          14.1667},{151,34.1333},{140.8,34.1333}},
+                                          color={0,0,127}));
+  connect(multizone.PHeater[2], sumHeater.u[4]) annotation (Line(points={{151,
+          16.5},{108.133,16.5},{108.133,12.8}},
+                                             color={0,0,127}));
+  connect(multizone.PCooler[2], sumCooler.u[4]) annotation (Line(points={{151,
+          14.5},{151,33.8667},{140.8,33.8667}},
+                                          color={0,0,127}));
+  connect(multizone.PHeater[1], sumHeater.u[5]) annotation (Line(points={{151,
+          16.1667},{108.4,16.1667},{108.4,12.8}},
+                                             color={0,0,127}));
+  connect(multizone.PCooler[1], sumCooler.u[5]) annotation (Line(points={{151,
+          14.1667},{151,33.6},{140.8,33.6}},
+                                          color={0,0,127}));
+  connect(multizone.PHeater[2], sumHeater.u[6]) annotation (Line(points={{151,
+          16.5},{108.667,16.5},{108.667,12.8}},
+                                             color={0,0,127}));
+  connect(multizone.PCooler[2], sumCooler.u[6]) annotation (Line(points={{151,
+          14.5},{151,33.3333},{140.8,33.3333}},
+                                          color={0,0,127}));
+  connect(multizone.PHeatAHU, sumHeat.u[2]) annotation (Line(points={{151,21},{116.4,
+          21},{116.4,-1.2}}, color={0,0,127}));
+  connect(multizone.PCoolAHU, sumCool.u[2]) annotation (Line(points={{151,19},{151,
+          41.6},{128.8,41.6}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
 </html>", revisions="<html>
