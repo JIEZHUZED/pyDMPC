@@ -111,7 +111,7 @@ partial model GeothermalHeatPumpControlledBase
   Modelica.Blocks.Math.Gain negate1(k=-1) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=180,
-        origin={130,-20})));
+        origin={130,-24})));
   AixLib.ThermalZones.ReducedOrder.ThermalZone.ThermalZoneEquipped thermalZone(
     redeclare package Medium = Modelica.Media.Air.SimpleAir,
     zoneParam=AixLib.DataBase.ThermalZones.OfficePassiveHouse.OPH_1_Office(),
@@ -123,21 +123,20 @@ partial model GeothermalHeatPumpControlledBase
     annotation (Placement(transformation(extent={{204,4},{184,24}})));
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
-
     computeWetBulbTemperature=false,
     filNam=Modelica.Utilities.Files.loadResource(
         "modelica://AixLib/Resources/weatherdata/USA_CA_San.Francisco.Intl.AP.724940_TMY3.mos"))
     "Weather data reader"
-    annotation (Placement(transformation(extent={{314,22},{294,42}})));
+    annotation (Placement(transformation(extent={{248,28},{228,48}})));
+
   Modelica.Blocks.Sources.Constant const(k=0.2)
     "Infiltration rate"
-    annotation (Placement(transformation(extent={{256,-36},{236,-16}})));
+    annotation (Placement(transformation(extent={{200,-26},{190,-16}})));
   Modelica.Blocks.Sources.CombiTimeTable internalGains(
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
     tableName="UserProfiles",
     fileName=Modelica.Utilities.Files.loadResource(
         "modelica://AixLib/Resources/LowOrder_ExampleData/UserProfiles_18599_SIA_Besprechung_Sitzung_Seminar.txt"),
-
     columns={2,3,4},
     tableOnFile=false,
     table=[0,0,0.1,0,0; 3540,0,0.1,0,0; 3600,0,0.1,0,0; 7140,0,0.1,0,0; 7200,0,
@@ -223,19 +222,21 @@ partial model GeothermalHeatPumpControlledBase
         590400,0,0,0,0; 593940,0,0,0,0; 594000,0,0,0,0; 597540,0,0,0,0; 597600,
         0,0,0,0; 601140,0,0,0,0; 601200,0,0,0,0; 604740,0,0,0,0])
     "Table with profiles for internal gains"
-    annotation(Placement(transformation(extent={{328,-55},{314,-41}})));
+    annotation(Placement(transformation(extent={{200,-48},{190,-37}})));
+
   AixLib.BoundaryConditions.WeatherData.Bus weaBus
     "Weather data bus"
-    annotation (Placement(transformation(extent={{284,-16},{250,16}}),
+    annotation (Placement(transformation(extent={{236,-22},{202,10}}),
     iconTransformation(extent={{-70,-12},{-50,8}})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature idealConditioning(T=294.15)
     annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=0,
         origin={160,22})));
-  Modelica.Blocks.Sources.RealExpression getTStorageUpper1(y=idealConditioning.port.Q_flow)
-                          "Gets the temperature of upper heat storage layer"
-    annotation (Placement(transformation(extent={{-28,-11},{28,11}},
+  Modelica.Blocks.Sources.RealExpression HeatFlowBuildingNeed(y=
+        idealConditioning.port.Q_flow) "Need of Building" annotation (Placement(
+        transformation(
+        extent={{-28,-11},{28,11}},
         rotation=180,
         origin={172,49})));
   Modelica.Blocks.Logical.Switch switch1 annotation (Placement(transformation(
@@ -243,9 +244,9 @@ partial model GeothermalHeatPumpControlledBase
         rotation=180,
         origin={150,0})));
   Modelica.Blocks.Logical.Switch switch2 annotation (Placement(transformation(
-        extent={{-8,-8},{8,8}},
+        extent={{-8,8},{8,-8}},
         rotation=180,
-        origin={150,-20})));
+        origin={150,-24})));
   Modelica.Blocks.Logical.LessEqualThreshold lessEqualThreshold annotation (
       Placement(transformation(
         extent={{5,-5},{-5,5}},
@@ -253,7 +254,7 @@ partial model GeothermalHeatPumpControlledBase
         origin={123,49})));
   Modelica.Blocks.Sources.Constant const1(k=0)
     "Infiltration rate"
-    annotation (Placement(transformation(extent={{200,-80},{180,-60}})));
+    annotation (Placement(transformation(extent={{200,-64},{190,-54}})));
 equation
   connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,58},
           {78,58},{78,80}},                 color={0,0,127}));
@@ -275,52 +276,53 @@ equation
   connect(supplyTemSensor.T, supplyTemperature) annotation (Line(points={{-115,-62.8},
           {-115,-67.4},{-116,-67.4},{-116,-120}}, color={0,0,127}));
   connect(negate.y, prescribedHeatFlow1.Q_flow)
-    annotation (Line(points={{125.6,0},{100,0},{100,2},{96,2}},
+    annotation (Line(points={{125.6,0},{96,0},{96,2}},
                                                 color={0,0,127}));
   connect(prescribedHeatFlow.Q_flow, negate1.y)
-    annotation (Line(points={{116,-28},{116,-20},{125.6,-20}},
+    annotation (Line(points={{116,-28},{116,-24},{125.6,-24}},
                                                      color={0,0,127}));
   connect(weaDat.weaBus,thermalZone. weaBus) annotation (Line(
-      points={{294,32},{280,32},{280,14},{204,14}},
+      points={{228,38},{220,38},{220,16},{212,16},{212,14},{204,14}},
       color={255,204,51},
       thickness=0.5));
   connect(weaDat.weaBus,weaBus)  annotation (Line(
-      points={{294,32},{267,32},{267,0}},
+      points={{228,38},{219,38},{219,-6}},
       color={255,204,51},
       thickness=0.5), Text(
       string="%second",
       index=1,
       extent={{6,3},{6,3}}));
   connect(thermalZone.ventTemp,weaBus. TDryBul) annotation (Line(points={{205.3,
-          10.1},{291.35,10.1},{291.35,0},{267,0}},   color={0,0,127}), Text(
+          10.1},{235.35,10.1},{235.35,-6},{219,-6}}, color={0,0,127}), Text(
       string="%second",
       index=1,
       extent={{6,3},{6,3}}));
-  connect(const.y,thermalZone. ventRate) annotation (Line(points={{235,-26},{
-          235,5.6},{201,5.6}},                        color={0,0,127}));
+  connect(const.y,thermalZone. ventRate) annotation (Line(points={{189.5,-21},{
+          189.5,-4},{201,-4},{201,5.6}},              color={0,0,127}));
   connect(internalGains.y,thermalZone. intGains)
-    annotation (Line(points={{313.3,-48},{186,-48},{186,5.6}},
+    annotation (Line(points={{189.5,-42.5},{186,-42.5},{186,5.6}},
                                                           color={0,0,127}));
   connect(idealConditioning.port, thermalZone.intGainsRad) annotation (Line(
         points={{166,22},{174,22},{174,13},{184,13}}, color={191,0,0}));
   connect(negate.u, switch1.y) annotation (Line(points={{134.8,0},{140,0},{140,
           1.11022e-15},{141.2,1.11022e-15}}, color={0,0,127}));
   connect(switch2.y, negate1.u)
-    annotation (Line(points={{141.2,-20},{134.8,-20}}, color={0,0,127}));
-  connect(getTStorageUpper1.y, switch1.u1) annotation (Line(points={{141.2,49},
-          {132,49},{132,12},{170,12},{170,6.4},{159.6,6.4}}, color={0,0,127}));
-  connect(getTStorageUpper1.y, switch2.u3) annotation (Line(points={{141.2,49},
-          {132,49},{132,12},{170,12},{170,-13.6},{159.6,-13.6}}, color={0,0,127}));
-  connect(getTStorageUpper1.y, lessEqualThreshold.u) annotation (Line(points={{
-          141.2,49},{134.6,49},{134.6,49},{129,49}}, color={0,0,127}));
+    annotation (Line(points={{141.2,-24},{134.8,-24}}, color={0,0,127}));
+  connect(HeatFlowBuildingNeed.y, switch1.u1) annotation (Line(points={{141.2,
+          49},{132,49},{132,12},{170,12},{170,6.4},{159.6,6.4}}, color={0,0,127}));
+  connect(HeatFlowBuildingNeed.y, switch2.u3) annotation (Line(points={{141.2,
+          49},{132,49},{132,12},{170,12},{170,-30.4},{159.6,-30.4}}, color={0,0,
+          127}));
+  connect(HeatFlowBuildingNeed.y, lessEqualThreshold.u) annotation (Line(points
+        ={{141.2,49},{134.6,49},{134.6,49},{129,49}}, color={0,0,127}));
   connect(lessEqualThreshold.y, switch1.u2) annotation (Line(points={{117.5,49},
           {114,49},{114,-10},{164,-10},{164,0},{159.6,0}}, color={255,0,255}));
   connect(lessEqualThreshold.y, switch2.u2) annotation (Line(points={{117.5,49},
-          {114,49},{114,-10},{164,-10},{164,-20},{159.6,-20}}, color={255,0,255}));
-  connect(const1.y, switch2.u1) annotation (Line(points={{179,-70},{168,-70},{
-          168,-26.4},{159.6,-26.4}}, color={0,0,127}));
-  connect(const1.y, switch1.u3) annotation (Line(points={{179,-70},{168,-70},{
-          168,-6.4},{159.6,-6.4}}, color={0,0,127}));
+          {114,49},{114,-10},{164,-10},{164,-24},{159.6,-24}}, color={255,0,255}));
+  connect(const1.y, switch2.u1) annotation (Line(points={{189.5,-59},{168,-59},
+          {168,-17.6},{159.6,-17.6}},color={0,0,127}));
+  connect(const1.y, switch1.u3) annotation (Line(points={{189.5,-59},{168,-59},
+          {168,-6.4},{159.6,-6.4}},color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
 </html>", revisions="<html>
