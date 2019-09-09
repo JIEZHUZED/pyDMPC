@@ -73,8 +73,8 @@ input_variables.append([r"variation.table[1,2]"])       #subsystem
 inputs.append(range(280,290,5))
 output_names.append(["returnTemperature"])  #controlled System
 set_points.append([287])
-state_var_names.append(["sum1.y"])         #controlled System
-model_state_var_names.append(["const.k"])    #subsystem
+state_var_names.append(["negate1.y", "negate.y"])         #controlled System
+model_state_var_names.append(["negate1.y", "negate2.y"])    #subsystem
 start.append(0.)
 stop.append(7200.)
 incr.append(10.)

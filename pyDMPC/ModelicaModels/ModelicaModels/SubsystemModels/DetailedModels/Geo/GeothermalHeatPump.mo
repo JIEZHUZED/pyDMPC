@@ -53,11 +53,11 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
         transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
-        origin={144,-14})));
+        origin={150,-10})));
   Modelica.Blocks.Math.Gain negate1(k=-1) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=-90,
-        origin={116,-22})));
+        origin={116,-18})));
   Modelica.Blocks.Math.Gain negate2(k=-1) annotation (Placement(transformation(
         extent={{-4,-4},{4,4}},
         rotation=180,
@@ -120,10 +120,10 @@ equation
           90.77,-76},{90.77,-56.54}}, color={0,0,127}));
   connect(decisionVariables.y[1], hPControllerOnOff.T_set) annotation (Line(
         points={{-145.3,7},{-126,7},{-126,68},{-78,68}}, color={0,0,127}));
-  connect(const.y, negate1.u) annotation (Line(points={{137.4,-14},{116,-14},{
-          116,-17.2}}, color={0,0,127}));
+  connect(const.y, negate1.u) annotation (Line(points={{143.4,-10},{116,-10},{
+          116,-13.2}}, color={0,0,127}));
   connect(prescribedHeatFlow.Q_flow, negate1.y)
-    annotation (Line(points={{116,-28},{116,-26.4}}, color={0,0,127}));
+    annotation (Line(points={{116,-28},{116,-22.4}}, color={0,0,127}));
   connect(prescribedHeatFlow1.Q_flow, negate2.y)
     annotation (Line(points={{96,2},{111.6,2}}, color={0,0,127}));
   connect(negate2.u, const1.y)

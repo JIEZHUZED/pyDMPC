@@ -124,8 +124,7 @@ partial model GeothermalHeatPumpControlledBase
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
     computeWetBulbTemperature=false,
-    filNam=Modelica.Utilities.Files.loadResource(
-        "modelica://AixLib/Resources/weatherdata/USA_CA_San.Francisco.Intl.AP.724940_TMY3.mos"))
+    filNam=Modelica.Utilities.Files.loadResource("modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
     "Weather data reader"
     annotation (Placement(transformation(extent={{248,28},{228,48}})));
 
@@ -313,8 +312,8 @@ equation
   connect(HeatFlowBuildingNeed.y, switch2.u3) annotation (Line(points={{141.2,
           49},{132,49},{132,12},{170,12},{170,-30.4},{159.6,-30.4}}, color={0,0,
           127}));
-  connect(HeatFlowBuildingNeed.y, lessEqualThreshold.u) annotation (Line(points
-        ={{141.2,49},{134.6,49},{134.6,49},{129,49}}, color={0,0,127}));
+  connect(HeatFlowBuildingNeed.y, lessEqualThreshold.u) annotation (Line(points=
+         {{141.2,49},{134.6,49},{134.6,49},{129,49}}, color={0,0,127}));
   connect(lessEqualThreshold.y, switch1.u2) annotation (Line(points={{117.5,49},
           {114,49},{114,-10},{164,-10},{164,0},{159.6,0}}, color={255,0,255}));
   connect(lessEqualThreshold.y, switch2.u2) annotation (Line(points={{117.5,49},
