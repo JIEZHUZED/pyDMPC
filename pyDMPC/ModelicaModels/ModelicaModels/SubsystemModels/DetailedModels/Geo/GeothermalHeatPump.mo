@@ -14,8 +14,6 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     variation(table=[0,285]),
     decisionVariables(table=[0.0,273.15 + 35]),
     geothField_sink1(T=T_start_cold[1]),
-    integrator1(k=3600),
-    integrator(k=3600),
     pumpCondenser(m_flow_nominal=8),
     pumpHeatConsumer(m_flow_nominal=8));
 

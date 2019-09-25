@@ -124,7 +124,8 @@ partial model GeothermalHeatPumpControlledBase
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
     computeWetBulbTemperature=false,
-    filNam=Modelica.Utilities.Files.loadResource("modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
+    filNam=Modelica.Utilities.Files.loadResource(
+        "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
     "Weather data reader"
     annotation (Placement(transformation(extent={{248,28},{228,48}})));
 
@@ -232,7 +233,7 @@ partial model GeothermalHeatPumpControlledBase
         extent={{-6,-6},{6,6}},
         rotation=0,
         origin={160,22})));
-  Modelica.Blocks.Sources.RealExpression HeatFlowBuildingNeed(y=
+  Modelica.Blocks.Sources.RealExpression HeatFlowBuildingNeed(y=-
         idealConditioning.port.Q_flow) "Need of Building" annotation (Placement(
         transformation(
         extent={{-28,-11},{28,11}},

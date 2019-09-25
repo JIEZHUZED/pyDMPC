@@ -73,8 +73,8 @@ input_variables.append([r"variation.table[1,2]"])       #subsystem
 inputs.append(range(280,290,5))
 output_names.append(["returnTemperature"])  #controlled System
 set_points.append([287])
-state_var_names.append(["negate1.y", "negate.y"])         #controlled System
-model_state_var_names.append(["negate1.y", "negate2.y"])    #subsystem
+state_var_names.append(["switch2.y"])         #controlled System
+model_state_var_names.append(["const.k"])    #subsystem
 start.append(0.)
 stop.append(7200.)
 incr.append(10.)
@@ -86,10 +86,10 @@ dym_path.append(glob_dym_path)
 mod_path.append(r'ModelicaModels.SubsystemModels.DetailedModels.Geo.GeothermalHeatPump')
 command_names.append(["T_set_storage"])     #controlled System
 command_variables.append(["decisionVariables.table[1,2]"])      #subsystem
-commands.append(range(273+35,273+40,5))
+commands.append(range(308,313,5))
 traj_points.append([])
 traj_var.append([])
-cost_fac.append([-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3000.0, -3000.0, 10.0, 2.0])
+cost_fac.append([-1.0, 0.0, 1000.0, -1000.0, 2000.0, -2000.0, 3000.0, -3000.0, 10.0, 2.0])
 factors.append([1, -10./4.18/8./100.])
 
 sys_id.append(1)

@@ -7,37 +7,44 @@ model GeothermalHeatPumpSystem
     redeclare
       AixLib.Fluid.Examples.GeothermalHeatPump.Components.BoilerStandAlone
       PeakLoadDevice(redeclare package Medium = Water),
-    vol1(V=0.5, T_start=285.15),
-    vol2(V=0.5, T_start=285.15),
+    vol1(V=0.5,
+      nPorts=3,
+      T_start=279.15),
+    vol2(V=0.5,
+      nPorts=3,
+      T_start=318.15),
     resistanceGeothermalSource(m_flow_nominal=baseParam.m_flow_tot),
     pumpGeothermalSource(T_start=285.15),
     pumpHeatConsumer(T_start=285.15),
     pumpCondenser(T_start=285.15),
     pumpEvaporator(T_start=285.15),
-    pumpColdConsumer(T_start=285.15),
-    integrator(k=3600),
-    integrator1(k=3600),
-    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,9900,
-          10200,10500,11100,11400; 323.15,13500,13200,13800,15000,15300],
-        tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
-          29100,34800,39000,44400,48900; 323.15,30000,33600,38700,50100,52500]),
+    pumpColdConsumer(T_start=279.15),
+    heatPumpTab(
+      VolumeEvaporator=1,
+      VolumeCondenser=1,
+      tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,29700,30600,
+          31500,33300,34200; 323.15,40500,39600,41400,45000,45900],
+      tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
+          87300,104400,117000,133200,146700; 323.15,90000,100800,116100,150300,
+          157500]),
     thermalZone(zoneParam=
           Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office()));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
-        Water, nPorts=1,
-    T=285.15)            annotation (Placement(transformation(
+        Water,
+    nPorts=1,
+    T=279.15)            annotation (Placement(transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
-        origin={94,-20})));
+        origin={100,-20})));
   AixLib.Fluid.Sources.Boundary_pT heatConsumerReturn(
     redeclare package Medium = Water,
     nPorts=1,
-    T=285.15) "Source representing heat consumer" annotation (Placement(
+    T=313.15) "Source representing heat consumer" annotation (Placement(
         transformation(
         extent={{-6,-6},{6,6}},
         rotation=180,
-        origin={112,-106})));
+        origin={118,-106})));
   Modelica.Blocks.Sources.Constant pressureDifference(k=60000)
     "Pressure difference used for all pumps"                   annotation (
       Placement(transformation(
@@ -62,15 +69,11 @@ model GeothermalHeatPumpSystem
     "Connector of Real input signal 2"
     annotation (Placement(transformation(extent={{-102,62},{-90,74}})));
 equation
-  connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
-    annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
   connect(pressureDifference.y, pumpColdConsumer.dp_in) annotation (Line(points={{65.4,6},
           {55,6},{55,-11.6}},                        color={0,0,127}));
   connect(pressureDifference.y, pumpHeatConsumer.dp_in) annotation (Line(points={{65.4,6},
           {62,6},{62,-36},{55,-36},{55,-41.6}},                        color={0,
           0,127}));
-  connect(resistanceHeatConsumerReturn.port_a,heatConsumerReturn. ports[1])
-    annotation (Line(points={{100,-106},{106,-106}},          color={0,127,255}));
   connect(pressureDifference.y, pumpEvaporator.dp_in) annotation (Line(points={{65.4,6},
           {56,6},{56,54},{7,54},{7,44.4}},                        color={0,0,
           127}));
@@ -114,6 +117,10 @@ equation
          {{-139,74},{-108.5,74},{-108.5,76},{-78,76}}, color={0,0,127}));
   connect(T_set_storage, hPControllerOnOff.T_set)
     annotation (Line(points={{-96,68},{-78,68}}, color={0,0,127}));
+  connect(coldConsumerFlow.ports[1], vol1.ports[3]) annotation (Line(points={{
+          94,-20},{90,-20},{90,30},{86,30}}, color={0,127,255}));
+  connect(heatConsumerReturn.ports[1], vol2.ports[3]) annotation (Line(points={
+          {112,-106},{110,-106},{110,-54},{106,-54}}, color={0,127,255}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
