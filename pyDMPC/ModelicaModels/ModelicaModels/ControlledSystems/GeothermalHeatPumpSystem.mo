@@ -19,16 +19,14 @@ model GeothermalHeatPumpSystem
     pumpCondenser(T_start=285.15),
     pumpEvaporator(T_start=285.15),
     pumpColdConsumer(T_start=279.15),
-    heatPumpTab(
-      VolumeEvaporator=1,
-      VolumeCondenser=1,
-      tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,29700,30600,
-          31500,33300,34200; 323.15,40500,39600,41400,45000,45900],
-      tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
-          87300,104400,117000,133200,146700; 323.15,90000,100800,116100,150300,
-          157500]),
     thermalZone(zoneParam=
-          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office()));
+          Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office()),
+    negate1(k=-1),
+    negate(k=-1),
+    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,1650,
+          1700,1750,1850,1900; 323.15,2250,2200,2300,2500,2550],
+        tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,
+          4850,5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750]));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water,
@@ -121,6 +119,12 @@ equation
           94,-20},{90,-20},{90,30},{86,30}}, color={0,127,255}));
   connect(heatConsumerReturn.ports[1], vol2.ports[3]) annotation (Line(points={
           {112,-106},{110,-106},{110,-54},{106,-54}}, color={0,127,255}));
+  connect(geothermalFieldControllerCold.valveOpening2, valve.y) annotation (
+      Line(points={{-83.04,31.2},{-82,31.2},{-82,2},{-86,2},{-86,-3.6}}, color=
+          {0,0,127}));
+  connect(geothermalFieldControllerCold.valveOpening1, valve1.y) annotation (
+      Line(points={{-83.04,40.8},{-70,40.8},{-70,30.4},{-72,30.4}}, color={0,0,
+          127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>

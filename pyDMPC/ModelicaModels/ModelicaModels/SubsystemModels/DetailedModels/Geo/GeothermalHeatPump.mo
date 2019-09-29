@@ -126,6 +126,11 @@ equation
     annotation (Line(points={{96,2},{111.6,2}}, color={0,0,127}));
   connect(negate2.u, const1.y)
     annotation (Line(points={{120.8,2},{127.4,2}}, color={0,0,127}));
+  connect(geothermalFieldControllerCold.valveOpening1, valve1.y) annotation (
+      Line(points={{-83.04,50.8},{-83.04,50},{-74,50},{-74,32.4}}, color={0,0,
+          127}));
+  connect(valve.y, geothermalFieldControllerCold.valveOpening2) annotation (
+      Line(points={{-74,0.4},{-83.04,0.4},{-83.04,41.2}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
