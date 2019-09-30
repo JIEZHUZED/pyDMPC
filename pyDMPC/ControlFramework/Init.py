@@ -84,7 +84,7 @@ lib_paths.append(glob_lib_paths)
 res_path.append(glob_res_path + "\\" + name_wkdir)
 dym_path.append(glob_dym_path)
 mod_path.append(r'ModelicaModels.SubsystemModels.DetailedModels.Geo.GeothermalHeatPump')
-command_names.append(["T_set_storage"])     #controlled System
+command_names.append(["T_set_HeatStorage"])     #controlled System
 command_variables.append(["decisionVariables.table[1,2]"])      #subsystem
 commands.append(range(308,313,5))
 traj_points.append([])

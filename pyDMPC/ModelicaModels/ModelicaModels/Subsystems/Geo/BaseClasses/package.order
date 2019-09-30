@@ -5,3 +5,4 @@ GeothermalHeatPumpControlledBase
 GeothermalHeatPumpBase
 TEASER_DataBase
 TEASER_BuildingSets
+geothermalFieldController

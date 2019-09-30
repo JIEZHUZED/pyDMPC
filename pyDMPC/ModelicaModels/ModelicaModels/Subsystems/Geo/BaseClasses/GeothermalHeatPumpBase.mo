@@ -117,8 +117,10 @@ partial model GeothermalHeatPumpBase
         rotation=90,
         origin={-18,-78})));
   AixLib.Fluid.Sources.Boundary_pT geothField_sink1(redeclare package Medium =
-        Water, nPorts=1) "One of two sinks representing geothermal field"
-    annotation (Placement(transformation(extent={{-158,20},{-146,32}})));
+        Water, nPorts=2) "One of two sinks representing geothermal field"
+    annotation (Placement(transformation(extent={{-6,-6},{6,6}},
+        rotation=90,
+        origin={-120,12})));
   AixLib.Fluid.FixedResistances.PressureDrop resistanceHeatConsumerFlow(
     redeclare package Medium = Water,
     dp_nominal=10000,
@@ -263,16 +265,7 @@ partial model GeothermalHeatPumpBase
     annotation (Placement(transformation(
         extent={{-6,7},{6,-7}},
         rotation=180,
-        origin={-78,32})));
-  AixLib.Fluid.Actuators.Valves.TwoWayQuickOpening valve2(
-    redeclare package Medium = Water,
-    m_flow_nominal=0.5,
-    dpValve_nominal=5000)
-    "Valve connecting cold storage to the evaporator of the heat pump"
-    annotation (Placement(transformation(
-        extent={{-6,-7},{6,7}},
-        rotation=180,
-        origin={-78,10})));
+        origin={-78,22})));
 equation
 
   connect(resistanceGeothermalSource.port_b, valveHeatSink.port_a) annotation (
@@ -344,7 +337,7 @@ equation
   connect(resistanceHeatConsumerFlow.port_b, PeakLoadDevice.port_a) annotation (
      Line(points={{80,-50},{86,-50}},            color={0,127,255}));
   connect(geothField_sink1.ports[1], returnTemSensor.port_b) annotation (
-      Line(points={{-146,26},{-138,26},{-138,18},{-114,18}},     color={0,
+      Line(points={{-121.2,18},{-114,18}},                       color={0,
           127,255}));
   connect(resistanceColdConsumerFlow.port_b, vol1.ports[1])
     annotation (Line(points={{80,-20},{86,-20},{86,28}}, color={0,127,255}));
@@ -361,13 +354,9 @@ equation
   connect(valve.port_b, returnTemSensor.port_a) annotation (Line(points={{-92,
           -12},{-100,-12},{-100,18}}, color={0,127,255}));
   connect(valve1.port_b, returnTemSensor.port_a) annotation (Line(points={{-84,
-          32},{-100,32},{-100,18}}, color={0,127,255}));
-  connect(valve2.port_b, returnTemSensor.port_a) annotation (Line(points={{-84,
-          10},{-100,10},{-100,18}}, color={0,127,255}));
+          22},{-100,22},{-100,18}}, color={0,127,255}));
   connect(heatPumpTab.port_b_sink, valve1.port_a) annotation (Line(points={{
-          -5.8,14.9},{-5.8,22},{-68,22},{-68,32},{-72,32}}, color={0,127,255}));
-  connect(heatPumpTab.port_b_sink, valve2.port_a) annotation (Line(points={{
-          -5.8,14.9},{-5.8,22},{-68,22},{-68,10},{-72,10}}, color={0,127,255}));
+          -5.8,14.9},{-5.8,22},{-72,22}}, color={0,127,255}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),

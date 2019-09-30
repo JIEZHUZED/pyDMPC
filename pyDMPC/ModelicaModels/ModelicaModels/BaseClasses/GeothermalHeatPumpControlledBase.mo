@@ -255,6 +255,11 @@ partial model GeothermalHeatPumpControlledBase
   Modelica.Blocks.Sources.Constant const1(k=0)
     "Infiltration rate"
     annotation (Placement(transformation(extent={{200,-64},{190,-54}})));
+  Modelica.Thermal.HeatTransfer.Sources.FixedTemperature cellarTemperature(T=284.15)
+    annotation (Placement(transformation(
+        extent={{6,-6},{-6,6}},
+        rotation=0,
+        origin={194,-76})));
 equation
   connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,58},
           {78,58},{78,80}},                 color={0,0,127}));
@@ -323,6 +328,11 @@ equation
           {168,-17.6},{159.6,-17.6}},color={0,0,127}));
   connect(const1.y, switch1.u3) annotation (Line(points={{189.5,-59},{168,-59},
           {168,-6.4},{159.6,-6.4}},color={0,0,127}));
+  connect(cellarTemperature.port, coldStorage.heatPort)
+    annotation (Line(points={{188,-76},{50,-76},{50,6},{49.2,6}},
+                                                        color={191,0,0}));
+  connect(cellarTemperature.port, heatStorage.heatPort)
+    annotation (Line(points={{188,-76},{49.2,-76}},         color={191,0,0}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
 </html>", revisions="<html>
