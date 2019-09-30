@@ -52,7 +52,7 @@ model GeothermalHeatPumpSystem
   AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerCold(
       temperature_low=273.15 + 6, temperature_high=273.15 + 8)
     "Controls the heat exchange with the geothermal field and the cold storage"
-    annotation (Placement(transformation(extent={{-100,28},{-84,44}})));
+    annotation (Placement(transformation(extent={{-104,40},{-88,56}})));
   AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerHeat
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-100,-34},{-84,-18}})));
@@ -81,13 +81,13 @@ equation
         points={{-89,-45.6},{-89,-36},{62,-36},{62,6},{65.4,6}},       color={0,
           0,127}));
   connect(getTStorageLower.y,geothermalFieldControllerCold. temperature)
-    annotation (Line(points={{-139,58},{-122,58},{-108,58},{-108,36},{-100,36}},
+    annotation (Line(points={{-139,58},{-108,58},{-108,48},{-104,48}},
         color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening1, valveColdStorage.y)
-    annotation (Line(points={{-83.04,40.8},{-82,40.8},{-82,40},{-82,52},{-82,54},
-          {-52,54},{-52,46.4}}, color={0,0,127}));
+    annotation (Line(points={{-87.04,52.8},{-82,52.8},{-82,54},{-52,54},{-52,
+          46.4}},               color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening2, valveHeatSource.y)
-    annotation (Line(points={{-83.04,31.2},{-82,31.2},{-82,1},{-68.4,1}}, color=
+    annotation (Line(points={{-87.04,43.2},{-86,43.2},{-86,1},{-68.4,1}}, color=
          {0,0,127}));
   connect(getTStorageUpper.y,geothermalFieldControllerHeat. temperature)
     annotation (Line(points={{-139,74},{-122,74},{-122,-26},{-100,-26}}, color=
@@ -120,11 +120,12 @@ equation
   connect(heatConsumerReturn.ports[1], vol2.ports[3]) annotation (Line(points={
           {112,-106},{110,-106},{110,-54},{106,-54}}, color={0,127,255}));
   connect(geothermalFieldControllerCold.valveOpening2, valve.y) annotation (
-      Line(points={{-83.04,31.2},{-82,31.2},{-82,2},{-86,2},{-86,-3.6}}, color=
-          {0,0,127}));
+      Line(points={{-87.04,43.2},{-86,43.2},{-86,-3.6}}, color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening1, valve1.y) annotation (
-      Line(points={{-83.04,40.8},{-70,40.8},{-70,30.4},{-72,30.4}}, color={0,0,
+      Line(points={{-87.04,52.8},{-70,52.8},{-70,40.4},{-78,40.4}}, color={0,0,
           127}));
+  connect(geothermalFieldControllerHeat.valveOpening1, valve2.y) annotation (
+      Line(points={{-83.04,-21.2},{-78,-21.2},{-78,1.6}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
