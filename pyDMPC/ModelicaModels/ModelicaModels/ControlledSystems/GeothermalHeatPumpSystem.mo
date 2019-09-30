@@ -83,9 +83,6 @@ equation
   connect(getTStorageLower.y,geothermalFieldControllerCold. temperature)
     annotation (Line(points={{-139,58},{-108,58},{-108,48},{-104,48}},
         color={0,0,127}));
-  connect(geothermalFieldControllerCold.valveOpening1, valveColdStorage.y)
-    annotation (Line(points={{-87.04,52.8},{-82,52.8},{-82,54},{-52,54},{-52,
-          46.4}},               color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening2, valveHeatSource.y)
     annotation (Line(points={{-87.04,43.2},{-86,43.2},{-86,1},{-68.4,1}}, color=
          {0,0,127}));
@@ -121,11 +118,13 @@ equation
           {112,-106},{110,-106},{110,-54},{106,-54}}, color={0,127,255}));
   connect(geothermalFieldControllerCold.valveOpening2, valve.y) annotation (
       Line(points={{-87.04,43.2},{-86,43.2},{-86,-3.6}}, color={0,0,127}));
-  connect(geothermalFieldControllerCold.valveOpening1, valve1.y) annotation (
-      Line(points={{-87.04,52.8},{-70,52.8},{-70,40.4},{-78,40.4}}, color={0,0,
-          127}));
   connect(geothermalFieldControllerHeat.valveOpening1, valve2.y) annotation (
       Line(points={{-83.04,-21.2},{-78,-21.2},{-78,1.6}}, color={0,0,127}));
+  connect(geothermalFieldControllerCold.valveOpening1, valveColdStorage.y)
+    annotation (Line(points={{-87.04,52.8},{-52,52.8},{-52,46.4}}, color={0,0,
+          127}));
+  connect(geothermalFieldControllerCold.valveOpening1, valve1.y) annotation (
+      Line(points={{-87.04,52.8},{-78,52.8},{-78,40.4}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
