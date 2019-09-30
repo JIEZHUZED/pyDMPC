@@ -75,8 +75,6 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
   AixLib.Controls.HeatPump.HPControllerOnOff hPControllerOnOff(bandwidth=5)
     "Controls the temperature in the heat storage by switching the heat pump on or off"
     annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
-  AixLib.Controls.Interfaces.HeatPumpControlBus heatPumpControlBus1
-    annotation (Placement(transformation(extent={{-21,60},{20,98}})));
   Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth
       =275.15)
     "Controls the heat exchange with the geothermal field and the heat storage"
@@ -121,14 +119,6 @@ equation
   connect(const2.y,add1. u1) annotation (Line(points={{-147.5,29},{-141,29},{
           -141,24}},
                 color={0,0,127}));
-  connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus1)
-    annotation (Line(
-      points={{-58.05,72.05},{-44,72.05},{-44,79},{-0.5,79}},
-      color={255,204,51},
-      thickness=0.5), Text(
-      string="%second",
-      index=1,
-      extent={{6,3},{6,3}}));
   connect(add1.y,geothermalFieldControllerHeat. Setpoint) annotation (Line(
         points={{-129.5,21},{-126,21},{-126,-20.4},{-96,-20.4}},  color={0,0,127}));
   connect(geothermalFieldControllerCold.valveOpening1, valve1.y) annotation (
@@ -168,6 +158,14 @@ equation
   connect(cellarTemperature.port, coldStorage.heatPort)
     annotation (Line(points={{188,-76},{50,-76},{50,6},{49.2,6}},
                                                         color={191,0,0}));
+  connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation
+    (Line(
+      points={{-58.05,72.05},{-32.025,72.05},{-32.025,79},{-0.5,79}},
+      color={255,204,51},
+      thickness=0.5), Text(
+      string="%second",
+      index=1,
+      extent={{6,3},{6,3}}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(revisions="<html>
 <ul>
 <li>
