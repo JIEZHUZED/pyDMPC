@@ -26,7 +26,8 @@ model GeothermalHeatPumpSystem
     heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,1650,1700,
           1750,1850,1900; 323.15,2250,2200,2300,2500,2550],
         tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,4850,
-          5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750]));
+          5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750]),
+    movMea(delta=7200));
 
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =

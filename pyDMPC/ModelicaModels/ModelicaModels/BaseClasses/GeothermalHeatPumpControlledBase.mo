@@ -260,14 +260,16 @@ partial model GeothermalHeatPumpControlledBase
         extent={{6,-6},{-6,6}},
         rotation=0,
         origin={194,-76})));
+  Buildings.Controls.OBC.CDL.Continuous.MovingMean movMea(delta=94672800)
+    annotation (Placement(transformation(extent={{-6,-6},{6,6}},
+        rotation=-90,
+        origin={-144,-94})));
 equation
   connect(getTStorageLower.y, coldStorageTemperature) annotation (Line(points={{-139,58},
           {78,58},{78,80}},                 color={0,0,127}));
   connect(getTStorageUpper.y, heatStorageTemperature) annotation (Line(points={{-139,74},
           {-122,74},{-122,60},{60,60},{60,80}},
         color={0,0,127}));
-  connect(returnTemSensor.T, returnTemperature) annotation (Line(points={{
-          -107,9.2},{-107,-94},{-144,-94},{-144,-120}}, color={0,0,127}));
   connect(prescribedHeatFlow.port, vol2.heatPort)
     annotation (Line(points={{116,-40},{116,-44}}, color={191,0,0}));
   connect(vol1.heatPort, prescribedHeatFlow1.port)
@@ -333,6 +335,10 @@ equation
                                                         color={191,0,0}));
   connect(cellarTemperature.port, heatStorage.heatPort)
     annotation (Line(points={{188,-76},{49.2,-76}},         color={191,0,0}));
+  connect(returnTemperature, movMea.y)
+    annotation (Line(points={{-144,-120},{-144,-100.6}}, color={0,0,127}));
+  connect(returnTemSensor.T, movMea.u) annotation (Line(points={{-107,9.2},{
+          -107,-86},{-144,-86},{-144,-86.8}}, color={0,0,127}));
   annotation (experiment(StopTime=86400, Interval=10), Documentation(info="<html>
 <p>Base class of an example demonstrating the use of a heat pump connected to two storages and a geothermal source. A replaceable model is connected in the flow line of the heating circuit. A peak load device can be added here.  This model also includes basic controllers.</p>
 </html>", revisions="<html>
