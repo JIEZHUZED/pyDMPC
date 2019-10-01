@@ -266,6 +266,10 @@ partial model GeothermalHeatPumpBase
         extent={{-6,7},{6,-7}},
         rotation=180,
         origin={-78,22})));
+  Modelica.Blocks.Logical.Not not1 annotation (Placement(transformation(
+        extent={{-4,-4},{4,4}},
+        rotation=-90,
+        origin={-14,52})));
 equation
 
   connect(resistanceGeothermalSource.port_b, valveHeatSink.port_a) annotation (
@@ -328,12 +332,6 @@ equation
         points={{-8,-98},{-18,-98},{-18,-84}}, color={0,127,255}));
   connect(pumpGeothermalSource.port_b, resistanceGeothermalSource.port_a)
     annotation (Line(points={{-82,-54},{-79,-54},{-76,-54}}, color={0,127,255}));
-  connect(heatPumpTab.OnOff, heatPumpControlBus.onOff) annotation (Line(points={
-          {-22,16.6},{-22,16.6},{-22,60},{-0.3975,60},{-0.3975,79.095}}, color={
-          255,0,255}), Text(
-      string="%second",
-      index=1,
-      extent={{6,3},{6,3}}));
   connect(resistanceHeatConsumerFlow.port_b, PeakLoadDevice.port_a) annotation (
      Line(points={{80,-50},{86,-50}},            color={0,127,255}));
   connect(geothField_sink1.ports[1], returnTemSensor.port_b) annotation (
@@ -357,6 +355,13 @@ equation
           22},{-100,22},{-100,18}}, color={0,127,255}));
   connect(heatPumpTab.port_b_sink, valve1.port_a) annotation (Line(points={{
           -5.8,14.9},{-5.8,22},{-72,22}}, color={0,127,255}));
+  connect(heatPumpTab.OnOff, not1.y) annotation (Line(points={{-22,16.6},{-18,
+          16.6},{-18,47.6},{-14,47.6}}, color={255,0,255}));
+  connect(not1.u, heatPumpControlBus.onOff) annotation (Line(points={{-14,56.8},
+          {-10,56.8},{-10,79.095},{-0.3975,79.095}}, color={255,0,255}), Text(
+      string="%second",
+      index=1,
+      extent={{6,3},{6,3}}));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-160,
           -120},{160,80}})),              Icon(coordinateSystem(
           preserveAspectRatio=false, extent={{-160,-120},{160,80}})),

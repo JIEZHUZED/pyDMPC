@@ -15,7 +15,11 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     decisionVariables(table=[0.0,273.15 + 35]),
     geothField_sink1(T=T_start_cold[1]),
     pumpCondenser(m_flow_nominal=8),
-    pumpHeatConsumer(m_flow_nominal=8));
+    pumpHeatConsumer(m_flow_nominal=8),
+    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,1650,
+          1700,1750,1850,1900; 323.15,2250,2200,2300,2500,2550],
+        tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,
+          4850,5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750]));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1) annotation (Placement(transformation(
@@ -68,15 +72,15 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
         origin={-153,45})));
   Buildings.Controls.OBC.CDL.Continuous.Add add1
     annotation (Placement(transformation(extent={{-140,16},{-130,26}})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerCold(bandwidth
-      =275.15)
+  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerCold(bandwidth=
+       275.15)
     "Controls the heat exchange with the geothermal field and the cold storage"
     annotation (Placement(transformation(extent={{-104,38},{-88,54}})));
   AixLib.Controls.HeatPump.HPControllerOnOff hPControllerOnOff(bandwidth=5)
     "Controls the temperature in the heat storage by switching the heat pump on or off"
     annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth
-      =275.15)
+  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth=
+       275.15)
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-96,-34},{-80,-18}})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature cellarTemperature(T=284.15)
@@ -158,8 +162,8 @@ equation
   connect(cellarTemperature.port, coldStorage.heatPort)
     annotation (Line(points={{188,-76},{50,-76},{50,6},{49.2,6}},
                                                         color={191,0,0}));
-  connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation
-    (Line(
+  connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation (
+     Line(
       points={{-58.05,72.05},{-32.025,72.05},{-32.025,79},{-0.5,79}},
       color={255,204,51},
       thickness=0.5), Text(

@@ -50,12 +50,12 @@ model GeothermalHeatPumpSystem
         extent={{-6,-6},{6,6}},
         rotation=180,
         origin={72,6})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerCold(bandwidth
-      =275.15)
+  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerCold(bandwidth=
+       275.15)
     "Controls the heat exchange with the geothermal field and the cold storage"
     annotation (Placement(transformation(extent={{-104,40},{-88,56}})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth
-      =275.15)
+  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth=
+       275.15)
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-100,-34},{-84,-18}})));
   Modelica.Blocks.Interfaces.RealInput traj "Connector of Real input signal 2"
@@ -67,7 +67,8 @@ model GeothermalHeatPumpSystem
     annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
   Modelica.Blocks.Interfaces.RealInput T_set_HeatStorage
     "Setpoint of the Heat Storage"
-    annotation (Placement(transformation(extent={{-166,8},{-154,20}})));
+    annotation (Placement(transformation(extent={{-166,8},{-154,20}}),
+        iconTransformation(extent={{-160,20},{-120,60}})));
   Modelica.Blocks.Sources.Constant const2(k=4)
     "Infiltration rate"
     annotation (Placement(transformation(extent={{5,-5},{-5,5}},
