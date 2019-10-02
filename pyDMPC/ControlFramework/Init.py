@@ -89,7 +89,7 @@ command_variables.append(["decisionVariables.table[1,2]"])      #subsystem
 commands.append(range(308,313,5))
 traj_points.append([])
 traj_var.append([])
-cost_fac.append([-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 100.0, 0.0])
+cost_fac.append([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 10000.0, 0.0])
 factors.append([1, -10./4.18/8./100.])
 
 sys_id.append(1)

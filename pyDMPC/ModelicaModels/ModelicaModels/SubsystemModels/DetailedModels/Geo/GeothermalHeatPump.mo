@@ -16,10 +16,11 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     geothField_sink1(T=T_start_cold[1]),
     pumpCondenser(m_flow_nominal=8),
     pumpHeatConsumer(m_flow_nominal=8),
-    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,1650,
-          1700,1750,1850,1900; 323.15,2250,2200,2300,2500,2550],
+    heatPumpTab(
         tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,
-          4850,5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750]));
+          4850,5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750],
+        tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,4125,4250,4375,
+          4625,4750; 323.15,5625,5500,5750,6250,6375]));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1) annotation (Placement(transformation(
@@ -65,22 +66,17 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     annotation (Placement(transformation(extent={{5,-5},{-5,5}},
         rotation=180,
         origin={-153,29})));
-  Modelica.Blocks.Sources.Constant T_set_ColdStorage(k=279.15)
-    "Infiltration rate" annotation (Placement(transformation(
-        extent={{5,-5},{-5,5}},
-        rotation=180,
-        origin={-153,45})));
   Buildings.Controls.OBC.CDL.Continuous.Add add1
     annotation (Placement(transformation(extent={{-140,16},{-130,26}})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerCold(bandwidth=
-       275.15)
+  AixLib.Fluid.Examples.GeothermalHeatPump.Control.geothermalFieldController geothermalFieldControllerCold(
+      temperature_low=273.15 + 6, temperature_high=273.15 + 8)
     "Controls the heat exchange with the geothermal field and the cold storage"
     annotation (Placement(transformation(extent={{-104,38},{-88,54}})));
   AixLib.Controls.HeatPump.HPControllerOnOff hPControllerOnOff(bandwidth=5)
     "Controls the temperature in the heat storage by switching the heat pump on or off"
     annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth=
-       275.15)
+  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth
+      =277.15)
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-96,-34},{-80,-18}})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature cellarTemperature(T=284.15)
@@ -117,9 +113,6 @@ equation
     annotation (Line(points={{96,2},{111.6,2}}, color={0,0,127}));
   connect(negate2.u, const1.y)
     annotation (Line(points={{120.8,2},{127.4,2}}, color={0,0,127}));
-  connect(T_set_ColdStorage.y, geothermalFieldControllerCold.Setpoint)
-    annotation (Line(points={{-147.5,45},{-128,45},{-128,51.6},{-104,51.6}},
-        color={0,0,127}));
   connect(const2.y,add1. u1) annotation (Line(points={{-147.5,29},{-141,29},{
           -141,24}},
                 color={0,0,127}));

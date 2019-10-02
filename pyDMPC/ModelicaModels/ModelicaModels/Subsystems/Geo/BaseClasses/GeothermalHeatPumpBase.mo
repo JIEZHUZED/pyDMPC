@@ -20,8 +20,7 @@ partial model GeothermalHeatPumpBase
   AixLib.Fluid.HeatPumps.HeatPumpSimple heatPumpTab(
     volumeEvaporator(T_start=T_start_cold[1]),
     volumeCondenser(T_start=T_start_warm[5]),
-    gain(
-    k =    -1000000),
+    gain(k = -1),
     redeclare package Medium = Water,
     tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,97000,116000,
         130000,148000,163000; 323.15,100000,112000,129000,167000,175000],
