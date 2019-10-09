@@ -74,30 +74,58 @@ class TestModelClass (unittest.TestCase):
                 self.assertIsInstance(self.model.times, Modeling.Times)
                 self.assertIsInstance(self.model.paths, Modeling.Paths) 
 
-@unittest.skipUnless('Modelica' in Init.model_type, "no Modelica model used")
 class TestModelicaModClass (unittest.TestCase):
     
-                      
+    def testInit(self):
+
+        for i in Init.sys_id:
+            with self.subTest(i=i):
+                self.model = Modeling.ModelicaMod(i)
+               
+                self.assertEqual(Init.model_type[i], self.model.model_type)
+                self.assertIsInstance(self.model.states, Modeling.States)
+                self.assertIsInstance(self.model.times, Modeling.Times)
+                self.assertIsInstance(self.model.paths, Modeling.Paths)                   
+    
     def testMakeDymola(self):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
                 self.model = Modeling.ModelicaMod(i)
-                self.assertIn(Init.name[i], self.model.dym_path)
-
+                
+                self.assertEqual(self.model.dym_path, Init.glob_dym_path)
+                self.assertEqual(self.model.lib_paths, Init.glob_lib_paths)
+                self.assertEqual(self.model.dymola, None)
+              
     #def testDelDymola(self):
         
-    #def testTranslate(self):
+    def testTranslate(self):
         
-    #def testSimulate(self):
+        for i in Init.sys_id:
+            with self.subTest(i=i):
+                self.model = Modeling.ModelicaMod(i)
+                
+                self.assertEqual(Init.res_path[i] + "\\" + Init.name[i], self.model.paths.res_path)    
         
+    def testSimulate(self):
+        
+        for i in Init.sys_id:
+            with self.subTest(i=i):
+                self.model = Modeling.ModelicaMod(i)
+                
+                self.dymola = self.model.make_dymola()
+                self.translate = self.model.translate()
+                self.simulate = self.model.simulate()
+                #self.delete = self.model.del_dymola()
+                
+                self.assertEqual(self.simulate.command_variables, "decisionVariables.table[1,2]")
+                
     #def testGetOutputs(self):
         
     #def testGetResults(self):
         
     #def testPredict(self):
     
-@unittest.skipUnless('Scikit' in Init.model_type, "no Scikit model used")
 class TestSciModClass (unittest.TestCase):
               
     def testSciMod(self):
@@ -105,9 +133,8 @@ class TestSciModClass (unittest.TestCase):
             with self.subTest(i=i):
                 self.model = Modeling.SciMod(i)
                 
-                #self.assertEqual(6, 5)
-        
-@unittest.skipUnless('Linear' in Init.model_type, "no Linear model used")
+
+@unittest.skipUnless('Linear' in Init.model_type, "no Linear model used")        
 class TestLinModClass (unittest.TestCase):
             
     def testLinMod(self):
@@ -117,7 +144,6 @@ class TestLinModClass (unittest.TestCase):
                 
                 self.assertEqual(3,5)
     
-#@unittest.skipUnless('Fuzzy'/None ?? in Init.model_type )           
-          
+         
 if __name__ == '__main__':
    unittest.main()
