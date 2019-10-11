@@ -74,9 +74,20 @@ class TestModelClass (unittest.TestCase):
                 self.assertIsInstance(self.model.times, Modeling.Times)
                 self.assertIsInstance(self.model.paths, Modeling.Paths) 
 
+class TestModifsClass (unittest.TestCase):
+    
+    def test_modifs (self): 
+        
+        for i in Init.sys_id:
+            with self.subTest(i=i):
+                self.modifs = Modeling.Modifs(i)
+                
+                self.assertEqual(self.modifs.factors[i], Init.factors[i])
+
+
 class TestModelicaModClass (unittest.TestCase):
     
-    def testInit(self):
+    def test_Init(self):
 
         for i in Init.sys_id:
             with self.subTest(i=i):
@@ -87,7 +98,7 @@ class TestModelicaModClass (unittest.TestCase):
                 self.assertIsInstance(self.model.times, Modeling.Times)
                 self.assertIsInstance(self.model.paths, Modeling.Paths)                   
     
-    def testMakeDymola(self):
+    def test_makeDymola(self):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
@@ -96,10 +107,17 @@ class TestModelicaModClass (unittest.TestCase):
                 self.assertEqual(self.model.dym_path, Init.glob_dym_path)
                 self.assertEqual(self.model.lib_paths, Init.glob_lib_paths)
                 self.assertEqual(self.model.dymola, None)
-              
-    #def testDelDymola(self):
+                    
+    def testDelDymola(self):
         
-    def testTranslate(self):
+        for i in Init.sys_id:
+            with self.subTest(i=i):
+                self.model = Modeling.ModelicaMod(i)
+                self.delete = self.model.del_dymola()
+                
+                self.assertEqual(self.delete, None) #überprüfen, ob dymola auf None gesetzt wurde
+        
+    def test_translate(self):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
@@ -107,42 +125,49 @@ class TestModelicaModClass (unittest.TestCase):
                 
                 self.assertEqual(Init.res_path[i] + "\\" + Init.name[i], self.model.paths.res_path)    
         
-    def testSimulate(self):
+    def test_simulate(self):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
                 self.model = Modeling.ModelicaMod(i)
                 
-                self.dymola = self.model.make_dymola()
-                self.translate = self.model.translate()
-                self.simulate = self.model.simulate()
-                #self.delete = self.model.del_dymola()
+                #self.dymola = self.model.make_dymola()
+                #self.translate = self.model.translate()
+                #self.simulate = self.model.simulate()
+             
+                #self.assertEqual(self.simulate.command_variables, "decisionVariables.table[1,2]")
                 
-                self.assertEqual(self.simulate.command_variables, "decisionVariables.table[1,2]")
-                
-    #def testGetOutputs(self):
+    #def test_GetOutputs(self):
         
-    #def testGetResults(self):
+    #def test_GetResults(self):    
         
-    #def testPredict(self):
+    #def test_Predict(self):
     
 class TestSciModClass (unittest.TestCase):
               
-    def testSciMod(self):
+    def test_SciMod(self):
         for i in Init.sys_id:
             with self.subTest(i=i):
                 self.model = Modeling.SciMod(i)
                 
+                self.assertEqual(Init.model_type[i], self.model.model_type)
+                self.assertIsInstance(self.model.states, Modeling.States)
+                self.assertIsInstance(self.model.times, Modeling.Times)
+                self.assertIsInstance(self.model.paths, Modeling.Paths)
+                
+                self.load = self.model.load_mod()
+                self.inputs = self.model.write_inputs()
+    
+    #def test_LoadMod(self):
+    #def test_WriteInputs(self):        
 
 @unittest.skipUnless('Linear' in Init.model_type, "no Linear model used")        
 class TestLinModClass (unittest.TestCase):
             
-    def testLinMod(self):
+    def test_LinMod(self):
        for i in Init.sys_id:
             with self.subTest(i=i):
                 self.model = Modeling.LinMod(i)
-                
-                self.assertEqual(3,5)
     
          
 if __name__ == '__main__':

@@ -8,9 +8,45 @@ Created on Tue Oct  8 11:05:11 2019
 import unittest
 import Init
 
-class TestInitListsClass(unittest.TestCase):
+class TestInitClass(unittest.TestCase):
     
-    def test_lengthoflists(self):
+    def test_emptylists(self):
+        
+        self.assertTrue(Init.sys_id)
+        self.assertTrue(Init.name)
+        self.assertTrue(Init.model_type)
+        self.assertTrue(Init.ups_neigh)
+        self.assertTrue(Init.downs_neigh)
+        self.assertTrue(Init.par_neigh)
+        self.assertTrue(Init.input_names)
+        self.assertTrue(Init.input_variables)
+        self.assertTrue(Init.inputs)
+        self.assertTrue(Init.output_names)
+        self.assertTrue(Init.set_points)
+        self.assertTrue(Init.state_var_names)
+        self.assertTrue(Init.model_state_var_names)
+        self.assertTrue(Init.start)
+        self.assertTrue(Init.stop)
+        self.assertTrue(Init.incr)
+        self.assertTrue(Init.opt_time)
+        self.assertTrue(Init.samp_time)
+        self.assertTrue(Init.lib_paths)
+        self.assertTrue(Init.res_path)
+        self.assertTrue(Init.dym_path)
+        self.assertTrue(Init.mod_path)
+        self.assertTrue(Init.command_names)
+        self.assertTrue(Init.command_variables)
+        self.assertTrue(Init.commands)
+        self.assertTrue(Init.traj_points)
+        self.assertTrue(Init.traj_var)
+        self.assertTrue(Init.cost_fac)
+        
+        #self.assertTrue(Init.factors)
+        #self.assertTrue(Init.min_var)
+        #self.assertTrue(Init.max_var)
+        #self.assertTrue(Init.inc_var)
+    
+    def test_samelengthoflists(self):
         
         self.assertEqual(len(Init.sys_id), len(Init.name))
         self.assertEqual(len(Init.name), len(Init.model_type))
@@ -41,9 +77,15 @@ class TestInitListsClass(unittest.TestCase):
         self.assertEqual(len(Init.traj_var), len(Init.cost_fac))
         self.assertEqual(len(Init.cost_fac), len(Init.sys_id))
         
-        #min_var
-        #max_var
-        #inc_var
+    def test_paths(self):
+        
+        self.assertIn('ModelicaModels', Init.glob_lib_paths[0])
+        self.assertIn('Buildings', Init.glob_lib_paths[1])
+        self.assertIn('AixLib', Init.glob_lib_paths[2])
+        
+        self.assertIn('dymola', Init.glob_res_path)
+        self.assertIn('dymola.egg', Init.glob_dym_path)
+        
         
 if __name__ == '__main__':
     unittest.main()
