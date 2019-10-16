@@ -239,23 +239,17 @@ class Subsystem:
                 self.coup_vars_send = opt_outputs[0]
             
     def calc_cost(self, command, outputs):
-        import scipy.interpolate
+        #import scipy.interpolate
         
-        cost = self.cost_fac[0] * command
+        cost = 0
         
-        #if self.cost_rec != []:
-            #energy_heater = self.model.get_results("chemicalEnergy[-1]")
-            #cost += self.cost_fac[1] * energy_heater        #Realkosten Chiller/Heater
-            #energy_heatpump = self.model.get_results("heatPumpEnergy[-1]")
-            #cost += self.cost_fac[2] * energy_heatpump      #Realkosten Strom Wärmepumpe
-                        
-        if self.cost_rec != []:
-            if type(self.cost_rec) is scipy.interpolate.interpolate.interp1d:
-                cost += self.cost_fac[1] * self.cost_rec(outputs)
-            elif type(self.cost_rec) is list:
-                cost += self.cost_fac[1] * self.cost_rec[0]
-            else:
-                cost += self.cost_fac[1] * self.cost_rec
+        #Langzeitsimulation: Abweichungen von der mittleren Temperatur müssen bestraft werden
+        #if self.setpoint_send != []:
+        cost += self.cost_fac[0]*(outputs - self.model.states.set_points[0])**2
+        #else:
+            #cost += 0
+
+        cost += self.cost_fac[1] * command
 
         if self.setpoint_rec != []:
             setpoint = self.setpoint_rec
@@ -307,14 +301,14 @@ class Subsystem:
         #if self.phase > 0:#field cools off (heating demand building)
         if self.err_prop < 0:    
             if self.err_diff > 0:
-                cost += self.cost_fac[6] * self.err_diff        #Differential penalization
+                cost += self.cost_fac[7] * self.err_diff        #Differential penalization
             else:
-                cost += self.cost_fac[7] * (-(self.err_diff))   #Differential reward
+                cost += self.cost_fac[6] * (-(self.err_diff))   #Differential reward
         else:
             if self.err_diff > 0:
-                cost += self.cost_fac[7] * self.err_diff
+                cost += self.cost_fac[6] * self.err_diff
             else:
-                cost += self.cost_fac[6] * (-(self.err_diff))
+                cost += self.cost_fac[7] * (-(self.err_diff))
             #else:#field heats up (cooling demand building)
 #            if self.err_prop > 0:
 #                if self.err_diff > 0:

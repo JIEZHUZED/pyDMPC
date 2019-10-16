@@ -58,5 +58,7 @@ equation
       Advanced(GenerateVariableDependencies=false, OutputModelicaCode=false),
       Evaluate=false,
       OutputCPUtime=false,
-      OutputFlatModelica=false));
+      OutputFlatModelica=false),
+    Diagram(coordinateSystem(extent={{-100,-100},{140,100}})),
+    Icon(coordinateSystem(extent={{-100,-100},{140,100}})));
 end Field;

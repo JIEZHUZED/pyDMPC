@@ -60,7 +60,7 @@ partial model GeothermalHeatPumpControlledBase
         rotation=90,
         origin={-60.5,-109})));
   inner Modelica.Fluid.System system
-    annotation (Placement(transformation(extent={{180,60},{200,80}})));
+    annotation (Placement(transformation(extent={{220,60},{240,80}})));
   Modelica.Blocks.Interfaces.RealOutput returnTemperature(
     final quantity="ThermodynamicTemperature",
     final unit="K",
@@ -120,18 +120,18 @@ partial model GeothermalHeatPumpControlledBase
     energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
     T_start=293.15)
     "Thermal zone"
-    annotation (Placement(transformation(extent={{204,4},{184,24}})));
+    annotation (Placement(transformation(extent={{200,4},{180,24}})));
   AixLib.BoundaryConditions.WeatherData.ReaderTMY3 weaDat(
     calTSky=AixLib.BoundaryConditions.Types.SkyTemperatureCalculation.HorizontalRadiation,
     computeWetBulbTemperature=false,
     filNam=Modelica.Utilities.Files.loadResource(
         "modelica://ModelicaModels/Subsystems/Geo/BaseClasses/TEASER_BuildingSets/DEU_BW_Mannheim_107290_TRY2010_12_Jahr_BBSR.mos"))
     "Weather data reader"
-    annotation (Placement(transformation(extent={{248,28},{228,48}})));
+    annotation (Placement(transformation(extent={{240,28},{220,48}})));
 
   Modelica.Blocks.Sources.Constant const(k=0.2)
     "Infiltration rate"
-    annotation (Placement(transformation(extent={{200,-26},{190,-16}})));
+    annotation (Placement(transformation(extent={{196,-26},{186,-16}})));
   Modelica.Blocks.Sources.CombiTimeTable internalGains(
     extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
     tableName="UserProfiles",
@@ -222,11 +222,11 @@ partial model GeothermalHeatPumpControlledBase
         590400,0,0,0,0; 593940,0,0,0,0; 594000,0,0,0,0; 597540,0,0,0,0; 597600,
         0,0,0,0; 601140,0,0,0,0; 601200,0,0,0,0; 604740,0,0,0,0])
     "Table with profiles for internal gains"
-    annotation(Placement(transformation(extent={{200,-48},{190,-37}})));
+    annotation(Placement(transformation(extent={{196,-48},{186,-37}})));
 
   AixLib.BoundaryConditions.WeatherData.Bus weaBus
     "Weather data bus"
-    annotation (Placement(transformation(extent={{236,-22},{202,10}}),
+    annotation (Placement(transformation(extent={{232,-22},{198,10}}),
     iconTransformation(extent={{-70,-12},{-50,8}})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature idealConditioning(T=294.15)
     annotation (Placement(transformation(
@@ -254,12 +254,12 @@ partial model GeothermalHeatPumpControlledBase
         origin={123,49})));
   Modelica.Blocks.Sources.Constant const1(k=0)
     "Infiltration rate"
-    annotation (Placement(transformation(extent={{200,-64},{190,-54}})));
+    annotation (Placement(transformation(extent={{180,-64},{170,-54}})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature cellarTemperature(T=284.15)
     annotation (Placement(transformation(
         extent={{6,-6},{-6,6}},
         rotation=0,
-        origin={194,-76})));
+        origin={154,-76})));
   Buildings.Controls.OBC.CDL.Continuous.MovingMean movMea(delta=94672800)
     annotation (Placement(transformation(extent={{-6,-6},{6,6}},
         rotation=-90,
@@ -289,28 +289,28 @@ equation
     annotation (Line(points={{116,-28},{116,-24},{125.6,-24}},
                                                      color={0,0,127}));
   connect(weaDat.weaBus,thermalZone. weaBus) annotation (Line(
-      points={{228,38},{220,38},{220,16},{212,16},{212,14},{204,14}},
+      points={{220,38},{208,38},{208,14},{200,14}},
       color={255,204,51},
       thickness=0.5));
   connect(weaDat.weaBus,weaBus)  annotation (Line(
-      points={{228,38},{219,38},{219,-6}},
+      points={{220,38},{215,38},{215,-6}},
       color={255,204,51},
       thickness=0.5), Text(
       string="%second",
       index=1,
       extent={{6,3},{6,3}}));
-  connect(thermalZone.ventTemp,weaBus. TDryBul) annotation (Line(points={{205.3,
-          10.1},{235.35,10.1},{235.35,-6},{219,-6}}, color={0,0,127}), Text(
+  connect(thermalZone.ventTemp,weaBus. TDryBul) annotation (Line(points={{201.3,
+          10.1},{231.35,10.1},{231.35,-6},{215,-6}}, color={0,0,127}), Text(
       string="%second",
       index=1,
       extent={{6,3},{6,3}}));
-  connect(const.y,thermalZone. ventRate) annotation (Line(points={{189.5,-21},{
-          189.5,-4},{201,-4},{201,5.6}},              color={0,0,127}));
+  connect(const.y,thermalZone. ventRate) annotation (Line(points={{185.5,-21},{
+          185.5,-4},{197,-4},{197,5.6}},              color={0,0,127}));
   connect(internalGains.y,thermalZone. intGains)
-    annotation (Line(points={{189.5,-42.5},{186,-42.5},{186,5.6}},
+    annotation (Line(points={{185.5,-42.5},{182,-42.5},{182,5.6}},
                                                           color={0,0,127}));
   connect(idealConditioning.port, thermalZone.intGainsRad) annotation (Line(
-        points={{166,22},{174,22},{174,13},{184,13}}, color={191,0,0}));
+        points={{166,22},{166,13},{180,13}},          color={191,0,0}));
   connect(negate.u, switch1.y) annotation (Line(points={{134.8,0},{140,0},{140,
           1.11022e-15},{141.2,1.11022e-15}}, color={0,0,127}));
   connect(switch2.y, negate1.u)
@@ -326,15 +326,15 @@ equation
           {114,49},{114,-10},{164,-10},{164,0},{159.6,0}}, color={255,0,255}));
   connect(lessEqualThreshold.y, switch2.u2) annotation (Line(points={{117.5,49},
           {114,49},{114,-10},{164,-10},{164,-24},{159.6,-24}}, color={255,0,255}));
-  connect(const1.y, switch2.u1) annotation (Line(points={{189.5,-59},{168,-59},
+  connect(const1.y, switch2.u1) annotation (Line(points={{169.5,-59},{168,-59},
           {168,-17.6},{159.6,-17.6}},color={0,0,127}));
-  connect(const1.y, switch1.u3) annotation (Line(points={{189.5,-59},{168,-59},
+  connect(const1.y, switch1.u3) annotation (Line(points={{169.5,-59},{168,-59},
           {168,-6.4},{159.6,-6.4}},color={0,0,127}));
   connect(cellarTemperature.port, coldStorage.heatPort)
-    annotation (Line(points={{188,-76},{50,-76},{50,6},{49.2,6}},
+    annotation (Line(points={{148,-76},{52,-76},{52,6},{49.2,6}},
                                                         color={191,0,0}));
   connect(cellarTemperature.port, heatStorage.heatPort)
-    annotation (Line(points={{188,-76},{49.2,-76}},         color={191,0,0}));
+    annotation (Line(points={{148,-76},{49.2,-76}},         color={191,0,0}));
   connect(returnTemperature, movMea.y)
     annotation (Line(points={{-144,-120},{-144,-100.6}}, color={0,0,127}));
   connect(returnTemSensor.T, movMea.u) annotation (Line(points={{-107,9.2},{
@@ -349,6 +349,6 @@ First implementation.
 </li>
 </ul>
 </html>"),
-    Diagram(coordinateSystem(extent={{-160,-120},{200,80}})),
-    Icon(coordinateSystem(extent={{-160,-120},{200,80}})));
+    Diagram(coordinateSystem(extent={{-160,-120},{240,80}})),
+    Icon(coordinateSystem(extent={{-160,-120},{240,80}})));
 end GeothermalHeatPumpControlledBase;

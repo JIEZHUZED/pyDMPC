@@ -23,10 +23,10 @@ model GeothermalHeatPumpSystem
           Subsystems.Geo.BaseClasses.TEASER_DataBase.TEASER_Office()),
     negate1(k=-1),
     negate(k=-1),
-    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,4125,
-          4250,4375,4625,4750; 323.15,5625,5500,5750,6250,6375],
-        tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,
-          12125,14500,16250,18500,20375; 323.15,12500,14000,16125,20875,21875]),
+    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,2900,
+          3000,3100,3300,3400; 323.15,4000,4000,4100,4500,4500],
+        tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
+          8660,10400,11600,13200,14500; 323.15,9000,10000,11500,15000,15600]),
     movMea(delta=7200));
 
 
@@ -165,6 +165,6 @@ from the geothermal field to the heat storage
 <p>In the flow line of the heating circuit a boiler is connected as a peak load device.
 Consumers are modeled as sinks are sources with a constant temperature.</p>
 </html>"),
-    Diagram(coordinateSystem(extent={{-160,-120},{200,80}})),
-    Icon(coordinateSystem(extent={{-160,-120},{200,80}})));
+    Diagram(coordinateSystem(extent={{-160,-120},{240,80}})),
+    Icon(coordinateSystem(extent={{-160,-120},{240,80}})));
 end GeothermalHeatPumpSystem;

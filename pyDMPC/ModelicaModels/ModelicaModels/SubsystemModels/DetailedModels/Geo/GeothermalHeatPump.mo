@@ -16,11 +16,10 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     geothField_sink1(T=T_start_cold[1]),
     pumpCondenser(m_flow_nominal=8),
     pumpHeatConsumer(m_flow_nominal=8),
-    heatPumpTab(
-        tableHeatFlowCondenser=[0,266.16,275.15,280.15,283.15,293.15; 308.15,
-          4850,5800,6500,7400,8150; 323.15,5000,5600,6450,8350,8750],
-        tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,4125,4250,4375,
-          4625,4750; 323.15,5625,5500,5750,6250,6375]));
+    heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,2900,
+          3000,3100,3300,3400; 323.15,4000,4000,4100,4500,4500],
+        tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
+          8660,10400,11600,13200,14500; 323.15,9000,10000,11500,15000,15600]));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1) annotation (Placement(transformation(
@@ -75,15 +74,15 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
   AixLib.Controls.HeatPump.HPControllerOnOff hPControllerOnOff(bandwidth=5)
     "Controls the temperature in the heat storage by switching the heat pump on or off"
     annotation (Placement(transformation(extent={{-78,62},{-58,82}})));
-  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth
-      =277.15)
+  Subsystems.Geo.BaseClasses.geothermalFieldController                       geothermalFieldControllerHeat(bandwidth=
+       277.15)
     "Controls the heat exchange with the geothermal field and the heat storage"
     annotation (Placement(transformation(extent={{-96,-34},{-80,-18}})));
   Modelica.Thermal.HeatTransfer.Sources.FixedTemperature cellarTemperature(T=284.15)
     annotation (Placement(transformation(
         extent={{6,-6},{-6,6}},
         rotation=0,
-        origin={194,-76})));
+        origin={134,-76})));
 equation
   connect(resistanceColdConsumerFlow.port_b,coldConsumerFlow. ports[1])
     annotation (Line(points={{80,-20},{88,-20}},            color={0,127,255}));
@@ -151,9 +150,9 @@ equation
         points={{-145.3,7},{-145.3,22},{-146,22},{-146,36},{-112,36},{-112,68},
           {-78,68}}, color={0,0,127}));
   connect(cellarTemperature.port, heatStorage.heatPort)
-    annotation (Line(points={{188,-76},{49.2,-76}},         color={191,0,0}));
+    annotation (Line(points={{128,-76},{49.2,-76}},         color={191,0,0}));
   connect(cellarTemperature.port, coldStorage.heatPort)
-    annotation (Line(points={{188,-76},{50,-76},{50,6},{49.2,6}},
+    annotation (Line(points={{128,-76},{50,-76},{50,6},{49.2,6}},
                                                         color={191,0,0}));
   connect(hPControllerOnOff.heatPumpControlBus, heatPumpControlBus) annotation (
      Line(

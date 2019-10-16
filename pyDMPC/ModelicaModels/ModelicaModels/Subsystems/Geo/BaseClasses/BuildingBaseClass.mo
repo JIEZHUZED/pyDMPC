@@ -36,7 +36,7 @@ model BuildingBaseClass "Simplified building model"
     use_T_in=true,
     nPorts=1,
     m_flow=baseParam.m_flow_tot)
-              annotation (Placement(transformation(extent={{-80,-10},{-60,10}})));
+              annotation (Placement(transformation(extent={{-76,22},{-56,42}})));
   AixLib.Fluid.Sources.Boundary_pT bou(
   redeclare package Medium = Water,
   nPorts=1) annotation (Placement(
@@ -62,8 +62,8 @@ equation
           80,-1}},          color={0,127,255}));
   connect(senTem.T, returnTemperature)
     annotation (Line(points={{81,18},{81,60},{92,60}}, color={0,0,127}));
-  connect(boundary.ports[1], vol1.ports[2]) annotation (Line(points={{-60,0},{-52,
-          0},{-52,32},{26,32}}, color={0,127,255}));
+  connect(boundary.ports[1], vol1.ports[2]) annotation (Line(points={{-56,32},{
+          26,32}},              color={0,127,255}));
   connect(const.y, product1.u2) annotation (Line(points={{-71,-80},{-52,-80},{-52,
           -62},{-36,-62}}, color={0,0,127}));
 end BuildingBaseClass;

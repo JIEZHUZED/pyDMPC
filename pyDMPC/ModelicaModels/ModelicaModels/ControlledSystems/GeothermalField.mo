@@ -44,6 +44,8 @@ equation
     annotation (Line(points={{-100,-50},{-76,-50}}, color={0,0,127}));
   connect(const.y, product.u1)
     annotation (Line(points={{-79,48},{-64,48}}, color={0,0,127}));
-  annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-        coordinateSystem(preserveAspectRatio=false)));
+  annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,
+            -100},{160,100}})),                                  Diagram(
+        coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{160,
+            100}})));
 end GeothermalField;
