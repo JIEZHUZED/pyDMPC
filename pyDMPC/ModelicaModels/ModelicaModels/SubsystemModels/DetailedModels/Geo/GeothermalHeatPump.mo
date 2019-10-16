@@ -17,9 +17,10 @@ model GeothermalHeatPump "Example of a geothermal heat pump systemreplaceable pa
     pumpCondenser(m_flow_nominal=8),
     pumpHeatConsumer(m_flow_nominal=8),
     heatPumpTab(tablePower=[0,266.15,275.15,280.15,283.15,293.15; 308.15,2900,
-          3000,3100,3300,3400; 323.15,4000,4000,4100,4500,4500],
-        tableHeatFlowCondenser=[0,266.15,275.15,280.15,283.15,293.15; 308.15,
-          8660,10400,11600,13200,14500; 323.15,9000,10000,11500,15000,15600]));
+          3000,3100,3300,3400; 323.15,4000,4000,4100,4500,4500; 373.15,4000,
+          4000,4100,4500,4500], tableHeatFlowCondenser=[0,266.15,275.15,280.15,
+          283.15,293.15; 308.15,8660,10400,11600,13200,14500; 323.15,9000,10000,
+          11500,15000,15600; 373.15,9000,10000,11500,15000,15600]));
 
   AixLib.Fluid.Sources.Boundary_pT coldConsumerFlow(redeclare package Medium =
         Water, nPorts=1) annotation (Placement(transformation(
