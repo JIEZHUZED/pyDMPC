@@ -9,9 +9,21 @@ import unittest
 import Init
 
 class TestInitClass(unittest.TestCase):
-    
-    def test_emptylists(self):
         
+    def test_controlledSystem(self):
+    
+        self.assertTrue(Init.contr_sys_typ)
+        self.assertTrue(Init.ads_id)
+        self.assertTrue(Init.ads_port)
+        self.assertTrue(Init.time_incr)
+        self.assertTrue(Init.name_fmu)
+        
+        self.assertEqual(Init.orig_fmu_path, Init.glob_res_path + '\\' + Init.name_fmu)
+        self.assertEqual(Init.dest_fmu_path, Init.glob_res_path + '\\' + Init.name_wkdir + '\\' + Init.name_fmu)
+    
+    
+    def test_emptyLists(self):
+           
         self.assertTrue(Init.sys_id)
         self.assertTrue(Init.name)
         self.assertTrue(Init.model_type)
@@ -41,12 +53,12 @@ class TestInitClass(unittest.TestCase):
         self.assertTrue(Init.traj_var)
         self.assertTrue(Init.cost_fac)
         
-        #self.assertTrue(Init.factors)
-        #self.assertTrue(Init.min_var)
-        #self.assertTrue(Init.max_var)
-        #self.assertTrue(Init.inc_var)
+        #self.assertTrue(Init.factors) factors existiert nicht in Init
+        #self.assertTrue(Init.min_var) in welchem Skript benötigt?
+        #self.assertTrue(Init.max_var) in welchem Skript benötigt?
+        #self.assertTrue(Init.inc_var) in welchem Skript benötigt?
     
-    def test_samelengthoflists(self):
+    def test_sameLengthOfLists(self):
         
         self.assertEqual(len(Init.sys_id), len(Init.name))
         self.assertEqual(len(Init.name), len(Init.model_type))
