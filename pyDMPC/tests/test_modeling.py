@@ -67,6 +67,7 @@ class TestModelClass (unittest.TestCase):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
+               
                 self.model = Modeling.Model(i)
                
                 self.assertEqual(Init.model_type[i], self.model.model_type)
@@ -80,9 +81,10 @@ class TestModifsClass (unittest.TestCase):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
+                
                 self.modifs = Modeling.Modifs(i)
                 
-                self.assertEqual(self.modifs.factors[i], Init.factors[i])
+                self.assertEqual(self.modifs.factors, Init.factors[i])
 
 
 class TestModelicaModClass (unittest.TestCase):
@@ -91,6 +93,7 @@ class TestModelicaModClass (unittest.TestCase):
 
         for i in Init.sys_id:
             with self.subTest(i=i):
+                
                 self.model = Modeling.ModelicaMod(i)
                
                 self.assertEqual(Init.model_type[i], self.model.model_type)
@@ -102,16 +105,18 @@ class TestModelicaModClass (unittest.TestCase):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
+                
                 self.model = Modeling.ModelicaMod(i)
                 
                 self.assertEqual(self.model.dym_path, Init.glob_dym_path)
                 self.assertEqual(self.model.lib_paths, Init.glob_lib_paths)
                 self.assertEqual(self.model.dymola, None)
-                    
+                   
     def testDelDymola(self):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
+               
                 self.model = Modeling.ModelicaMod(i)
                 self.delete = self.model.del_dymola()
                 
@@ -121,33 +126,63 @@ class TestModelicaModClass (unittest.TestCase):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
-                self.model = Modeling.ModelicaMod(i)
                 
+                self.model = Modeling.ModelicaMod(i)
+                #for change directory
                 self.assertEqual(Init.res_path[i] + "\\" + Init.name[i], self.model.paths.res_path)    
-        
+                #for translating Model
+                self.assertEqual(Init.mod_path[i], self.model.paths.mod_path)
+                               
     def test_simulate(self):
         
         for i in Init.sys_id:
             with self.subTest(i=i):
+                
                 self.model = Modeling.ModelicaMod(i)
                 
-                #self.dymola = self.model.make_dymola()
-                #self.translate = self.model.translate()
-                #self.simulate = self.model.simulate()
+                self.dymola = self.model.make_dymola()
+                self.translate = self.model.translate()
+                self.simulate = self.model.simulate()
              
                 #self.assertEqual(self.simulate.command_variables, "decisionVariables.table[1,2]")
-                
-    #def test_GetOutputs(self):
+             
+    def test_sim(self):
         
-    #def test_GetResults(self):    
         
-    #def test_Predict(self):
+        import sys
+        import os
+        
+        sys.path.insert(0, os.path.join(Init.glob_dym_path))
+        
+        from dymola.dymola_interface import DymolaInterface
+        
+        path = r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\pyDMPC\pyDMPC\tests'
+        
+        dymola = DymolaInterface()
+        print(dymola)
+        check = dymola.openModel(os.path.join(path, 'TestModel.mo'))
+        print('Opening successful ' + str(check))
+        dymola.cd(Init.glob_res_path)
+        check2 = dymola.translateModel('TestModel')
+        print("Translation successful " + str(check2))
+        output = dymola.simulateExtendedModel(
+                problem = 'TestModel',
+                startTime = 0.0,
+                stopTime = 3.1536e+07,
+                outputInterval = 3600,
+                method = "Dassl", 
+                tolerance = 0.001, 
+                resultFile = Init.glob_res_path + r'\dsres',
+                finalNames = ['TestConstant.k'],
+            )
+        print(output)
     
 class TestSciModClass (unittest.TestCase):
               
     def test_SciMod(self):
         for i in Init.sys_id:
             with self.subTest(i=i):
+                
                 self.model = Modeling.SciMod(i)
                 
                 self.assertEqual(Init.model_type[i], self.model.model_type)
@@ -167,6 +202,7 @@ class TestLinModClass (unittest.TestCase):
     def test_LinMod(self):
        for i in Init.sys_id:
             with self.subTest(i=i):
+                
                 self.model = Modeling.LinMod(i)
     
          

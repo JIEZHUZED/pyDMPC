@@ -11,7 +11,7 @@ import Init
 class TestInitClass(unittest.TestCase):
         
     def test_controlledSystem(self):
-    
+        # test if every parameter(?) is specified
         self.assertTrue(Init.contr_sys_typ)
         self.assertTrue(Init.ads_id)
         self.assertTrue(Init.ads_port)
@@ -22,8 +22,8 @@ class TestInitClass(unittest.TestCase):
         self.assertEqual(Init.dest_fmu_path, Init.glob_res_path + '\\' + Init.name_wkdir + '\\' + Init.name_fmu)
     
     
-    def test_emptyLists(self):
-           
+    def test_filledLists(self): 
+        #tests if lists are filled with content -> False: empty list / no list should be empty
         self.assertTrue(Init.sys_id)
         self.assertTrue(Init.name)
         self.assertTrue(Init.model_type)
@@ -52,14 +52,14 @@ class TestInitClass(unittest.TestCase):
         self.assertTrue(Init.traj_points)
         self.assertTrue(Init.traj_var)
         self.assertTrue(Init.cost_fac)
+        self.assertTrue(Init.factors) 
         
-        #self.assertTrue(Init.factors) factors existiert nicht in Init
-        #self.assertTrue(Init.min_var) in welchem Skript benötigt?
-        #self.assertTrue(Init.max_var) in welchem Skript benötigt?
-        #self.assertTrue(Init.inc_var) in welchem Skript benötigt?
+        self.assertFalse(Init.min_var) #in welchem Skript benötigt?
+        self.assertFalse(Init.max_var) #in welchem Skript benötigt?
+        self.assertFalse(Init.inc_var) #in welchem Skript benötigt?
     
     def test_sameLengthOfLists(self):
-        
+        #test if every list has the same length (an entry for each subsystem)
         self.assertEqual(len(Init.sys_id), len(Init.name))
         self.assertEqual(len(Init.name), len(Init.model_type))
         self.assertEqual(len(Init.model_type), len(Init.ups_neigh))
@@ -95,7 +95,7 @@ class TestInitClass(unittest.TestCase):
         self.assertIn('Buildings', Init.glob_lib_paths[1])
         self.assertIn('AixLib', Init.glob_lib_paths[2])
         
-        self.assertIn('dymola', Init.glob_res_path)
+        self.assertIn('dymola', Init.glob_res_path) 
         self.assertIn('dymola.egg', Init.glob_dym_path)
         
         
