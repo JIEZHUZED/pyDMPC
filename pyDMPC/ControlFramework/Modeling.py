@@ -188,12 +188,17 @@ class ModelicaMod(Model):
             cls.dymola = None
 
     def translate(self):
+        import os                                                                 #NEUNEUNEU
+        os.mkdir(Init.glob_res_path + "\\" + r'pyDMPC_' + 'wkdir' + Init.timestr)
+        os.mkdir(self.paths.res_path)
+        
         ModelicaMod.dymola.cd(self.paths.res_path)
         print(self.paths.res_path)
         check = ModelicaMod.dymola.translateModel(self.paths.mod_path)
         print("Translation successful " + str(check))
 
     def simulate(self):
+        
         ModelicaMod.dymola.cd(self.paths.res_path)
         
         command_variables = [f"decisionVariables.table[{i+1},2]" 
@@ -208,6 +213,9 @@ class ModelicaMod(Model):
             initialNames = (self.states.command_variables  +
                             self.states.model_state_var_names + time_variables)
             initialValues = (self.states.commands + self.states.state_vars + times)
+        elif self.states.input_variables[0] == "testPurposes":                          #NEUNEUNEU
+            initialNames = None
+            initialValues = None
         else:
             initialValues = (self.states.commands + self.states.inputs +
                              self.states.state_vars + times)
@@ -215,13 +223,13 @@ class ModelicaMod(Model):
             initialNames = (command_variables +
                             self.states.input_variables +
                             self.states.model_state_var_names + time_variables)
+        
             print(initialNames)
             print(initialValues)
 
-
         for k in range(3):
             try:
-                print(ModelicaMod.dymola.simulateExtendedModel(
+                sim = ModelicaMod.dymola.simulateExtendedModel(
                     problem=self.paths.mod_path,
                     startTime=self.times.start,
                     stopTime=self.times.stop,
@@ -231,13 +239,17 @@ class ModelicaMod(Model):
                     resultFile= self.paths.res_path + r'\dsres',
                     finalNames = self.states.output_names,
                     initialNames = initialNames,
-                    initialValues = initialValues))
-
-                print("Simulation successful")
+                    initialValues = initialValues
+                    )
+                print(sim)
+                if sim[0] == True:                                                         #NEUNEUNEU
+                    print("Simulation successful")
+                else: 
+                    print('Simulation error')
                 break
 
             except:
-                if k < 3:
+                if k < 2:
                     print('Repeating simulation attempt')
                 else:
                     print('Final simulation error')
