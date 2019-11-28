@@ -53,10 +53,9 @@ class TestInitClass(unittest.TestCase):
         self.assertTrue(Init.traj_var)
         self.assertTrue(Init.cost_fac)
         self.assertTrue(Init.factors) 
-        
-        self.assertFalse(Init.min_var) #in welchem Skript benötigt?
-        self.assertFalse(Init.max_var) #in welchem Skript benötigt?
-        self.assertFalse(Init.inc_var) #in welchem Skript benötigt?
+        self.assertTrue(Init.min_var)
+        self.assertTrue(Init.max_var) 
+        self.assertTrue(Init.inc_var) 
     
     def test_sameLengthOfLists(self):
         #test if every list has the same length (an entry for each subsystem)
@@ -87,7 +86,11 @@ class TestInitClass(unittest.TestCase):
         self.assertEqual(len(Init.commands), len(Init.traj_points))
         self.assertEqual(len(Init.traj_points), len(Init.traj_var))
         self.assertEqual(len(Init.traj_var), len(Init.cost_fac))
-        self.assertEqual(len(Init.cost_fac), len(Init.sys_id))
+        self.assertEqual(len(Init.cost_fac), len(Init.factors))
+        self.assertEqual(len(Init.factors), len(Init.min_var))
+        self.assertEqual(len(Init.min_var), len(Init.max_var))
+        self.assertEqual(len(Init.max_var), len(Init.inc_var))
+        self.assertEqual(len(Init.inc_var), len(Init.sys_id))
         
     def test_paths(self):
         
