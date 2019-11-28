@@ -1,9 +1,9 @@
 import time
 
 # Global paths
-glob_lib_paths = [#r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\pyDMPC\pyDMPC\ModelicaModels\ModelicaModels',
-                 #r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\modelica-buildings\Buildings',
-                 #r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\AixLib\AixLib',
+glob_lib_paths = [r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\pyDMPC\pyDMPC\ModelicaModels\ModelicaModels',
+                 r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\modelica-buildings\Buildings',
+                 r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\AixLib\AixLib',
                  r'N:\Forschung\EBC0332_BMWi_MODI_GA\Students\mba-nre\01-notes\HiWi Nadja\Git\pyDMPC\pyDMPC\tests\Testing'] #Testing environment
 glob_res_path = r'D:\dymola'
 glob_dym_path = r'C:\Program Files\Dymola 2020\Modelica\Library\python_interface\dymola.egg'
