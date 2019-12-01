@@ -1,4 +1,5 @@
 import Init
+import numpy as np
 
 class States:
     """This class holds all the states relevant for the models.
@@ -17,7 +18,7 @@ class States:
         the Modelica models
     outputs : list of floats
         The outputs of a subsystem model
-    output_names : list of strings
+    model_output_names : list of strings
         The names of the outputs. These are the identifiers for logging and for
         the Modelica models
     set_points : list of floats
@@ -39,7 +40,7 @@ class States:
         self.input_names = Init.input_names[sys_id]
         self.input_variables = Init.input_variables[sys_id]
         self.outputs = []
-        self.output_names = Init.output_names[sys_id]
+        self.model_output_names = Init.model_output_names[sys_id]
         self.set_points = Init.set_points[sys_id]
         self.state_vars = []
         self.state_var_names = Init.state_var_names[sys_id]
@@ -123,7 +124,12 @@ class Modifs:
     """
 
     def __init__(self, sys_id):
-        self.factors = Init.factors[sys_id]
+        self.state_factors = Init.state_factors[sys_id]
+        self.state_offsets = Init.state_offsets[sys_id]
+        self.input_factors = Init.input_factors[sys_id]
+        self.input_offsets = Init.input_offsets[sys_id]
+        self.output_factors = Init.output_factors[sys_id]
+        self.output_offsets = Init.output_offsets[sys_id]
 
 
 class Model:
@@ -229,7 +235,7 @@ class ModelicaMod(Model):
                     method="Dassl",
                     tolerance=0.001,
                     resultFile= self.paths.res_path + r'\dsres',
-                    finalNames = self.states.output_names,
+                    finalNames = self.states.model_output_names,
                     initialNames = initialNames,
                     initialValues = initialValues))
 
@@ -245,8 +251,8 @@ class ModelicaMod(Model):
     def get_outputs(self):
         self.states.outputs = []
 
-        if self.states.output_names is not None:
-            for nam in self.states.output_names:
+        if self.states.model_output_names is not None:
+            for nam in self.states.model_output_names:
                 self.states.outputs.append(self.get_results(nam))
 
     def get_results(self, name):
@@ -274,7 +280,6 @@ class SciMod(Model):
         self.scaler = load(self.paths.mod_path + r"_scaler.joblib")
 
     def write_inputs(self):
-        import numpy as np
         commands_1 = self.states.commands[0]*np.ones(10)
         commands_2 = self.states.commands[1]*np.ones(50)
         commands = commands_1.tolist() + commands_2.tolist()
@@ -310,3 +315,93 @@ class FuzMod(Model):
         self.states.outputs = self.states.inputs[0]
         self.states.set_points = fuz.control(self.states.inputs[0],
                                              self.states.inputs[1])
+
+
+class Statespace(Model):
+    def __init__(self, sys_id):
+        super().__init__(sys_id)
+        self.load_mod()
+        self.modifs = Modifs(sys_id)
+
+    def SS_lsim_process_form(self, u):
+        m, L = u.shape
+        l, n = self.C.shape
+        y = np.zeros((l, L))
+        x = np.zeros((n, L + 1))
+        if type(self.x0) != str:
+            x[:, 0] = self.x0[:]
+        for i in range(0, L):
+            x[:, i + 1] = np.dot(self.A, x[:, i]) + np.dot(self.B, u[:, i])
+            y[:, i] = np.dot(self.C, x[:, i]) + np.dot(self.D, u[:, i])
+
+        return y[0, -1]
+
+    def SS_lsim_predictor_form(self):
+        m, L = self.u.shape
+        l, n = self.C.shape
+        y_hat = np.zeros((l, L))
+        x = np.zeros((n, L + 1))
+        if type(self.x0) != str:
+            x[:, 0] = self.x0[:]
+        for i in range(0, L):
+            x[:, i + 1] = np.dot(self.A_K, x[:, i]) + np.dot(self.B_K, self.u[:, i]) + np.dot(self.K, self.y[:, i])
+            y_hat[:, i] = np.dot(self.C, x[:, i]) + np.dot(self.D, self.u[:, i])
+
+        self.x0 = x[:, -1]
+
+    def load_mod(self):
+        import pickle
+        with open(self.paths.mod_path + r".PICKLE", 'rb') as f:
+            self.A, self.B, self.C, self.D, self.K = pickle.load(f)
+        
+        self.A_K = self.A - np.dot(self.K, self.C)
+        self.B_K = self.B - np.dot(self.K, self.D)
+
+        _, l_1 = self.A.shape
+        _, l_2 = self.B.shape
+        l_3, _ = self.C.shape
+
+        self.x0 = np.zeros((l_1))
+        self.u = np.zeros((l_2, 1))
+        self.y = np.zeros((l_3, 1))
+
+    def modify(self):
+        stat_temp = []
+        inp_temp = []
+        out_temp = []
+
+        for i, inp in enumerate(self.states.inputs):
+            if type(inp) is list:
+                inp = inp[0]
+            inp_temp.append(inp + self.modifs.input_offsets[i])
+
+        for i, stat in enumerate(self.states.state_vars):
+            stat_temp.append(stat[0] + self.modifs.state_offsets[i])
+
+        for i, out in enumerate(self.states.outputs):
+            out_temp.append(out[0] + self.modifs.output_offsets[i])
+
+        return stat_temp, inp_temp, out_temp
+
+    def predict(self):
+        l = 60
+        stat_temp, inp_temp, out_temp = self.modify()
+
+        coms = np.asarray([[com] * l for com in self.states.commands])
+        inps = np.asarray([[inp] * l for inp in inp_temp])
+        stats = np.asarray([[stat] * l for stat in stat_temp])
+
+        u = np.vstack((coms, inps, stats))
+        self.SS_lsim_predictor_form()
+        self.states.outputs = [[self.SS_lsim_process_form(u) - self.modifs.output_offsets[0]]]
+
+    def log(self):
+        stat_temp, inp_temp, out_temp = self.modify()
+
+        coms = np.asarray([[com] for com in self.states.commands])
+        inps = np.asarray([[inp] for inp in inp_temp])
+        stats = np.asarray([[stat] for stat in stat_temp])
+        outs = np.asarray([[out] for out in out_temp])
+        u = np.vstack((coms, inps, stats))
+        self.u = np.append(self.u, u, axis = 1)
+        self.y = np.append(self.y, outs, axis = 1)

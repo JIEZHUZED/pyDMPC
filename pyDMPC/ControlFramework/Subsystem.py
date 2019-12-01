@@ -114,7 +114,14 @@ class Subsystem:
             model = Modeling.LinMod(self.sys_id)
         elif self.model_type == "Fuzzy":
             model = Modeling.FuzMod(self.sys_id)
+        elif self.model_type == "Statespace":
+            model = Modeling.Statespace(self.sys_id)
+            model.load_mod()
         return model
+
+    def log(self):
+        if self.model_type == "Statespace":
+            self.model.log()
 
     def predict(self, inputs, commands):
 
@@ -130,6 +137,7 @@ class Subsystem:
 
         self.model.states.inputs = inputs
         self.model.states.commands = commands
+        self.model.states.state_vars = state_vars
         self.model.predict()
 
         return self.model.states.outputs
@@ -230,6 +238,8 @@ class Subsystem:
             self.coup_vars_send = opt_outputs[0]
             self.command_send = opt_command[0]
 
+        print(self.command_send)
+
 
     def calc_cost(self, command, outputs):
         import scipy.interpolate
@@ -314,6 +324,9 @@ class Subsystem:
                 com = self.fin_command[0]
             else:
                 com = self.fin_command
+
+            self.model.states.commands = [com]
+            self.log()
 
             if self.model.states.command_names is not None:
                 for nam in self.model.states.command_names:
