@@ -127,7 +127,8 @@ class Subsystem:
 
         state_vars = []
 
-        if self.model.states.state_var_names != []:
+        if (self.model.states.state_var_names != [] and
+        self.model.states.state_var_names is not None):
             for i,nam in enumerate(self.model.states.state_var_names):
                 state_vars.append(System.Bexmoc.read_cont_sys(nam))
 
@@ -186,7 +187,7 @@ class Subsystem:
             for com in self.commands:
                 results = self.predict(inp, com)
                 outputs.append(results)
-                costs.append(self.calc_cost(com, results[-1][-1]))
+                costs.append(self.calc_cost(com, results[-1][-1], inp))
 
             min_ind = costs.index(min(costs))
 
@@ -238,10 +239,10 @@ class Subsystem:
             self.coup_vars_send = opt_outputs[0]
             self.command_send = opt_command[0]
 
-        print(self.command_send)
+        #print(self.command_send)
 
 
-    def calc_cost(self, command, outputs):
+    def calc_cost(self, command, outputs, inp):
         import scipy.interpolate
         import numpy as np
 
@@ -260,8 +261,18 @@ class Subsystem:
         if self.model.states.set_points != []:
             cost += (self.cost_fac[2] * (outputs -
                                  self.model.states.set_points[0])**2)
+        
+        cost += self.cost_fac[3] * self.quality_costs(inp)
 
         return cost
+
+    def quality_costs(self, inp):
+        if inp > 304:
+            c = 5
+        else:
+            c = 0
+
+        return c
     
     def find_nearest(self, a, a0):
         import numpy as np

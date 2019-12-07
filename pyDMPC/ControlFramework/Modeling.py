@@ -324,11 +324,11 @@ class Statespace(Model):
         self.modifs = Modifs(sys_id)
 
     def SS_lsim_process_form(self, u):
-        m, L = u.shape
+        _, L = u.shape
         l, n = self.C.shape
         y = np.zeros((l, L))
         x = np.zeros((n, L + 1))
-        if type(self.x0) != str:
+        if type(self.x0) is not str:
             x[:, 0] = self.x0[:]
         for i in range(0, L):
             x[:, i + 1] = np.dot(self.A, x[:, i]) + np.dot(self.B, u[:, i])
@@ -337,11 +337,11 @@ class Statespace(Model):
         return y[0, -1]
 
     def SS_lsim_predictor_form(self):
-        m, L = self.u.shape
+        _, L = self.u.shape
         l, n = self.C.shape
         y_hat = np.zeros((l, L))
         x = np.zeros((n, L + 1))
-        if type(self.x0) != str:
+        if type(self.x0) is not str:
             x[:, 0] = self.x0[:]
         for i in range(0, L):
             x[:, i + 1] = np.dot(self.A_K, x[:, i]) + np.dot(self.B_K, self.u[:, i]) + np.dot(self.K, self.y[:, i])
@@ -375,8 +375,10 @@ class Statespace(Model):
                 inp = inp[0]
             inp_temp.append(inp + self.modifs.input_offsets[i])
 
-        for i, stat in enumerate(self.states.state_vars):
-            stat_temp.append(stat[0] + self.modifs.state_offsets[i])
+        if (self.states.state_vars != [] and 
+        self.states.state_vars is not None):
+            for i, stat in enumerate(self.states.state_vars):
+                stat_temp.append(stat[0] + self.modifs.state_offsets[i])
 
         for i, out in enumerate(self.states.outputs):
             out_temp.append(out[0] + self.modifs.output_offsets[i])
@@ -384,15 +386,18 @@ class Statespace(Model):
         return stat_temp, inp_temp, out_temp
 
     def predict(self):
-        l = 60
-        stat_temp, inp_temp, out_temp = self.modify()
+        l = 120
+        stat_temp, inp_temp, _ = self.modify()
 
         coms = np.asarray([[com] * l for com in self.states.commands])
         inps = np.asarray([[inp] * l for inp in inp_temp])
-        stats = np.asarray([[stat] * l for stat in stat_temp])
 
-        u = np.vstack((coms, inps, stats))
-        self.SS_lsim_predictor_form()
+        if stat_temp != []:
+            stats = np.asarray([[stat] * l for stat in stat_temp])
+            u = np.vstack((coms, inps, stats))
+        else:
+            u = np.vstack((coms, inps))
+                
         self.states.outputs = [[self.SS_lsim_process_form(u) - self.modifs.output_offsets[0]]]
 
     def log(self):
@@ -400,8 +405,14 @@ class Statespace(Model):
 
         coms = np.asarray([[com] for com in self.states.commands])
         inps = np.asarray([[inp] for inp in inp_temp])
-        stats = np.asarray([[stat] for stat in stat_temp])
         outs = np.asarray([[out] for out in out_temp])
-        u = np.vstack((coms, inps, stats))
+
+        if stat_temp != []:
+            stats = np.asarray([[stat] for stat in stat_temp])
+            u = np.vstack((coms, inps, stats))
+        else:
+            u = np.vstack((coms, inps))
+
         self.u = np.append(self.u, u, axis = 1)
         self.y = np.append(self.y, outs, axis = 1)
+        self.SS_lsim_predictor_form()
