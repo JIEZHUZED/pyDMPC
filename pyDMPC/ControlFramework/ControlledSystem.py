@@ -1,15 +1,15 @@
 import Init
+import pyads
 
 class PLCSys:
 
     def __init__(self):
-        import pyads
         self.plc_typ = pyads.PLCTYPE_REAL
         self.ads_id = Init.ads_id
         self.ads_port = Init.ads_port
+        self.connect()
 
     def connect(self):
-        import pyads
         self.contr_sys = pyads.Connection(self.ads_id, self.ads_port)
         self.contr_sys.open()
 

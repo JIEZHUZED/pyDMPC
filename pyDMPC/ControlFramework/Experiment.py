@@ -15,16 +15,17 @@ def main():
 
     sys.initialize()
 
-    try:
-        try:
-            for cur_time in range(0, 86400 , min_samp_inter):
-                sys.execute()
-                print(f"Time: {cur_time}")
-        
-            sys.close_mod()
-            System.Bexmoc.close_cont_sys()
-            print("Success")
+    #try:
+    #    try:
+    for cur_time in range(0, 86400 , min_samp_inter):
+        Init.custom()
+        sys.execute()
+        print(f"Time: {cur_time}")
 
+    sys.close_mod()
+    System.Bexmoc.close_cont_sys()
+    print("Success")
+"""
         except Exception as e:
             sys.terminate()
             print(getattr(e, 'message', repr(e)))
@@ -32,5 +33,5 @@ def main():
     except KeyboardInterrupt:
         sys.terminate()
         print('Interrupted')
-
+"""
 if __name__=="__main__": main()

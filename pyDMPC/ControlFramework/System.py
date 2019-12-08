@@ -167,9 +167,9 @@ class System:
             The the value of the data point to be written
         """
 
-        #print("datapoint: " + str(datapoint))
-        #print("value: " + str(value))
-        cls.contr_sys.write(datapoint, value)
+        print("datapoint: " + str(datapoint))
+        print("value: " + str(value))
+        #cls.contr_sys.write(datapoint, value)
 
     @classmethod
     def proceed(cls, cur_time, incr):

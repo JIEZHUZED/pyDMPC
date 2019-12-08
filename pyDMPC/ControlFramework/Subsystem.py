@@ -155,7 +155,7 @@ class Subsystem:
 
         states = self.get_state_vars()
         if states != []:
-            self.model.states.state_vars = states[0]
+            self.model.states.state_vars = states
 
         if self.model.states.input_variables[0] != "external":
             if self.inputs == []:
@@ -226,9 +226,9 @@ class Subsystem:
                 self.coup_vars_send = opt_outputs
                 self.command_send = opt_command
 
-        else:
-            self.coup_vars_send = opt_outputs[0]
-            self.command_send = opt_command[0]
+        #else:
+        #    self.coup_vars_send = opt_outputs[0]
+        #    self.command_send = opt_command[0]
 
 
     def calc_cost(self, command, outputs):
@@ -288,8 +288,9 @@ class Subsystem:
         inputs = []
 
         if self.model.states.input_variables is not None:
-            for nam in self.model.states.input_names:
-                inputs.append(System.Bexmoc.read_cont_sys(nam))
+            for i, nam in enumerate(self.model.states.input_names):
+                inputs.append(System.Bexmoc.read_cont_sys(nam) + 
+                              self.model.modifs.input_offsets[i])
 
         self.model.states.inputs = inputs
 
@@ -298,8 +299,9 @@ class Subsystem:
         states = []
 
         if self.model.states.state_var_names is not None:
-            for nam in self.model.states.state_var_names:
-                states.append(System.Bexmoc.read_cont_sys(nam))
+            for i, nam in enumerate(self.model.states.state_var_names):
+                states.append(System.Bexmoc.read_cont_sys(nam) + 
+                              self.model.modifs.state_offsets[i])
 
         return states
 

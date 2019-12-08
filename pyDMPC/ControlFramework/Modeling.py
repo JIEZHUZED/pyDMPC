@@ -123,7 +123,12 @@ class Modifs:
     """
 
     def __init__(self, sys_id):
-        self.factors = Init.factors[sys_id]
+        self.state_factors = Init.state_factors[sys_id]
+        self.state_offsets = Init.state_offsets[sys_id]
+        self.input_factors = Init.input_factors[sys_id]
+        self.input_offsets = Init.input_offsets[sys_id]
+        self.output_factors = Init.output_factors[sys_id]
+        self.output_offsets = Init.output_offsets[sys_id]
 
 
 class Model:
@@ -149,6 +154,7 @@ class Model:
         self.states = States(sys_id)
         self.times = Times(sys_id)
         self.paths = Paths(sys_id)
+        self.modifs = Modifs(sys_id)
 
 
 class ModelicaMod(Model):
@@ -190,6 +196,7 @@ class ModelicaMod(Model):
     def translate(self):
         ModelicaMod.dymola.cd(self.paths.res_path)
         print(self.paths.res_path)
+        print(self.paths.mod_path)
         check = ModelicaMod.dymola.translateModel(self.paths.mod_path)
         print("Translation successful " + str(check))
 
@@ -203,13 +210,20 @@ class ModelicaMod(Model):
                           for i in range(1)]
         
         times = [i*600 for i in range(1)]
+        
+        print(times)
+        print(self.states.state_vars)
+        print(self.states.inputs)
+        print(self.states.commands)
+    
 
         if self.states.input_variables[0] == "external":
             initialNames = (self.states.command_variables  +
                             self.states.model_state_var_names + time_variables)
             initialValues = (self.states.commands + self.states.state_vars + times)
         else:
-            initialValues = (self.states.commands + self.states.inputs +
+            initialValues = (self.states.commands + 
+                             self.states.inputs +
                              self.states.state_vars + times)
 
             initialNames = (command_variables +
