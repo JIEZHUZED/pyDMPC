@@ -161,31 +161,29 @@ class TestSciModClass (unittest.TestCase):
               
     def test_SciMod(self):
         
-        for i in Init.sys_id:
-            with self.subTest(i=i):
+        i = Init.sys_id[-2]
                 
-                self.model = Modeling.SciMod(i)
+        self.model = Modeling.SciMod(i)
                 
-                self.assertEqual(Init.model_type[i], self.model.model_type)
-                self.assertIsInstance(self.model.states, Modeling.States)
-                self.assertIsInstance(self.model.times, Modeling.Times)
-                self.assertIsInstance(self.model.paths, Modeling.Paths)
+        self.assertEqual(Init.model_type[i], self.model.model_type)
+        self.assertIsInstance(self.model.states, Modeling.States)
+        self.assertIsInstance(self.model.times, Modeling.Times)
+        self.assertIsInstance(self.model.paths, Modeling.Paths)
                 
-                self.load = self.model.load_mod()
-                self.inputs = self.model.write_inputs()
+        self.load = self.model.load_mod()
+        self.inputs = self.model.write_inputs()
                 
-                print('SciMod Class Test successful')
+        #print('SciMod Class Test successful')
     
     def test_LoadMod(self):
      
-        for i in Init.sys_id:
-            with self.subTest(i=i):
+        i = Init.sys_id[-2]
+        
+        self.model = Modeling.SciMod(i)
                 
-                self.model = Modeling.SciMod(i)
+        self.load = self.model.load_mod()
                 
-                self.load = self.model.load_mod()
-                
-                print('SciMod LoadMod Function Test successful')
+        #print('SciMod LoadMod Function Test successful')
                 
     #def test_WriteInputs(self):        
 
