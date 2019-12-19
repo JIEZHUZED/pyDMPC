@@ -208,7 +208,7 @@ class ModelicaMod(Model):
                           for i in range(1)]
         
         times = [i*600 for i in range(1)]
-
+        
         if self.states.input_variables[0] == "external":
             initialNames = (self.states.command_variables  +
                             self.states.model_state_var_names + time_variables)
@@ -223,7 +223,6 @@ class ModelicaMod(Model):
             initialNames = (command_variables +
                             self.states.input_variables +
                             self.states.model_state_var_names + time_variables)
-        
             print(initialNames)
             print(initialValues)
 

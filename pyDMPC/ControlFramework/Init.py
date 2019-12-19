@@ -22,7 +22,7 @@ dest_fmu_path = glob_res_path + '\\' + name_wkdir + '\\' + name_fmu
 time_incr = 120
 
 # Number of subsystems
-n = 3
+n = 4
 
 # States
 inputs = [None for _ in range(n)]
@@ -123,26 +123,28 @@ traj_points[1] = []
 traj_var[1] = []
 cost_fac[1] = [0.0, 1.0, 0]
 
+#Test-Subsystem for SciKit: Always second to last entry !
+sys_id[2] = len(sys_id) - 2
 
 #Test-Subsystem for Modelica: ALWAYS LAST ENTRY
-sys_id[2] = len(sys_id)-1
-name[2] = "ModelicaTest"
-model_type[2] = "Modelica"
-input_variables[2] = ["testPurposes"]
-inputs[2] = [i for i in range(280,325,1)]
-output_names[2] = ["Test.y"]
-state_var_names[2] = ['TestSystem']
-model_state_var_names[2] = ['Test.k']
-start[2] = 0.
-stop[2] = 3600.
-incr[2] = 10.
-opt_time[2] = 600
-samp_time[2] = time_incr
-lib_paths[2] = glob_lib_paths
-res_path[2] = glob_res_path + "\\" + name_wkdir
-dym_path[2] = glob_dym_path
-mod_path[2] = 'Testing.Subsystem.ModelicaTest'
-commands[2] = [[i,i] for i in range(0,100,5)]
-traj_points[2] = []
-traj_var[2] = []
-cost_fac[2] = [0.0, 1.0, 0]
+sys_id[3] = len(sys_id)-1
+name[len(sys_id)-1] = "ModelicaTest"
+model_type[len(sys_id)-1] = "Modelica"
+input_variables[len(sys_id)-1] = ["testPurposes"]
+inputs[len(sys_id)-1] = [i for i in range(280,325,1)]
+output_names[len(sys_id)-1] = ["Test.y"]
+state_var_names[len(sys_id)-1] = ['TestSystem']
+model_state_var_names[len(sys_id)-1] = ['Test.k']
+start[len(sys_id)-1] = 0.
+stop[len(sys_id)-1] = 3600.
+incr[len(sys_id)-1] = 10.
+opt_time[len(sys_id)-1] = 600
+samp_time[len(sys_id)-1] = time_incr
+lib_paths[len(sys_id)-1] = glob_lib_paths
+res_path[len(sys_id)-1] = glob_res_path + "\\" + name_wkdir
+dym_path[len(sys_id)-1] = glob_dym_path
+mod_path[len(sys_id)-1] = 'Testing.Subsystem.ModelicaTest'
+commands[len(sys_id)-1] = [[i,i] for i in range(0,100,5)]
+traj_points[len(sys_id)-1] = []
+traj_var[len(sys_id)-1] = []
+cost_fac[len(sys_id)-1] = [0.0, 1.0, 0]
