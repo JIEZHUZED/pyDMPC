@@ -286,6 +286,11 @@ class SciMod(Model):
 
     def write_inputs(self):
         import numpy as np
+        
+        if self.states.input_variables[0] == "testPurposes":
+            self.states.commands = [1,1]
+            self.states.inputs = [1]
+            
         commands_1 = self.states.commands[0]*np.ones(10)
         commands_2 = self.states.commands[1]*np.ones(50)
         commands = commands_1.tolist() + commands_2.tolist()
@@ -299,7 +304,11 @@ class SciMod(Model):
     def predict(self):
         self.write_inputs()
         self.states.outputs = [self.model.predict(self.scal_inputs)]
-
+        print(self.states.outputs)
+        result = self.states.outputs
+        
+        return result
+        
 class LinMod(Model):
 
     def __init__(self, sys_id):
