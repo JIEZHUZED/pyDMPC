@@ -171,21 +171,11 @@ class TestSciModClass (unittest.TestCase):
         self.assertIsInstance(self.model.paths, Modeling.Paths)
                 
         self.load = self.model.load_mod()
-        self.inputs = self.model.write_inputs()
+        self.predict = self.model.predict()
+        
+        self.assertAlmostEqual(1, self.predict[0][0], 5)
                 
         #print('SciMod Class Test successful')
-    
-    def test_LoadMod(self):
-     
-        i = Init.sys_id[-2]
-        
-        self.model = Modeling.SciMod(i)
-                
-        self.load = self.model.load_mod()
-                
-        #print('SciMod LoadMod Function Test successful')
-                
-    #def test_WriteInputs(self):        
 
 #@unittest.skipUnless('Linear' in Init.model_type, "no Linear model used")        
 class TestLinModClass (unittest.TestCase):
