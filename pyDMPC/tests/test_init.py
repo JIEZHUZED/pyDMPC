@@ -5,7 +5,7 @@ Created on Tue Oct  8 11:05:11 2019
 @author: mba-nre
 """
 
-import unittest
+from ControlFramework import unittest
 import Init
 
 class TestInitClass(unittest.TestCase):
