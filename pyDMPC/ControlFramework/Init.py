@@ -125,6 +125,11 @@ cost_fac[1] = [0.0, 1.0, 0]
 
 #Test-Subsystem for SciKit: Always second to last entry !
 sys_id[2] = len(sys_id) - 2
+name[len(sys_id) - 2] = "SciKit_TestingModel"
+model_type[len(sys_id) - 2] = "SciKit"
+input_variables[len(sys_id) - 2] = ["testPurposes"]
+res_path[len(sys_id) - 2] = glob_res_path + "\\" + name_wkdir
+mod_path[len(sys_id) - 2] = f'{glob_lib_paths[-1]}\\SciKit_TestingModel'
 
 #Test-Subsystem for Modelica: ALWAYS LAST ENTRY
 sys_id[3] = len(sys_id)-1
