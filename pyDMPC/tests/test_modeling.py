@@ -32,9 +32,7 @@ class TestStatesClass(unittest.TestCase):
                 self.assertIsInstance(self.model.outputs, list)
                 self.assertIsInstance(self.model.state_vars, list)
                 self.assertIsInstance(self.model.commands, list)
-                
-                #print('States Class Test successful')
-            
+                           
 class TestTimesClass (unittest.TestCase):            
     
     def test_times(self):
@@ -49,8 +47,6 @@ class TestTimesClass (unittest.TestCase):
                 self.assertEqual(Init.incr[i], self.model.incr)
                 self.assertEqual(Init.opt_time[i], self.model.opt_time)
                 self.assertEqual(Init.samp_time[i], self.model.samp_time)
-                
-                #print('Times Class Test successful')
             
 class TestPathsClass (unittest.TestCase):
                 
@@ -65,8 +61,6 @@ class TestPathsClass (unittest.TestCase):
                 self.assertEqual(Init.res_path[i] + "\\" + Init.name[i], self.model.res_path)
                 self.assertEqual(Init.dym_path[i], self.model.dym_path)
                 self.assertEqual(Init.mod_path[i], self.model.mod_path)
-                
-                #print('Paths Class Test successful')
             
 class TestModelClass (unittest.TestCase):
                        
@@ -82,8 +76,6 @@ class TestModelClass (unittest.TestCase):
                 self.assertIsInstance(self.model.times, Modeling.Times)
                 self.assertIsInstance(self.model.paths, Modeling.Paths) 
                 
-                #print('Model Class Test successful')
-
 class TestModifsClass (unittest.TestCase):
     
     def test_modifs (self): 
@@ -95,9 +87,6 @@ class TestModifsClass (unittest.TestCase):
                 
                 self.assertEqual(self.modifs.factors, Init.factors[i])
                 
-                #print('Modifs Class Test successful')
-
- 
 class TestModelicaModClass (unittest.TestCase):
     
     def test_Init(self):
@@ -111,8 +100,6 @@ class TestModelicaModClass (unittest.TestCase):
                 self.assertIsInstance(self.model.states, Modeling.States)
                 self.assertIsInstance(self.model.times, Modeling.Times)
                 self.assertIsInstance(self.model.paths, Modeling.Paths)  
-
-                #print('Modelica Init Function Test successful')                 
    
     def test_makeDymola(self):
         
@@ -125,8 +112,6 @@ class TestModelicaModClass (unittest.TestCase):
         self.assertEqual(self.model.lib_paths, Init.glob_lib_paths)
         self.assertNotEqual(self.model.dymola, None)
  
-        #print('Modelica Make Dymola Function Test successful')
-        
         self.translate = self.model.translate()
         self.simulate = self.model.simulate()
         results = self.model.get_results(Init.output_names[i][0])
@@ -140,10 +125,8 @@ class TestModelicaModClass (unittest.TestCase):
         self.model = Modeling.ModelicaMod(i)
         self.delete = self.model.del_dymola()
                 
-        self.assertEqual(self.model.dymola, None) #überprüfen, ob dymola auf None gesetzt wurde
-                
-        #print('Modelica Delete Dymola Function Test successful')
-        
+        self.assertEqual(self.model.dymola, None) 
+                        
     def test_translate(self):
         
         i = Init.sys_id[-1]
@@ -153,10 +136,7 @@ class TestModelicaModClass (unittest.TestCase):
         self.assertEqual(Init.res_path[i] + "\\" + Init.name[i], self.model.paths.res_path)    
         #for translating Model
         self.assertEqual(Init.mod_path[i], self.model.paths.mod_path)
-              
-        #print('Modelica Translate Function Test successful') #doesn't mean that the translation was successful
-    
-    
+                  
 class TestSciModClass (unittest.TestCase):
               
     def test_SciMod(self):
@@ -175,9 +155,6 @@ class TestSciModClass (unittest.TestCase):
         
         self.assertAlmostEqual(1, self.predict[0][0], 5)
                 
-        #print('SciMod Class Test successful')
-
-#@unittest.skipUnless('Linear' in Init.model_type, "no Linear model used")        
 class TestLinModClass (unittest.TestCase):
             
     def test_LinMod(self):
