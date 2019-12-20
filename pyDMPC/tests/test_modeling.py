@@ -6,8 +6,8 @@ Created on Mon Sep  9 15:57:00 2019
 """
 
 import unittest
-import Modeling
-import Init
+from ControlFramework import Modeling
+from ControlFramework import Init
       
 class TestStatesClass(unittest.TestCase):
           
