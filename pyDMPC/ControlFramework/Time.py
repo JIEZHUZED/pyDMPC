@@ -11,7 +11,6 @@ class Time:
     
     sys_time = 0
     time_incr = Init.time_incr
-    contr_sys_typ = "Modelica"
     
     def __init__(self):
         pass
@@ -21,7 +20,7 @@ class Time:
         
         import time
             
-        if cls.contr_sys_typ != "Modelica":
+        if Init.contr_sys_typ != "Modelica":
             cls.sys_time = time.time()
             
         return cls.sys_time
