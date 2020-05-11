@@ -81,7 +81,7 @@ class Subsystem:
         self.cost_rec = []
         self.command_send = []
         self.command_rec = []
-        self.cost_fac = Init.cost_fac[sys_id]
+        self.cost_fac = Init.cost_fac[sys_id][0]
         self.last_opt = 0
         self.last_read = 0
         self.last_write = 0
@@ -118,12 +118,6 @@ class Subsystem:
 
     def predict(self, inputs, commands):
 
-        state_vars = []
-
-        if self.model.states.state_var_names != []:
-            for i,nam in enumerate(self.model.states.state_var_names):
-                state_vars.append(System.Bexmoc.read_cont_sys(nam))
-
         if inputs != "external":
             if type(inputs) is not list:
                 inputs = [inputs]
@@ -155,7 +149,7 @@ class Subsystem:
 
         states = self.get_state_vars()
         if states != []:
-            self.model.states.state_vars = states[0]
+            self.model.states.state_vars = states
 
         if self.model.states.input_variables[0] != "external":
             if self.inputs == []:
@@ -214,43 +208,42 @@ class Subsystem:
             else:
                 self.cost_send = opt_costs[0]
 
-        if len(inputs) >= 2:
-            if interp:
-                interp_com = []
-                self.coup_vars_send = opt_outputs
-                for com in opt_command:
-                    interp_com.append(com[0])
-                self.command_send = it.interp1d(inputs, interp_com,
-                                             fill_value = (100,100), bounds_error = False)
-            else:
-                self.coup_vars_send = opt_outputs
-                self.command_send = opt_command
-
+        if len(inputs) >= 2 and interp:
+            interp_com = []
+            self.coup_vars_send = opt_outputs
+            for com in opt_command:
+                interp_com.append(com[0])
+            self.command_send = it.interp1d(inputs, interp_com,
+                                         fill_value = (100,100), bounds_error = False)
         else:
-            self.coup_vars_send = opt_outputs[0]
-            self.command_send = opt_command[0]
+            self.coup_vars_send = opt_outputs
+            self.command_send = opt_command
 
 
     def calc_cost(self, command, outputs):
         import scipy.interpolate
         import numpy as np
+        
+        cost = 0
+        i = 0
 
-        cost = self.cost_fac[0] * sum(command)
+        if self.cost_fac[0] > 0:    
+            cost = self.cost_fac[0] * sum(command)
 
         if self.cost_rec != [] and self.cost_rec != [[]]:
-            for c in self.cost_rec:
+            for i, c in enumerate(self.cost_rec):
                 if type(c) is scipy.interpolate.interpolate.interp1d:
-                    cost += self.cost_fac[1] * c(outputs)
+                    cost += self.cost_fac[i+1] * c(outputs)
                 elif type(c) is list:
                     idx = self.find_nearest(np.asarray(self.inputs), outputs)
-                    cost += self.cost_fac[1] * c[idx]
+                    cost += self.cost_fac[i+1] * c[idx]
                 else:
-                    cost += self.cost_fac[1] * c
+                    cost += self.cost_fac[i+1] * c
 
-        if self.model.states.set_points != []:
-            cost += (self.cost_fac[2] * (outputs -
+        if self.model.states.set_points is not None:
+            cost += (self.cost_fac[2+i] * (outputs -
                                  self.model.states.set_points[0])**2)
-
+            
         return cost
     
     def find_nearest(self, a, a0):
@@ -276,6 +269,8 @@ class Subsystem:
                 self.fin_command = self.command_send(inp[0])
             else:
                 self.fin_command = self.command_send[idx]
+                
+        print(f"command_send: {self.command_send}")
 
         if self.coup_vars_send != []:
             if type(self.coup_vars_send) is scipy.interpolate.interpolate.interp1d:
@@ -288,8 +283,9 @@ class Subsystem:
         inputs = []
 
         if self.model.states.input_variables is not None:
-            for nam in self.model.states.input_names:
-                inputs.append(System.Bexmoc.read_cont_sys(nam))
+            for i, nam in enumerate(self.model.states.input_names):
+                inputs.append(System.Bexmoc.read_cont_sys(nam) + 
+                              self.model.modifs.input_offsets[i])
 
         self.model.states.inputs = inputs
 
@@ -298,8 +294,13 @@ class Subsystem:
         states = []
 
         if self.model.states.state_var_names is not None:
-            for nam in self.model.states.state_var_names:
-                states.append(System.Bexmoc.read_cont_sys(nam))
+            for i, nam in enumerate(self.model.states.state_var_names):
+                if type(nam) is str:
+                    val = System.Bexmoc.read_cont_sys(nam)
+                else:
+                    val = nam()
+                
+                states.append(val + self.model.modifs.state_offsets[i])
 
         return states
 
