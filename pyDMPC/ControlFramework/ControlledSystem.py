@@ -84,3 +84,47 @@ class ModelicaSys:
         self.contr_sys.terminate()
         self.contr_sys.freeInstance()
         shutil.rmtree(self.unzipdir)
+
+class API:
+
+    def __init__(self):
+        self.auth = Init.auth
+        self.project_id = Init.project_id
+        self.base_url = Init.base_url
+
+    def read(self, dataPointID):
+
+        import datetime
+        import requests
+                
+        params = {'project_id': self.project_id,
+                'dataPointID': dataPointID,
+                'end': datetime.datetime.now(),
+                'max' : 1,
+                'short': False}
+
+        r = requests.get(f"{self.base_url}/timeseries", auth = self.auth, params=params)
+
+        val = (r.json())
+        val = val["data"]
+        val = val[0]
+        val = val["value"]
+
+        print(f"{dataPointID}: {val}")
+
+        return [val]
+        
+    def write(self, dataPointID, val):
+
+        import requests
+
+        print(f"{dataPointID}: {val}")
+        
+        params = {'dataPointID': dataPointID,
+                'project_id': self.project_id,
+                'value' : val,
+                'priority': 13,
+                'acked' : False,
+                'dryrun': False}
+
+        requests.post(f"{self.base_url}/setpoint", auth = self.auth, params = params)
