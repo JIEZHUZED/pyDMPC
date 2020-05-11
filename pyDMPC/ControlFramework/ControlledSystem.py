@@ -1,15 +1,15 @@
 import Init
+import pyads
 
 class PLCSys:
 
     def __init__(self):
-        import pyads
         self.plc_typ = pyads.PLCTYPE_REAL
         self.ads_id = Init.ads_id
         self.ads_port = Init.ads_port
+        self.connect()
 
     def connect(self):
-        import pyads
         self.contr_sys = pyads.Connection(self.ads_id, self.ads_port)
         self.contr_sys.open()
 
@@ -17,7 +17,9 @@ class PLCSys:
         self.contr_sys.close()
 
     def read(self, datapoint):
-        return self.contr_sys.read_by_name(datapoint, self.plc_typ)
+        val = self.contr_sys.read_by_name(datapoint, self.plc_typ)
+        print(datapoint + str(val))
+        return val
 
     def write(self, datapoint, value):
         self.contr_sys.write_by_name(datapoint, value, self.plc_typ)
