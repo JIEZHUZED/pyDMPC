@@ -3,3 +3,4 @@ AHUMockupCommunicationBaseClass
 HeatExchangerCommunicationBaseClass
 TemperatureSensor
 HumiditySensor
+HallBaseClass
