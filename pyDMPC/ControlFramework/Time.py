@@ -11,7 +11,7 @@ class Time:
     
     sys_time = 0
     time_incr = Init.time_incr
-    contr_sys_typ = "Modelica"
+    contr_sys_typ = Init.contr_sys_typ
     
     def __init__(self):
         pass

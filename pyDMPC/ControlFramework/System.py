@@ -124,6 +124,8 @@ class System:
             cls.contr_sys = ControlledSystem.PLCSys()
         elif cls.contr_sys_typ == "Modelica":
             cls.contr_sys = ControlledSystem.ModelicaSys()
+        elif cls.contr_sys_typ == "API":
+            cls.contr_sys = ControlledSystem.API()
 
     @classmethod
     def close_cont_sys(cls):
@@ -258,26 +260,34 @@ class Bexmoc(System):
             sub.get_inputs()
             inputs = sub.model.states.inputs[0]
 
-            if i == 1:
+            if i == 0:
                 sub.inputs = [inputs[0] - 0.1, inputs[0] + 0.1]
             else:
-                sub.inputs = [inputs[0], sub.model.states.set_points[0]]
+                if (self.subsystems[0].inputs[0] <
+                    self.subsystems[1].model.states.set_points[0]):
+                    sub.inputs = [min(self.subsystems[0].inputs[0],
+                                        sub.model.states.set_points[0] - 0.5), 
+                                        sub.model.states.set_points[0]]
+                else:
+                    sub.inputs = [max(self.subsystems[0].inputs[0],
+                                sub.model.states.set_points[0] + 0.5), 
+                        sub.model.states.set_points[0]]
 
             sub.inputs.sort()
             sub.optimize(interp = True)
             self.broadcast([i])
 
 
-        for ino in range(0,8,1):
+        for ino in range(0,3,1):
             for i,sub in enumerate(self.subsystems):
-                if i == 1:
+                if i == 0:
                     sub.get_inputs()
                     inputs = sub.model.states.inputs[0]
                     sub.inputs = [inputs[0] - 0.1, inputs[0] + 0.1]
 
                 else:
                     if sub.coup_vars_rec != []:
-                        if (self.subsystems[1].inputs[0] <
+                        if (self.subsystems[0].inputs[0] <
                             self.subsystems[1].model.states.set_points[0]):
                             sub.inputs = [min(sub.coup_vars_rec[0],
                                               sub.model.states.set_points[0] - 0.5), 
