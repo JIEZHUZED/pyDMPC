@@ -167,8 +167,8 @@ class System:
             The the value of the data point to be written
         """
 
-        #print("datapoint: " + str(datapoint))
-        #print("value: " + str(value))
+        print("datapoint: " + str(datapoint))
+        print("value: " + str(value))
         cls.contr_sys.write(datapoint, value)
 
     @classmethod
@@ -245,9 +245,9 @@ class Bexmoc(System):
             sub.interp(iter_real = "real")
             sub.send_commands()
 
+        cur_time = Time.Time.get_time()
+        
         if Bexmoc.contr_sys_typ == "Modelica":
-            cur_time = Time.Time.get_time()
-
             Bexmoc.proceed(cur_time, Time.Time.time_incr)
             Time.Time.set_time()
 
