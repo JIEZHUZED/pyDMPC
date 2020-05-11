@@ -123,7 +123,14 @@ class Modifs:
     """
 
     def __init__(self, sys_id):
-        self.factors = Init.factors[sys_id]
+        self.state_factors = Init.state_factors[sys_id]
+        self.state_offsets = Init.state_offsets[sys_id]
+        self.input_factors = Init.input_factors[sys_id]
+        self.input_offsets = Init.input_offsets[sys_id]
+        self.output_factors = Init.output_factors[sys_id]
+        self.output_offsets = Init.output_offsets[sys_id]
+        self.linear_model_factors = Init.linear_model_factors[sys_id]
+        self.linear_model_offsets =Init.linear_model_offsets[sys_id]
 
 
 class Model:
@@ -149,6 +156,7 @@ class Model:
         self.states = States(sys_id)
         self.times = Times(sys_id)
         self.paths = Paths(sys_id)
+        self.modifs = Modifs(sys_id)
 
 
 class ModelicaMod(Model):
@@ -190,6 +198,7 @@ class ModelicaMod(Model):
     def translate(self):
         ModelicaMod.dymola.cd(self.paths.res_path)
         print(self.paths.res_path)
+        print(self.paths.mod_path)
         check = ModelicaMod.dymola.translateModel(self.paths.mod_path)
         print("Translation successful " + str(check))
 
@@ -202,22 +211,20 @@ class ModelicaMod(Model):
         time_variables = [f"decisionVariables.table[{i+1},1]"
                           for i in range(1)]
         
-        times = [i*600 for i in range(1)]
+        times = [i*600 for i in range(1)]    
 
         if self.states.input_variables[0] == "external":
             initialNames = (self.states.command_variables  +
                             self.states.model_state_var_names + time_variables)
             initialValues = (self.states.commands + self.states.state_vars + times)
         else:
-            initialValues = (self.states.commands + self.states.inputs +
+            initialValues = (self.states.commands + 
+                             self.states.inputs +
                              self.states.state_vars + times)
 
             initialNames = (command_variables +
                             self.states.input_variables +
                             self.states.model_state_var_names + time_variables)
-            print(initialNames)
-            print(initialValues)
-
 
         for k in range(3):
             try:
@@ -295,10 +302,9 @@ class LinMod(Model):
         super().__init__(sys_id)
         self.modifs = Modifs(sys_id)
 
-    def predict(self, start_val):
-        self.states.outputs = (start_val +
-                               self.modifs.factors[0] * self.states.inputs[0] +
-                               self.modifs.factors[1] * self.states.commands[0])
+    def predict(self):
+        self.states.outputs = [[(self.modifs.linear_model_factors[0] * self.states.inputs[0] +
+                               self.modifs.linear_model_factors[1] * self.states.commands[0])]]
 
 class FuzMod(Model):
 
@@ -307,6 +313,7 @@ class FuzMod(Model):
 
     def predict(self):
         import functions.fuzzy as fuz
-        self.states.outputs = self.states.inputs[0]
-        self.states.set_points = fuz.control(self.states.inputs[0],
-                                             self.states.inputs[1])
+        self.states.outputs = [[self.states.inputs[0]]]
+        self.states.set_points = [fuz.control(self.states.state_vars[0],
+                                             self.states.state_vars[1])]
+        t = 1
