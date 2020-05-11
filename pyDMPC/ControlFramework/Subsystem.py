@@ -114,15 +114,11 @@ class Subsystem:
             model = Modeling.LinMod(self.sys_id)
         elif self.model_type == "Fuzzy":
             model = Modeling.FuzMod(self.sys_id)
+        elif self.model_type == "StateSpace":
+            model = Modeling.StateSpace(self.sys_id)
         return model
 
     def predict(self, inputs, commands):
-
-        state_vars = []
-
-        if self.model.states.state_var_names != []:
-            for i,nam in enumerate(self.model.states.state_var_names):
-                state_vars.append(System.Bexmoc.read_cont_sys(nam))
 
         if inputs != "external":
             if type(inputs) is not list:
@@ -153,9 +149,8 @@ class Subsystem:
         opt_outputs =  []
         opt_command = []
 
-        states = self.get_state_vars()
-        if states != []:
-            self.model.states.state_vars = states[0]
+        self.model.states.outputs_his = self.get_outputs()
+        self.model.states.state_vars = self.get_state_vars()
 
         if self.model.states.input_variables[0] != "external":
             if self.inputs == []:
@@ -221,7 +216,7 @@ class Subsystem:
                 for com in opt_command:
                     interp_com.append(com[0])
                 self.command_send = it.interp1d(inputs, interp_com,
-                                             fill_value = (100,100), bounds_error = False)
+                                             fill_value = (interp_com[0],interp_com[-1]), bounds_error = False)
             else:
                 self.coup_vars_send = opt_outputs
                 self.command_send = opt_command
@@ -288,8 +283,10 @@ class Subsystem:
         inputs = []
 
         if self.model.states.input_variables is not None:
-            for nam in self.model.states.input_names:
-                inputs.append(System.Bexmoc.read_cont_sys(nam))
+            for i, nam in enumerate(self.model.states.input_names):
+                val  = System.Bexmoc.read_cont_sys(nam) 
+                inputs.append(val[0] * self.model.modifs.input_factors[i] + 
+                self.model.modifs.input_offsets[i])
 
         self.model.states.inputs = inputs
 
@@ -298,10 +295,28 @@ class Subsystem:
         states = []
 
         if self.model.states.state_var_names is not None:
-            for nam in self.model.states.state_var_names:
-                states.append(System.Bexmoc.read_cont_sys(nam))
+            for i, nam in enumerate(self.model.states.state_var_names):
+                if type(nam) is str:
+                    val = System.Bexmoc.read_cont_sys(nam)
+                else:
+                    val = nam()
+                
+                states.append(val[0] * self.model.modifs.state_factors[i] + 
+                self.model.modifs.state_offsets[i])
 
         return states
+
+    def get_outputs(self):
+
+        outputs = []
+
+        if self.model.states.state_var_names is not None:
+            for i, nam in enumerate(self.model.states.output_names):
+                val = System.Bexmoc.read_cont_sys(nam)
+                outputs.append(val[0] * self.model.modifs.output_factors[i] + 
+                self.model.modifs.output_offsets[i])
+
+        return outputs
 
     def send_commands(self):
 

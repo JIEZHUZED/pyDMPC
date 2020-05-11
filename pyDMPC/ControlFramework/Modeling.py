@@ -1,4 +1,5 @@
 import Init
+import numpy as np
 
 class States:
     """This class holds all the states relevant for the models.
@@ -17,7 +18,7 @@ class States:
         the Modelica models
     outputs : list of floats
         The outputs of a subsystem model
-    output_names : list of strings
+    model_output_names : list of strings
         The names of the outputs. These are the identifiers for logging and for
         the Modelica models
     set_points : list of floats
@@ -39,6 +40,8 @@ class States:
         self.input_names = Init.input_names[sys_id]
         self.input_variables = Init.input_variables[sys_id]
         self.outputs = []
+        self.outputs_his = []
+        self.model_output_names = Init.model_output_names[sys_id]
         self.output_names = Init.output_names[sys_id]
         self.set_points = Init.set_points[sys_id]
         self.state_vars = []
@@ -123,7 +126,14 @@ class Modifs:
     """
 
     def __init__(self, sys_id):
-        self.factors = Init.factors[sys_id]
+        self.state_factors = Init.state_factors[sys_id]
+        self.state_offsets = Init.state_offsets[sys_id]
+        self.input_factors = Init.input_factors[sys_id]
+        self.input_offsets = Init.input_offsets[sys_id]
+        self.output_factors = Init.output_factors[sys_id]
+        self.output_offsets = Init.output_offsets[sys_id]
+        self.linear_model_factors = Init.linear_model_factors[sys_id]
+        self.linear_model_offsets =Init.linear_model_offsets[sys_id]
 
 
 class Model:
@@ -149,6 +159,7 @@ class Model:
         self.states = States(sys_id)
         self.times = Times(sys_id)
         self.paths = Paths(sys_id)
+        self.modifs = Modifs(sys_id)
 
 
 class ModelicaMod(Model):
@@ -245,8 +256,8 @@ class ModelicaMod(Model):
     def get_outputs(self):
         self.states.outputs = []
 
-        if self.states.output_names is not None:
-            for nam in self.states.output_names:
+        if self.states.model_output_names is not None:
+            for nam in self.states.model_output_names:
                 self.states.outputs.append(self.get_results(nam))
 
     def get_results(self, name):
@@ -297,8 +308,8 @@ class LinMod(Model):
 
     def predict(self, start_val):
         self.states.outputs = (start_val +
-                               self.modifs.factors[0] * self.states.inputs[0] +
-                               self.modifs.factors[1] * self.states.commands[0])
+                               self.modifs.linear_model_factors[0] * self.states.inputs[0] +
+                               self.modifs.linear_model_factors[1] * self.states.commands[0])
 
 class FuzMod(Model):
 
@@ -310,3 +321,82 @@ class FuzMod(Model):
         self.states.outputs = self.states.inputs[0]
         self.states.set_points = fuz.control(self.states.inputs[0],
                                              self.states.inputs[1])
+
+class StateSpace(Model):
+
+    def __init__(self, sys_id):
+        super().__init__(sys_id)
+        self.load_mod()
+
+    def load_mod(self):
+        import pickle
+
+        with open(self.paths.mod_path + r".PICKLE", 'rb') as f:
+            A, B, C, D, K = pickle.load(f)
+
+        self.A = A
+        self.B = B
+        self.C = C
+        self.D = D
+        self.K = K
+        self.A_K = A - np.dot(K, C)
+        self.B_K = B - np.dot(K, D)
+        _, l = self.C.shape
+        self.x0 = np.zeros((l, 1))
+        self.inputs_his = [[] for _ in self.states.state_var_names]
+        self.outputs_his = [[] for _ in self.states.output_names]
+
+    def lsim_process_form(self, u):
+        m, L = u.shape
+        l, n = self.C.shape
+        y = np.zeros((l, L))
+        x = np.zeros((n, L))
+        x[:, 0] = self.x0[:, 0]
+        y[:, 0] = np.dot(self.C, x[:, 0]) + np.dot(self.D, u[:, 0])
+        for i in range(1, L):
+            x[:, i] = np.dot(self.A, x[:, i - 1]) + np.dot(self.B, u[:, i - 1])
+            y[:, i] = np.dot(self.C, x[:, i]) + np.dot(self.D, u[:, i])
+        return y
+
+    def lsim_predictor_form(self, y, u):
+        m, L = u.shape
+        l, n = self.C.shape
+        y_hat = np.zeros((l, L))
+        x = np.zeros((n, L + 1))
+        for i in range(0, L):
+            x[:, i + 1] = np.dot(self.A_K, x[:, i]) + np.dot(self.B_K, u[:, i]) + np.dot(self.K, y[:, i])
+            y_hat[:, i] = np.dot(self.C, x[:, i]) + np.dot(self.D, u[:, i])
+
+        return x
+
+    def predict(self):
+        
+        for k in range(len(self.inputs_his)):
+            self.inputs_his[k].append(self.states.state_vars[k])
+        
+        for k in range(len(self.outputs_his)):
+            self.outputs_his[k].append(self.states.outputs_his[k])
+
+        u = np.asarray([np.asarray(k) for k in self.inputs_his])
+        y = np.asarray([np.asarray(k) for k in self.outputs_his])
+
+        x_sim_1 = self.lsim_predictor_form(y, u)
+        self.x0[:, 0] = x_sim_1[:, -1]
+
+        inputs = [[k] for k in self.states.commands]
+        l_c = len(self.states.commands)
+        l_i = len(self.states.inputs)
+        l_s = len(self.states.state_vars)
+        
+        for k in self.states.inputs:
+            inputs.append([k])
+
+        for k in range(l_c + l_i, l_s, 1):
+            inputs.append([self.states.state_vars[k]])
+
+        #u_test = [k] * 60) for k in inputs)
+
+        u_comb = np.asarray([k * 60 for k in inputs])
+
+        self.states.outputs = self.lsim_process_form(u_comb)
+        #self.states.outputs = yid
