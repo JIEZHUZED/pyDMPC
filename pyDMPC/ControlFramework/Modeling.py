@@ -306,10 +306,9 @@ class LinMod(Model):
         super().__init__(sys_id)
         self.modifs = Modifs(sys_id)
 
-    def predict(self, start_val):
-        self.states.outputs = (start_val +
-                               self.modifs.linear_model_factors[0] * self.states.inputs[0] +
-                               self.modifs.linear_model_factors[1] * self.states.commands[0])
+    def predict(self):
+        self.states.outputs = [[self.modifs.linear_model_factors[0] * self.states.inputs[0] +
+                               self.modifs.linear_model_factors[1] * self.states.commands[0]]]
 
 class FuzMod(Model):
 
@@ -318,9 +317,9 @@ class FuzMod(Model):
 
     def predict(self):
         import functions.fuzzy as fuz
-        self.states.outputs = self.states.inputs[0]
-        self.states.set_points = fuz.control(self.states.inputs[0],
-                                             self.states.inputs[1])
+        self.states.outputs = [[self.states.inputs[0]]]
+        self.states.set_points = fuz.control(self.states.state_vars[0],
+                                             self.states.state_vars[1])
 
 class StateSpace(Model):
 

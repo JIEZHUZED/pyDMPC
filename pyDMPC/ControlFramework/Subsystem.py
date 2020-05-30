@@ -275,8 +275,11 @@ class Subsystem:
         if self.coup_vars_send != []:
             if type(self.coup_vars_send) is scipy.interpolate.interpolate.interp1d:
                 self.fin_coup_vars = self.coup_vars_send(inp[0])
-            else:
+            elif type(self.coup_vars_send) is list:
                 self.fin_coup_vars = self.coup_vars_send[idx]
+            else:
+                self.fin_coup_vars = self.coup_vars_send
+
 
     def get_inputs(self):
 
