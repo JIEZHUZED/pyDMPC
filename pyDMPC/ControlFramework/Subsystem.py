@@ -2,6 +2,7 @@ import Init
 import Modeling
 import System
 import Time
+import time
 
 class Subsystem:
 
@@ -114,6 +115,8 @@ class Subsystem:
             model = Modeling.LinMod(self.sys_id)
         elif self.model_type == "Fuzzy":
             model = Modeling.FuzMod(self.sys_id)
+        elif self.model_type == "Integrator":
+            model = Modeling.Integrator(self.sys_id)
         elif self.model_type == "StateSpace":
             model = Modeling.StateSpace(self.sys_id)
         return model
@@ -236,6 +239,7 @@ class Subsystem:
             for c in self.cost_rec:
                 if type(c) is scipy.interpolate.interpolate.interp1d:
                     cost += self.cost_fac[1] * c(outputs)
+                    print(c(outputs))
                 elif type(c) is list:
                     idx = self.find_nearest(np.asarray(self.inputs), outputs)
                     cost += self.cost_fac[1] * c[idx]
@@ -245,6 +249,7 @@ class Subsystem:
         if self.model.states.set_points != []:
             cost += (self.cost_fac[2] * (outputs -
                                  self.model.states.set_points[0])**2)
+
 
         return cost
     
@@ -279,6 +284,8 @@ class Subsystem:
                 self.fin_coup_vars = self.coup_vars_send[idx]
             else:
                 self.fin_coup_vars = self.coup_vars_send
+
+        print(f"self.fin_coup_vars: {self.fin_coup_vars}")
 
 
     def get_inputs(self):
@@ -323,7 +330,10 @@ class Subsystem:
 
     def send_commands(self):
 
-        cur_time = Time.Time.get_time()
+        cur_time = time.time()
+
+        print(f"Difference: {cur_time - self.last_write}")
+        print(f"Samp Time: {self.model.times.samp_time}")
 
         if (cur_time - self.last_write) > self.model.times.samp_time:
             self.last_write = cur_time

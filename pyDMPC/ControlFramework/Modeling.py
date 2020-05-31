@@ -310,6 +310,21 @@ class LinMod(Model):
         self.states.outputs = [[self.modifs.linear_model_factors[0] * self.states.inputs[0] +
                                self.modifs.linear_model_factors[1] * self.states.commands[0]]]
 
+class Integrator(Model):
+
+    def __init__(self, sys_id):
+        super().__init__(sys_id)
+        self.modifs = Modifs(sys_id)
+
+    def predict(self):
+        if self.states.state_vars[2] < self.states.set_points[0] - 1:
+            self.states.commands[0] = self.states.state_vars[1] + self.states.set_points[1] - self.states.state_vars[0]
+        self.states.outputs = [[self.states.inputs[0] + 273.15]]
+        
+        self.states.set_points[0] = min(max(288, 295 + self.modifs.linear_model_factors[0] * self.states.commands[0]), 303)
+        if self.states.set_points[0] < self.states.state_vars[2]: 
+            self.states.set_points[0] = self.states.state_vars[2]
+
 class FuzMod(Model):
 
     def __init__(self, sys_id):
