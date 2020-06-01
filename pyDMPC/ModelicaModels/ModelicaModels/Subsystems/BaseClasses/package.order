@@ -8,3 +8,4 @@ BaseClass
 HeatExchangerPorts
 GenericModelBaseClass
 HallBaseClass
+IdealHeater

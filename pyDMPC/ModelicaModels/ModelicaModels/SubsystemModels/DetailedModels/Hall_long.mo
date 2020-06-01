@@ -1,29 +1,71 @@
 within ModelicaModels.SubsystemModels.DetailedModels;
 model Hall_long
-  extends ModelicaModels.SubsystemModels.DetailedModels.BaseClasses.HallBaseClass;
+  extends
+    ModelicaModels.SubsystemModels.DetailedModels.BaseClasses.HallBaseClass(
+      weather(
+      table=[0.0,293],
+      tableOnFile=true,
+      smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+      fileName="../weather.mat",
+      extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
+      startTime=startTime));
 
-  Modelica.Blocks.Sources.Constant Tnormal(k=273 + 22)
+      parameter Real startTime = 0;
+
+  Modelica.Blocks.Sources.Constant Tnormal(k=273 + 24)
     "Average Temperature of supply air or forecast"
     annotation (Placement(transformation(extent={{-160,10},{-140,30}})));
   Modelica.Blocks.Sources.Constant solar(k=0)
-    annotation (Placement(transformation(extent={{0,-50},{20,-30}})));
+    annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Modelica.Blocks.Sources.RealExpression realExpression(y=35 -
         decisionVariables.y[1])
-    annotation (Placement(transformation(extent={{-106,-110},{-50,-92}})));
-  Modelica.Thermal.HeatTransfer.Components.ThermalConductor FloorConductor(G=10000)
-    "Conducts heat from floor to air"
-    annotation (Placement(transformation(extent={{98,-160},{118,-140}})));
+    annotation (Placement(transformation(extent={{-196,-40},{-140,-22}})));
+  Modelica.Blocks.Sources.CombiTimeTable variation(
+    extrapolation=Modelica.Blocks.Types.Extrapolation.HoldLastPoint,
+    tableName="tab1",
+    smoothness=Modelica.Blocks.Types.Smoothness.ConstantSegments,
+    columns={2},
+    fileName="decisionVariables.mat",
+    tableOnFile=false,
+    table=[0.0,0.0]) "Table with decision variables" annotation (Placement(
+        transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={-130,-12})));
+  Modelica.Blocks.Sources.CombiTimeTable decisionVariables(
+    tableOnFile=false,
+    table=[0.0,0.0],
+    extrapolation=Modelica.Blocks.Types.Extrapolation.HoldLastPoint,
+    tableName="tab1",
+    smoothness=Modelica.Blocks.Types.Smoothness.ConstantSegments,
+    columns={2},
+    fileName="decisionVariables.mat")
+    "Table with decision variables"              annotation (Placement(
+        transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=0,
+        origin={-130,-90})));
+  Modelica.Blocks.Sources.Constant AirVolumeFlow(k=8000)
+    "Air volume flow rate, could be an initial value"
+    annotation (Placement(transformation(extent={{-160,40},{-140,60}})));
+  Modelica.Blocks.Math.Gain V2m(k=1.2/3600) "Volume to mass flow"
+    annotation (Placement(transformation(extent={{-126,34},{-114,46}})));
+  Modelica.Blocks.Math.Max max
+    annotation (Placement(transformation(extent={{-128,14},{-118,24}})));
 equation
-  connect(Tnormal.y, IntakeAirSource.T_in) annotation (Line(points={{-139,20},{
-          -120,20},{-120,24},{-102,24}}, color={0,0,127}));
   connect(solar.y, SolarShare.u)
-    annotation (Line(points={{21,-40},{32.8,-40}}, color={0,0,127}));
-  connect(realExpression.y, waterTemperature.Celsius) annotation (Line(points={
-          {-47.2,-101},{-37.6,-101},{-37.6,-100},{-29.2,-100}}, color={0,0,127}));
-  connect(FloorConductor.port_a, concreteFloor.port)
-    annotation (Line(points={{98,-150},{70,-150},{70,-144}}, color={191,0,0}));
-  connect(volume.heatPort, FloorConductor.port_b) annotation (Line(points={{90,
-          -80},{80,-80},{80,-124},{134,-124},{134,-150},{118,-150}}, color={191,
-          0,0}));
+    annotation (Line(points={{-59,70},{-52,70},{-52,36},{-45.2,36}},
+                                                   color={0,0,127}));
+  connect(realExpression.y, waterTemperature.Celsius) annotation (Line(points={{-137.2,
+          -31},{-116,-31},{-116,-24},{-107.2,-24}},             color={0,0,127}));
+  connect(AirVolumeFlow.y,V2m. u) annotation (Line(points={{-139,50},{-132,50},
+          {-132,40},{-127.2,40}}, color={0,0,127}));
+  connect(weather.y[1], max.u2) annotation (Line(points={{-119,-50},{-90,-50},{-90,
+          4},{-134,4},{-134,16},{-129,16}},
+                               color={0,0,127}));
+  connect(Tnormal.y, max.u1) annotation (Line(points={{-139,20},{-134,20},{-134,
+          22},{-129,22}}, color={0,0,127}));
+  connect(max.y, IntakeAirSource.T_in) annotation (Line(points={{-117.5,19},{-108,
+          19},{-108,24},{-102,24}}, color={0,0,127}));
   annotation (experiment(StopTime=172800, Interval=10));
 end Hall_long;

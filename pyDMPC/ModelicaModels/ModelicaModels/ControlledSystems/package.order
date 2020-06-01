@@ -1,5 +1,6 @@
 ControlledSystemBoundaries
 SimpleModelGeo
-TestHall
 GeothermalField
 GenericControlledSystem
+TestHall
+TestHall_Test
