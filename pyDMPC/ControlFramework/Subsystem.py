@@ -71,7 +71,6 @@ class BaseSubsystem:
         self.sys_id = sys_id
         self.name = Init.name[sys_id]
         self.model_type = Init.model_type[sys_id]
-        self.model = self.prepare_model()
         self.ups_neigh = Init.ups_neigh[sys_id]
         self.downs_neigh = Init.downs_neigh[sys_id]
         self.par_neigh = Init.par_neigh[sys_id]
@@ -90,6 +89,13 @@ class BaseSubsystem:
         self.fin_command = 0
         self.traj_var = Init.traj_var[sys_id]
         self.traj_points = Init.traj_points[sys_id]
+
+
+class Subsystem(BaseSubsystem):
+
+    def __init__(self, sys_id):
+        super().__init__(sys_id = sys_id)
+        self.model = self.prepare_model()
 
     def prepare_model(self):
         """Prepares the model of a subsystem according to the subsystem's model
@@ -119,11 +125,6 @@ class BaseSubsystem:
         elif self.model_type == "StateSpace":
             model = Modeling.StateSpace(self.sys_id)
         return model
-
-class Subsystem(BaseSubsystem):
-
-    def __init__(self, sys_id):
-        super().__init__(sys_id = sys_id)
 
     def predict(self, inputs, commands):
 
