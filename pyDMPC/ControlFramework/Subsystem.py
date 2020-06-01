@@ -4,7 +4,7 @@ import System
 import Time
 import time
 
-class Subsystem:
+class BaseSubsystem:
 
     """This class represents the the agents that are assigned to the subsystems.
     The agents can predict the behavior of their subsystems and store the
@@ -69,7 +69,6 @@ class Subsystem:
 
     def __init__(self, sys_id):
         self.sys_id = sys_id
-        print(sys_id)
         self.name = Init.name[sys_id]
         self.model_type = Init.model_type[sys_id]
         self.model = self.prepare_model()
@@ -120,6 +119,11 @@ class Subsystem:
         elif self.model_type == "StateSpace":
             model = Modeling.StateSpace(self.sys_id)
         return model
+
+class Subsystem(BaseSubsystem):
+
+    def __init__(self, sys_id):
+        super().__init__(sys_id = sys_id)
 
     def predict(self, inputs, commands):
 

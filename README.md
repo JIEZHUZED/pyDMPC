@@ -2,6 +2,8 @@
 
 # pyDMPC
 
+**pyDMPC** is a framework developed to provide the user with flexibility and guidance for implementing distributed control approaches. You know best what you require for implementing your control approach but if you seek guidance, you may find it by examining the reference implementations.
+
 ### Overview
 Distributed model predictive control (DMPC) is a promising approach that avoids the construction of a complex model of the total system and thus facilitates modelling and supports the use of exact simulation models.
 
