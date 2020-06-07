@@ -2,7 +2,7 @@ import Subsystem
 import ControlledSystem
 import Modeling
 import Init
-import Time
+import SystemTime
 
 class System:
     """This class represents the overall control system that creates the agents
@@ -40,7 +40,7 @@ class System:
         self.prep_wkdir()
         self.amo_subsys = len(Init.sys_id)
         self.subsystems = self.gen_subsys()
-        self.sys_time = Time.Time()
+        self.sys_time = SystemTime.Time()
 
     def prep_wkdir(self):
         """Prepares the working directory for the current experiment
@@ -248,10 +248,10 @@ class Bexmoc(System):
             sub.send_commands()
 
         if Bexmoc.contr_sys_typ == "Modelica":
-            cur_time = Time.Time.get_time()
+            cur_time = SystemTime.Time.get_time()
 
-            Bexmoc.proceed(cur_time, Time.Time.time_incr)
-            Time.Time.set_time()
+            Bexmoc.proceed(cur_time, SystemTime.Time.time_incr)
+            SystemTime.Time.set_time()
 
     def iterate(self):
         for i,sub in enumerate(self.subsystems):
@@ -310,10 +310,10 @@ class Bexmoc(System):
             sub.send_commands()
 
         if Bexmoc.contr_sys_typ == "Modelica":
-            cur_time = Time.Time.get_time()
+            cur_time = SystemTime.Time.get_time()
 
-            Bexmoc.proceed(cur_time, Time.Time.time_incr)
-            Time.Time.set_time()
+            Bexmoc.proceed(cur_time, SystemTime.Time.time_incr)
+            SystemTime.Time.set_time()
 
     def terminate(self):
         Bexmoc.close_cont_sys()
