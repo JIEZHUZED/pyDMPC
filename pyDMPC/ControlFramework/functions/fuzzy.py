@@ -5,9 +5,9 @@ def control(temp,delt):
     # Sparse universe makes calculations faster, without sacrifice accuracy.
     # Only the critical points are included here; making it higher resolution is
     # unnecessary.
-    universe = np.linspace(-4, 4, 5)
-    universe_temp = np.linspace(290, 303, 5)
-    universe_out = np.linspace(290, 303, 5)
+    universe = np.linspace(-5, 5, 5)
+    universe_temp = np.linspace(17, 30, 5)
+    universe_out = np.linspace(17, 30, 5)
 
     # Create the three fuzzy variables - two inputs, one output
     temperature = ctrl.Antecedent(universe_temp, 'temperature')
