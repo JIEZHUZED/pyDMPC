@@ -1,12 +1,15 @@
 # Overview of the reference implementation
 
 The reference implementation allows applying two specific DMPC algorithms to the AHU and the test hall use case. 
+The following figure shows a simplified class diagram. 
+
+![Classdiagram](classdiagram_v2.png)
 
 ## System
 The System module is used to generate a set of subsystems (agents) that perform the actual control task. It is also useful to define the overall algorithm. In the reference implementation, this algorithm is called BExMoC and simply inherits from the System class. 
 
 ## Subsystem
-The Subsystem module contains the definition of the subsystems (agents). In the BaseSubsystem class, only the main attributed are defined. 
+The Subsystem module contains the definition of the subsystems (agents). In the BaseSubsystem class, only the main attributes are defined. 
 
 ## Modeling
 The Modeling module contains various model classes. It also contains a States class, which is important for distinguishing the different types of state variables. 
