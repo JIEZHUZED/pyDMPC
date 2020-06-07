@@ -1,7 +1,7 @@
 import Init
 import Modeling
 import System
-import Time
+import SystemTime
 import time
 
 class BaseSubsystem:
@@ -140,7 +140,7 @@ class Subsystem(BaseSubsystem):
 
     def optimize(self, interp):
 
-        cur_time = Time.Time.get_time()
+        cur_time = SystemTime.Time.get_time()
 
         if (cur_time - self.last_opt) >= self.model.times.opt_time or (
                 cur_time == 0):
@@ -151,7 +151,6 @@ class Subsystem(BaseSubsystem):
     def interp_minimize(self, interp):
 
         from scipy import interpolate as it
-        import time
 
         opt_costs = []
         opt_outputs =  []
@@ -188,7 +187,11 @@ class Subsystem(BaseSubsystem):
             opt_costs.append(costs[min_ind])
             temp = outputs[min_ind]
             opt_outputs.append(temp[0][-1])
-            opt_command.append(self.commands[min_ind])
+
+            if len(self.commands) == 1:
+                opt_command.append(self.model.states.set_points)
+            else:
+                opt_command.append(self.commands[min_ind])
 
         if self.traj_var != []:
             traj_costs = []
@@ -239,20 +242,20 @@ class Subsystem(BaseSubsystem):
         import numpy as np
 
         cost = self.cost_fac[0] * sum(command)
-
+        i = 0
         if self.cost_rec != [] and self.cost_rec != [[]]:
-            for c in self.cost_rec:
+            for i, c in enumerate(self.cost_rec):
                 if type(c) is scipy.interpolate.interpolate.interp1d:
-                    cost += self.cost_fac[1] * c(outputs)
+                    cost += self.cost_fac[1+i] * c(outputs)
                     print(c(outputs))
                 elif type(c) is list:
                     idx = self.find_nearest(np.asarray(self.inputs), outputs)
-                    cost += self.cost_fac[1] * c[idx]
+                    cost += self.cost_fac[1+i] * c[idx]
                 else:
-                    cost += self.cost_fac[1] * c
+                    cost += self.cost_fac[1+i] * c
 
-        if self.model.states.set_points != []:
-            cost += (self.cost_fac[2] * (outputs -
+        if self.model.states.set_points is not None:
+            cost += (self.cost_fac[2+i] * (outputs -
                                  self.model.states.set_points[0])**2)
 
 
@@ -335,7 +338,7 @@ class Subsystem(BaseSubsystem):
 
     def send_commands(self):
 
-        cur_time = time.time()
+        cur_time = SystemTime.Time.get_time()
 
         print(f"Difference: {cur_time - self.last_write}")
         print(f"Samp Time: {self.model.times.samp_time}")
