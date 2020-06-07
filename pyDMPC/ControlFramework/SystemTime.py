@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu May 30 14:57:50 2019
-
-@author: mba
-"""
-
 import Init
+import time
 
 class Time:
     
@@ -18,8 +12,6 @@ class Time:
         
     @classmethod
     def get_time(cls):
-        
-        import time
             
         if cls.contr_sys_typ != "Modelica":
             cls.sys_time = time.time()
