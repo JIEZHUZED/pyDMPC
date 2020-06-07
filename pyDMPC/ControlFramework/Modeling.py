@@ -308,7 +308,8 @@ class LinMod(Model):
 
     def predict(self):
         self.states.outputs = [[self.modifs.linear_model_factors[0] * self.states.inputs[0] +
-                               self.modifs.linear_model_factors[1] * self.states.commands[0]]]
+                               self.modifs.linear_model_factors[1] * self.states.commands[0] +
+                               self.modifs.linear_model_offsets[0]]]
 
 class Integrator(Model):
 
@@ -333,8 +334,8 @@ class FuzMod(Model):
     def predict(self):
         import functions.fuzzy as fuz
         self.states.outputs = [[self.states.inputs[0]]]
-        self.states.set_points = fuz.control(self.states.state_vars[0],
-                                             self.states.state_vars[1])
+        self.states.set_points = [fuz.control(self.states.state_vars[0],
+                                             self.states.state_vars[1])]
 
 class StateSpace(Model):
 
